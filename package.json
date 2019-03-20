@@ -1,34 +1,38 @@
 {
-  "name": "auth-ii",
-  "version": "1.0.0",
-  "description": "## Topics",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Blent1050/auth-ii.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Blent1050/auth-ii/issues"
-  },
-  "homepage": "https://github.com/Blent1050/auth-ii#readme",
-  "dependencies": {
-    "bcrypt": "^3.0.4",
-    "connect-session-knex": "^1.4.0",
-    "cors": "^2.8.5",
-    "dotenv": "^6.2.0",
-    "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "helmet": "^3.15.1",
-    "jsonwebtoken": "^8.5.0",
-    "knex": "^0.16.3",
-    "mysql": "^2.16.0",
-    "pg": "^7.8.1",
-    "sqlite3": "^4.0.6"
-  }
+	"name": "auth-ii",
+	"version": "1.0.0",
+	"description": "## Topics",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node index.js",
+		"server": "nodemon index.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Blent1050/auth-ii.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Blent1050/auth-ii/issues"
+	},
+	"homepage": "https://github.com/Blent1050/auth-ii#readme",
+	"dependencies": {
+		"bcrypt": "^3.0.4",
+		"connect-session-knex": "^1.4.0",
+		"cors": "^2.8.5",
+		"dotenv": "^6.2.0",
+		"express": "^4.16.4",
+		"express-session": "^1.15.6",
+		"helmet": "^3.15.1",
+		"jsonwebtoken": "^8.5.0",
+		"knex": "^0.16.3",
+		"mysql": "^2.16.0",
+		"pg": "^7.8.1",
+		"sqlite3": "^4.0.6"
+	},
+	"devDependencies": {
+		"nodemon": "^1.18.10"
+	}
 }
