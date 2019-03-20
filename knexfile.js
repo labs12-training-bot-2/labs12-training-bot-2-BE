@@ -4,18 +4,14 @@ module.exports = {
   development: {
     client: "mysql",
     connection: {
-      filename: "./database/auth.db3"
+      host: process.env.DATABASE_URL,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME
     },
     pool: {
-      afterCreate: (conn, done) => {
-        conn.run("PRAGMA foreign_keys = ON", done);
-      }
-    },
-    migrations: {
-      directory: "./database/migrations"
-    },
-    seeds: {
-      directory: "./database/seeds"
+      min: 2,
+      max: 10
     }
   },
   production: {

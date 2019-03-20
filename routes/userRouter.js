@@ -2,7 +2,7 @@
 const router = require("express").Router();
 
 //Models
-const Users = require("../users/user-model");
+const Users = require("../database/Helpers/user-model");
 //Middleware
 
 //Routes
