@@ -2,8 +2,7 @@ require("dotenv").config();
 
 module.exports = {
   development: {
-    client: "sqlite3",
-    useNullAsDefault: true,
+    client: "mysql",
     connection: {
       filename: "./database/auth.db3"
     },
