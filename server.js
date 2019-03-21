@@ -11,9 +11,11 @@ server.use(helmet(), express.json(), cors());
 
 //Routes
 const usersRouter = require("./routes/userRouter");
+const teamMemberRouter = require("./routes/teamMemberRouter");
 
 //API Endpoints
 server.use("/api/users", usersRouter);
+server.use("/api/team-members", teamMemberRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
