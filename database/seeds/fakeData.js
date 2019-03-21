@@ -16,7 +16,8 @@ function createFakeTeamMembers() {
     jobDescription: faker.commerce.department(),
     email: faker.internet.email(),
     phoneNumber: faker.phone.phoneNumber(),
-    TeamMemberCol: 1
+    TeamMemberCol: 1,
+    user_ID: 13
   });
 
   for (let i = 0; i < numberOfUsers; i++) {

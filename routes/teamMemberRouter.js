@@ -1,7 +1,7 @@
 //Dependencies
 const router = require("express").Router();
 
-const { createFakeTeamMembers } = require("../database/seeds/fakeData");
+// const { createFakeTeamMembers } = require("../database/seeds/fakeData");
 
 //Models
 
