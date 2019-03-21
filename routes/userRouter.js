@@ -12,15 +12,11 @@ const TeamMembers = require('../database/Helpers/teamMember-model.js');
 // GET all users
 router.get('/', async (req, res) => {
 	try {
-
+		const users = await Users.find();
+		res.status(200).json({ users });
 	} catch(err) {
-
+		res.status(500).json(err);
 	}
-	Users.find()
-		.then(users => {
-			res.status(200).json({ users });
-		})
-		.catch(err => res.status(500).json(err));
 });
 
 // GET all members associated with user

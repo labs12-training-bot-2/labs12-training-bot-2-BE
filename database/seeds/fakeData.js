@@ -17,7 +17,10 @@ function createFakeTeamMembers() {
     email: faker.internet.email(),
     phoneNumber: faker.phone.phoneNumber(),
     TeamMemberCol: 1,
-    user_ID: 13
+    user_ID: faker.random.number({
+      'min': 1,
+      'max': 50
+  })
   });
 
   for (let i = 0; i < numberOfUsers; i++) {
