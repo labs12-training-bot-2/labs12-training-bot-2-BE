@@ -4,11 +4,11 @@ const sendNotifications = require('./sendNotifications');
 const runNotification = () => {
   return {
     run: () => {
-      sendNotifications;
+      sendNotifications();
       // connect to post data model here
       // sendNotification would be a function to post to twilio API with post information to send message
     }
   };
 };
 
-module.exports = runNotification;
+module.exports = runNotification();

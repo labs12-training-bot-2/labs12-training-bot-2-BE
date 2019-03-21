@@ -27,6 +27,6 @@ server.get('/', (req, res) => {
   res.send('It works!');
 });
 
-notificationSystem();
+// notificationSystem.start();
 
 module.exports = server;

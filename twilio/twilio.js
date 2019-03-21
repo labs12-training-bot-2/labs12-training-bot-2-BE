@@ -18,10 +18,7 @@ const alexNumber = process.env.ALEX_NUMBER;
 //   })
 //   .then(message => console.log(message.sid));
 
-// twilio application to send out posts based on start date of training material per member
-// notification system runs every day to check what posts to send out
-
-const sampleNotification = [
+const sampleNotificationData = [
   {
     bodyText:
       'Training bot has a reminder for you. Keep the customers drink filled they’ll make 40% more in tips. Read more https://pos.toasttab.com/blog/how-to-get-more-tips-as-a-server',
@@ -31,4 +28,4 @@ const sampleNotification = [
   }
 ];
 
-module.exports = sampleNotification;
+module.exports = sampleNotificationData;

@@ -2,6 +2,7 @@ const CronJob = require('cron').CronJob;
 
 const runNotification = require('./runNotification');
 // node-cron start function for notification system
+
 const notificationSystem = function() {
   return {
     start: () => {
@@ -12,15 +13,15 @@ const notificationSystem = function() {
         function() {
           const d = new Date();
           console.log('onTick:', d);
+          runNotification.run();
         },
         null,
         true,
         ''
       );
       console.log('After job instantiation');
-      runNotification.run();
     }
   };
 };
 
-module.exports = notificationSystem;
+module.exports = notificationSystem();
