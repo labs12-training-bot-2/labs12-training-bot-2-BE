@@ -3,8 +3,11 @@
  * @param {array} appointments List of appointments.
  */
 
+const accountSid = process.env.TWILIO_SID;
+const authToken = process.env.TWILIO_TOKEN;
+
 function sendNotifications(appointments) {
-  const client = new Twilio(cfg.twilioAccountSid, cfg.twilioAuthToken);
+  const client = new Twilio(accountSid, authToken);
   appointments.forEach(function(appointment) {
     // Create options to send the message
     const options = {

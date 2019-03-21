@@ -4,6 +4,7 @@ const twilio = require('twilio');
 
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_TOKEN;
+const twilioNumber = process.env.TWILIO_NUMBER;
 
 const client = new twilio(accountSid, authToken);
 
@@ -12,7 +13,7 @@ client.messages
   .create({
     body: 'Hello from Node',
     to: '+12223334444', // Text this number
-    from: '+12017620421' // From a valid Twilio number
+    from: twilioNumber
   })
   .then(message => console.log(message.sid));
 
