@@ -1,7 +1,7 @@
 //Dependencies
 const router = require("express").Router();
 
-const { createFakeUsers } = require("./teamMember_FakeData");
+const { createFakeTeamMembers } = require("../database/seeds/fakeData");
 
 //Models
 
@@ -18,11 +18,11 @@ router.get("/", (req, res) => {
     .catch(err => res.send(err));
 });
 
-router.post("/", (req, res) => {
+// Endpoint to create 10 fake team members
+router.post("/create-fake-members", (req, res) => {
   // Creates 10 fake team members
-  const teamMembers = createFakeUsers();
 
-  TeamMember.add(createFakeUsers())
+  TeamMember.add(createFakeTeamMembers())
     .then(teamMembers => {
       res
         .status(201)

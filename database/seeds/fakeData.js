@@ -1,13 +1,13 @@
 const faker = require("faker");
 
 module.exports = {
-  createFakeUsers
+  createFakeTeamMembers
 };
 
-function createFakeUsers() {
-  const fakeUsers = [];
+function createFakeTeamMembers() {
+  const fakeTeamMembers = [];
 
-  const fakeUser = () => ({
+  const fakeTeamMember = () => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     jobDescription: faker.commerce.department(),
@@ -18,8 +18,8 @@ function createFakeUsers() {
 
   const numberOfUsers = 10;
   for (let i = 0; i < numberOfUsers; i++) {
-    fakeUsers.push(fakeUser());
+    fakeTeamMembers.push(fakeTeamMember());
   }
 
-  return fakeUsers;
+  return fakeTeamMembers;
 }
