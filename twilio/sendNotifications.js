@@ -1,23 +1,29 @@
 /*
- * Send messages to all appoinment owners via Twilio
+ * Send messages to all appointment owners via Twilio
  * @param {array} appointments List of appointments.
  */
 
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_TOKEN;
+const twilioNumber = process.env.TWILIO_NUMBER;
+const alexNumber = process.env.ALEX_NUMBER;
+
+const sampleNotification = {
+  bodyText:
+    'Training bot has a reminder for you. Keep the customers drink filled they’ll make 40% more in tips. Read more https://pos.toasttab.com/blog/how-to-get-more-tips-as-a-server',
+  to: alexNumber, // Text this number
+  from: twilioNumber, // From a valid Twilio number
+  date: 'Thu, 21 Mar 2019 18:20:00 GMT'
+};
 
 function sendNotifications(appointments) {
   const client = new Twilio(accountSid, authToken);
   appointments.forEach(function(appointment) {
     // Create options to send the message
     const options = {
-      to: `+ ${appointment.phoneNumber}`,
-      from: cfg.twilioPhoneNumber,
-      /* eslint-disable max-len */
-      body: `Hi ${
-        appointment.name
-      }. Just a reminder that you have an appointment coming up.`
-      /* eslint-enable max-len */
+      to: `+ ${alexNumber}`, // input dynamic number from user
+      from: twilioNumber, // leave this number fixed
+      body: `${sampleNotification.bodyText}`
     };
 
     // Send the message!

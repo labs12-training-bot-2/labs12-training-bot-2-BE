@@ -5,6 +5,7 @@ const twilio = require('twilio');
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_TOKEN;
 const twilioNumber = process.env.TWILIO_NUMBER;
+const alexNumber = process.env.ALEX_NUMBER;
 
 const client = new twilio(accountSid, authToken);
 
@@ -12,7 +13,7 @@ const client = new twilio(accountSid, authToken);
 client.messages
   .create({
     body: 'Hello from Node',
-    to: '+12223334444', // Text this number
+    to: alexNumber,
     from: twilioNumber
   })
   .then(message => console.log(message.sid));
@@ -21,10 +22,10 @@ client.messages
 // twilio application runs every minute to check what posts to send out
 
 const sampleNotification = {
-  body:
+  bodyText:
     'Training bot has a reminder for you. Keep the customers drink filled they’ll make 40% more in tips. Read more https://pos.toasttab.com/blog/how-to-get-more-tips-as-a-server',
-  to: '+14804896962', // Text this number
-  from: '+12017620421', // From a valid Twilio number
+  to: alexNumber, // Text this number
+  from: twilioNumber, // From a valid Twilio number
   date: 'Thu, 21 Mar 2019 18:20:00 GMT'
 };
 
