@@ -1,10 +1,9 @@
 require('dotenv').config();
 
-const server = require('./server');
 const twilio = require('twilio');
 
 const accountSid = process.env.TWILIO_SID;
-const authToken = process.env.TWILIO_TOKEN; // Your Auth Token from www.twilio.com/console
+const authToken = process.env.TWILIO_TOKEN;
 
 const client = new twilio(accountSid, authToken);
 
@@ -27,3 +26,12 @@ const sampleNotification = {
   from: '+12017620421', // From a valid Twilio number
   date: 'Thu, 21 Mar 2019 18:20:00 GMT'
 };
+
+// twilio example appointment schema
+// var AppointmentSchema = new mongoose.Schema({
+//   name:String,
+//   phoneNumber: String,
+//   notification : Number,
+//   timeZone : String,
+//   time : {type : Date, index : true}
+// });
