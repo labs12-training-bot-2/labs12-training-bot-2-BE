@@ -36,4 +36,15 @@ router.post("/", async (req, res) => {
   }
 })
 
+//PUT team member information
+router.put("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedTeamMember = await TeamMember.update(id, req.body);
+    res.status(200).json({updatedTeamMember})
+  } catch(err) {
+    res.status(500).json(err);
+  }
+})
+
 module.exports = router;
