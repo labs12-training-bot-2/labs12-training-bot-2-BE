@@ -2,7 +2,6 @@
 const router = require('express').Router();
 
 //Models
-
 const Users = require('../database/Helpers/user-model.js');
 const TeamMembers = require('../database/Helpers/teamMember-model.js');
 
