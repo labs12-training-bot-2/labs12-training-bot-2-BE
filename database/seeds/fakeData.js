@@ -1,8 +1,11 @@
 const faker = require("faker");
 
 module.exports = {
-  createFakeTeamMembers
+  createFakeTeamMembers,
+  createFakeUsers
 };
+
+const numberOfUsers = 10;
 
 function createFakeTeamMembers() {
   const fakeTeamMembers = [];
@@ -16,10 +19,25 @@ function createFakeTeamMembers() {
     TeamMemberCol: 1
   });
 
-  const numberOfUsers = 10;
   for (let i = 0; i < numberOfUsers; i++) {
     fakeTeamMembers.push(fakeTeamMember());
   }
 
   return fakeTeamMembers;
+}
+
+// Creates 10 fake users
+function createFakeUsers() {
+  const fakeUsers = [];
+
+  const fakeUser = () => ({
+    accountTypeID: faker.random.number(2) + 1,
+    authToken: faker.random.uuid()
+  });
+
+  for (let i = 0; i < numberOfUsers; i++) {
+    fakeUsers.push(fakeUser());
+  }
+
+  return fakeUsers;
 }
