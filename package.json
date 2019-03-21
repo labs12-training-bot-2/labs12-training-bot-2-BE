@@ -34,6 +34,7 @@
 		"twilio": "^3.29.2"
 	},
 	"devDependencies": {
+		"faker": "^4.1.0",
 		"nodemon": "^1.18.10"
 	}
 }
