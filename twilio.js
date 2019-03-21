@@ -17,44 +17,13 @@ client.messages
   })
   .then(message => console.log(message.sid));
 
-// user information passed into notification function below
+// twilio application to send out posts based on start date of training material per member
+// twilio application runs every minute to check what posts to send out
 
-// Every minute we'd like our application to check the appointments database to see if any appointments are coming up that require reminders to be sent out.
-
-// To do this we use node-cron.
-
-// We configure on the start function both the job code we'd like to run, and the interval on which to run it. Then we call it from the application execution entry point like this: scheduler.start()
-
-// sample - schedule a job to send a reminder
-// This start function uses a notificationsWorker, next we'll see how it works.
-// const CronJob = require('cron').CronJob;
-// const notificationsWorker = require('./workers/notificationsWorker');
-// const moment = require('moment');
-
-// const schedulerFactory = function() {
-//   return {
-//     start: function() {
-//       new CronJob('00 * * * * *', function() {
-//         console.log('Running Send Notifications Worker for ' +
-//           moment().format());
-//         notificationsWorker.run();
-//       }, null, true, '');
-//     },
-//   };
-// };
-
-// module.exports = schedulerFactory();
-
-// To actually execute our recurring job logic, we create a worker function which uses a Static Model Method to query the database for upcoming appointments and sends reminders as necessary.
-
-// const Appointment = require('../models/appointment');
-
-// const notificationWorkerFactory = function() {
-//   return {
-//     run: function() {
-//       Appointment.sendNotifications();
-//     },
-//   };
-// };
-
-// module.exports = notificationWorkerFactory();
+const sampleNotification = {
+  body:
+    'Training bot has a reminder for you. Keep the customers drink filled they’ll make 40% more in tips. Read more https://pos.toasttab.com/blog/how-to-get-more-tips-as-a-server',
+  to: '+14804896962', // Text this number
+  from: '+12017620421', // From a valid Twilio number
+  date: 'Thu, 21 Mar 2019 18:20:00 GMT'
+};
