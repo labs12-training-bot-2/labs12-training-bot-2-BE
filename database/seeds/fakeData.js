@@ -18,8 +18,8 @@ function createFakeTeamMembers() {
     phoneNumber: faker.phone.phoneNumber(),
     TeamMemberCol: 1,
     user_ID: faker.random.number({
-      'min': 1,
-      'max': 50
+      min: 1,
+      max: 10
   })
   });
 
@@ -36,7 +36,7 @@ function createFakeUsers() {
 
   const fakeUser = () => ({
     accountTypeID: faker.random.number(2) + 1,
-    authToken: faker.random.uuid()
+    email: faker.internet.email()
   });
 
   for (let i = 0; i < numberOfUsers; i++) {
@@ -45,3 +45,4 @@ function createFakeUsers() {
 
   return fakeUsers;
 }
+
