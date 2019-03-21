@@ -5,7 +5,8 @@ module.exports = {
   find,
   findBy,
   findById,
-  update
+  update,
+  remove
 };
 
 function find() {
@@ -29,7 +30,11 @@ function findById(id) {
 }
 
 async function update(id, member) {
-  await db("TeamMember").where({teamMemberId: id}).update(member);
+  await db("TeamMember").where({teamMemberID: id}).update(member);
 
   return await findById(id)
+}
+
+function remove(id) {
+  return db("TeamMember").where({teamMemberID: id}).del();
 }
