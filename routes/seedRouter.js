@@ -34,7 +34,6 @@ router.post("/team-members", (req, res) => {
 router.post("/users", (req, res) => {
   // Creates 10 fake users
   const newUsers = createFakeUsers();
-  console.log(newUsers);
 
   Users.add(newUsers)
     .then(users => {
