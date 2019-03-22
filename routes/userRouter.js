@@ -8,18 +8,19 @@ const TeamMembers = require("../database/Helpers/teamMember-model");
 //Middleware
 
 //Routes
-router.get("/", (req, res) => {
-  Users.find()
-    .then(users => {
-      res.json({ users, decodedToken: req.decodedJwt });
-    })
-    .catch(err => res.send(err));
+router.get("/", async (req, res) => {
+  try {
+    const users = await Users.find();
+    res.status(200).json({ users });
+  } catch(err) {
+    res.status(500).json({ message: "A network error occurred" })
+  }
 });
 
 // Get All user info by ID
 router.get("/:id", async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     //get user by id
     const user = await Users.findById(id);
 
