@@ -4,7 +4,9 @@ module.exports = {
   add,
   find,
   findBy,
-  findById
+  findById,
+  update,
+  remove
 };
 
 function find() {
@@ -15,14 +17,24 @@ function findBy(filter) {
   return db("TeamMember").where(filter);
 }
 
-async function add(user) {
-  const [id] = await db("TeamMember").insert(user);
+async function add(member) {
+  const [id] = await db("TeamMember").insert(member);
 
   return findById(id);
 }
 
 function findById(id) {
   return db("TeamMember")
-    .where({ id })
+    .where({teamMemberID: id})
     .first();
+}
+
+async function update(id, member) {
+  await db("TeamMember").where({teamMemberID: id}).update(member);
+
+  return await findById(id)
+}
+
+function remove(id) {
+  return db("TeamMember").where({teamMemberID: id}).del();
 }
