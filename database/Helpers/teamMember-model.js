@@ -25,16 +25,20 @@ async function add(member) {
 
 function findById(id) {
   return db("TeamMember")
-    .where({teamMemberID: id})
+    .where({ teamMemberID: id })
     .first();
 }
 
 async function update(id, member) {
-  await db("TeamMember").where({teamMemberID: id}).update(member);
+  await db("TeamMember")
+    .where({ teamMemberID: id })
+    .update(member);
 
-  return await findById(id)
+  return await findById(id);
 }
 
 function remove(id) {
-  return db("TeamMember").where({teamMemberID: id}).del();
+  return db("TeamMember")
+    .where({ teamMemberID: id })
+    .del();
 }
