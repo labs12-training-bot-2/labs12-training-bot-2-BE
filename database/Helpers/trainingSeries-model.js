@@ -6,7 +6,8 @@ module.exports = {
   findBy,
   findById,
   addTrainingSeriesSeeds,
-  getAllPosts
+  getAllPosts,
+  getTrainingSeriesPosts
 };
 
 function find() {
@@ -25,7 +26,7 @@ async function add(trainingSeries) {
 
 function findById(id) {
   return db("TrainingSeries")
-    .where({ id })
+    .where({ trainingSeriesID: id })
     .first();
 }
 
@@ -33,6 +34,11 @@ function addTrainingSeriesSeeds(seeds) {
   return db("TrainingSeries").insert(seeds);
 }
 
+// not a production function
 function getAllPosts() {
   return db("Post");
+}
+
+function getTrainingSeriesPosts(id) {
+  return db("Post").where({ trainingSeriesID: id}).first();
 }

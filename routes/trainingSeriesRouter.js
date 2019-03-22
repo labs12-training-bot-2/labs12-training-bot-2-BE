@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
         const trainingSeries = await TrainingSeries.find();
         res.status(200).json({ trainingSeries });
       } catch(err) {
-        res.status(500).json(err);
+        res.status(500).json({ message: "A network error occurred" });
       }
 })
 
@@ -22,7 +22,7 @@ router.get("/posts", async (req, res) => {
         const posts = await TrainingSeries.getAllPosts();
         res.status(200).json({ posts });
     } catch(err) {
-       res.status(500).json(err); 
+       res.status(500).json({ message: "A network error occurred" }); 
     }
 })
 
@@ -32,9 +32,15 @@ router.get("/:id/posts", async (req, res) => {
         const { id } = req.params;
 
         //get training series by id
-        const trainingSeries = await TrainingSeries.findById()
-    } catch(err) {
+        const trainingSeries = await TrainingSeries.findById(id);
 
+        //get all posts of training series
+        // posts needs to be returned as an array, currently being returned as an object
+        const posts = await TrainingSeries.getTrainingSeriesPosts(id);
+
+        res.status(200).json({ trainingSeries, posts })
+    } catch(err) {
+        res.status(500).json({ message: "A network error occurred" })
     }
 })
 module.exports = router;
