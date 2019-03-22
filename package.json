@@ -22,17 +22,21 @@
 		"bcrypt": "^3.0.4",
 		"connect-session-knex": "^1.4.0",
 		"cors": "^2.8.5",
+		"cron": "^1.7.0",
 		"dotenv": "^6.2.0",
 		"express": "^4.16.4",
 		"express-session": "^1.15.6",
 		"helmet": "^3.15.1",
 		"jsonwebtoken": "^8.5.0",
 		"knex": "^0.16.3",
+		"moment": "^2.24.0",
 		"mysql": "^2.16.0",
 		"pg": "^7.8.1",
-		"sqlite3": "^4.0.6"
+		"sqlite3": "^4.0.6",
+		"twilio": "^3.29.2"
 	},
 	"devDependencies": {
+		"faker": "^4.1.0",
 		"nodemon": "^1.18.10"
 	}
 }
