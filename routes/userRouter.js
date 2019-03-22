@@ -3,7 +3,7 @@ const router = require("express").Router();
 
 //Models
 const Users = require("../database/Helpers/user-model.js");
-const TeamMembers = require("../database/Helpers/teamMember-model.js");
+const TeamMembers = require("../database/Helpers/teamMember-model");
 
 //Middleware
 
@@ -16,6 +16,7 @@ router.get("/", (req, res) => {
     .catch(err => res.send(err));
 });
 
+// Get All user info by ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -34,9 +35,18 @@ router.get("/:id", async (req, res) => {
       // Get posts by user
       const posts = await Users.getUserPosts(id);
 
-      // console.log(posts);
+      const members = await TeamMembers.findBy({ user_ID: id });
+      console.log(members);
 
-      res.status(200).json({ ...user, ...account, userTrainingSeries, posts });
+      const userInfo = {
+        ...user,
+        ...account,
+        members,
+        userTrainingSeries,
+        posts
+      };
+
+      res.status(200).json(userInfo);
     }
   } catch (error) {
     res.status(500).json({ message: "A network error occurred" });
