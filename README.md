@@ -54,7 +54,7 @@ yarn server
 # Database Tables
 
 ## Schema
-![Schema Table](assets/Schema.png)
+![Schema Table](https://i.imgur.com/oPQ8FuF.png)
 
 (FK's not accounted for in tables yet)
 ## User
