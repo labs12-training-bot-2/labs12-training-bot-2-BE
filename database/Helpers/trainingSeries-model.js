@@ -5,7 +5,8 @@ module.exports = {
   find,
   findBy,
   findById,
-  addTrainingSeriesSeeds
+  addTrainingSeriesSeeds,
+  getAllPosts
 };
 
 function find() {
@@ -30,4 +31,8 @@ function findById(id) {
 
 function addTrainingSeriesSeeds(seeds) {
   return db("TrainingSeries").insert(seeds);
+}
+
+function getAllPosts() {
+  return db("Post");
 }

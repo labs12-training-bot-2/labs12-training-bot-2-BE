@@ -60,8 +60,19 @@ router.get("/:id/team-members", async (req, res) => {
     const members = await TeamMembers.findBy({ user_ID: userId });
     res.status(200).json({ members });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ message: "A network error occurred" });
   }
 });
+
+// GET all training series associated with user
+router.get("/:id/training-series", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userTrainingSeries = await Users.findTrainingSeriesByUser(id);
+    res.status(200).json({ userTrainingSeries });
+  } catch(err) {
+    res.status(500).json({ message: "A network error occurred" });
+  }
+})
 
 module.exports = router;
