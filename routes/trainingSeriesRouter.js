@@ -37,6 +37,21 @@ router.get("/:id", async (req, res) => {
     }
 })
 
+router.post("/", async (req, res) => {
+    try {
+        const { title, userID } = req.body;
+
+        if ( !title || !userID ) {
+            res.status(400).json({ error: "Client must provide all fields." })
+        } else {
+            const newTrainingSeries = await TrainingSeries.add(req.body);
+            res.status(201).json({ newTrainingSeries });
+        }
+    } catch(err) {
+        res.status(500).json({ message: "A network error occurred" });
+    }
+})
+
 //GET all posts in a training series by training series ID
 router.get("/:id/posts", async (req, res) => {
     try {

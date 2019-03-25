@@ -2,8 +2,6 @@
 const router = require("express").Router();
 
 //Models
-const TeamMembers = require('../database/Helpers/teamMember-model.js');
-
 const TeamMember = require("../database/Helpers/teamMember-model");
 
 //Middleware
