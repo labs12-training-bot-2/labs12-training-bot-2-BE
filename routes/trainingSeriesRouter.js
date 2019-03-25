@@ -64,6 +64,21 @@ router.put("/:id", async (req, res) => {
     }
 })
 
+// DELETE a training series
+router.delete("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleted = await TrainingSeries.remove(id);
+        if (deleted > 0) {
+            res.status(200).json({ message: "The resource has been deleted."});
+        } else {
+            res.status(404).json({ error: "The resource could not be found."})
+        }
+    } catch(err) {
+        res.status(500).json({ message: "A network error occurred"})
+    }
+})
+
 //GET all posts in a training series by training series ID
 router.get("/:id/posts", async (req, res) => {
     try {
