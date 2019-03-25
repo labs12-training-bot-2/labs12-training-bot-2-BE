@@ -37,6 +37,7 @@ router.get("/:id", async (req, res) => {
     }
 })
 
+// POST a new training series
 router.post("/", async (req, res) => {
     try {
         const { title, userID } = req.body;
@@ -49,6 +50,17 @@ router.post("/", async (req, res) => {
         }
     } catch(err) {
         res.status(500).json({ message: "A network error occurred" });
+    }
+})
+
+// PUT training series information
+router.put("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedTrainingSeries = await TrainingSeries.update(id, req.body);
+        res.status(200).json({ updatedTrainingSeries });
+    } catch(err) {
+        res.status(500).json({ message: "A network error occurred" })
     }
 })
 

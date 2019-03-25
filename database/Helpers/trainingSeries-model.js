@@ -7,7 +7,8 @@ module.exports = {
   findById,
   addTrainingSeriesSeeds,
   getAllPosts,
-  getTrainingSeriesPosts
+  getTrainingSeriesPosts,
+  update
 };
 
 function find() {
@@ -22,6 +23,14 @@ async function add(trainingSeries) {
   const [id] = await db("TrainingSeries").insert(trainingSeries);
 
   return findById(id);
+}
+
+async function update(id, series) {
+  await db("TrainingSeries")
+    .where({ trainingSeriesID: id })
+    .update(series);
+
+  return await findById(id);
 }
 
 function findById(id) {
