@@ -10,7 +10,7 @@ const TeamMember = require("../database/Helpers/teamMember-model");
 
 //Routes
 
-// GET all team members in system
+// GET all team members in system (not a production endpoint)
 router.get("/", async (req, res) => {
   try {
     const teamMembers = await TeamMember.find();
@@ -21,6 +21,13 @@ router.get("/", async (req, res) => {
 });
 
 //GET a team member by teamMemberId
+router.get("/:id", async (req, res) => {
+  try {
+
+  } catch(err) {
+    
+  }
+})
 
 // POST a new team member
 router.post("/", async (req, res) => {
