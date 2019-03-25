@@ -17,7 +17,18 @@ router.post("/", async (req, res) => {
       const user = await Users.findByEmail(email);
 
       if (user) {
-        res.status(200).json({ message: "Login successful", user });
+        try {
+          // retrieves the training series belonging to the user
+          const trainingSeries = await Users.findTrainingSeriesByUser(
+            user.userID
+          );
+
+          res
+            .status(200)
+            .json({ message: "Login successful", user, trainingSeries });
+        } catch (error) {
+          res.status(404).json({ message: "Training series not found" });
+        }
       } else if (!user && !name) {
         // Check if user exists,
         // If user doesn't exist, must include a name
