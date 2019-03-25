@@ -26,6 +26,17 @@ router.get("/posts", async (req, res) => {
     }
 })
 
+// GET training series by ID
+router.get("/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const trainingSeries = await TrainingSeries.findById(id);
+        res.status(200).json({ trainingSeries });
+    } catch(err) {
+        res.status(500).json({ message: "A network error occurred" })
+    }
+})
+
 //GET all posts in a training series by training series ID
 router.get("/:id/posts", async (req, res) => {
     try {
