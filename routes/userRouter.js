@@ -97,4 +97,21 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await Users.findById(id);
+
+    if (!user) {
+      res.status(404).json({ message: "The specified user does not exist." });
+    } else {
+      await Users.deleteUser(id);
+      res.status(202).json({ message: "User account removed successfully." });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "A network error occurred." });
+  }
+});
+
 module.exports = router;

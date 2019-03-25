@@ -11,7 +11,8 @@ module.exports = {
   findTrainingSeriesByUser,
   getUserAccountType,
   getUserPosts,
-  updateUser
+  updateUser,
+  deleteUser
 };
 
 function find() {
@@ -78,4 +79,10 @@ async function updateUser(id, changes) {
     .update(changes);
 
   return findById(id);
+}
+
+async function deleteUser(id) {
+  return db("User")
+    .where("userID", id)
+    .del();
 }
