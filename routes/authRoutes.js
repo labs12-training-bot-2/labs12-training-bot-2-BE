@@ -5,23 +5,33 @@ const router = require("express").Router();
 
 const Users = require("../database/Helpers/user-model.js");
 
-router.post("/register", (req, res) => {
-  const { email } = req.body;
+router.post("/", async (req, res) => {
+  const { email, name } = req.body;
 
-  Users.findByEmail;
-});
+  const userInfo = req.body;
 
-router.post("/login", async (req, res) => {
-  const { email } = req.body;
-  //   console.log("EMAIL", email);
   if (!email) {
     res.status(400).json({ message: "Please include an email to login" });
   } else {
     try {
       const user = await Users.findByEmail(email);
-      // Need to get training series, posts, and team members
 
-      res.status(200).json({ message: "Login successful", user });
+      if (user) {
+        res.status(200).json({ message: "Login successful", user });
+      } else if (!user && !name) {
+        // Check if user exists,
+        // If user doesn't exist, must include a name
+        res.status(400).json({
+          message: "Please include a name to create an account."
+        });
+      } else {
+        // add user to the db and return the user id
+        const newUser = await Users.add(userInfo);
+
+        return res
+          .status(201)
+          .json({ message: "Account created Successfully", newUser });
+      }
     } catch (error) {
       res.status(500).json({ message: "A network error occurred." });
     }
