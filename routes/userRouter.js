@@ -12,8 +12,8 @@ router.get("/", async (req, res) => {
   try {
     const users = await Users.find();
     res.status(200).json({ users });
-  } catch(err) {
-    res.status(500).json({ message: "A network error occurred" })
+  } catch (err) {
+    res.status(500).json({ message: "A network error occurred" });
   }
 });
 
@@ -71,9 +71,30 @@ router.get("/:id/training-series", async (req, res) => {
     const { id } = req.params;
     const userTrainingSeries = await Users.findTrainingSeriesByUser(id);
     res.status(200).json({ userTrainingSeries });
-  } catch(err) {
+  } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
-})
+});
+
+// PUT update user information
+
+router.put("/:id", async (req, res) => {
+  const changes = req.body;
+  const { id } = req.params;
+
+  try {
+    const user = await Users.findById(id);
+
+    if (!user) {
+      res.status(404).json({ message: "The specified user does not exist." });
+    } else {
+      const updatedUser = await Users.updateUser(id, changes);
+
+      res.status(202).json({ message: "Update successful.", updatedUser });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "A network error occurred." });
+  }
+});
 
 module.exports = router;
