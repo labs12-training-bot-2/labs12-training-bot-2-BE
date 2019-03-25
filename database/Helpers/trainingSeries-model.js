@@ -42,7 +42,7 @@ function getAllPosts() {
 }
 
 function getTrainingSeriesPosts(id) {
-  return db("Post").where({ trainingSeriesID: id}).first();
+  return db("Post").where({ trainingSeriesID: id })
 }
 
 async function update(id, series) {
