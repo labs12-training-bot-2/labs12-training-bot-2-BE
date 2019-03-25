@@ -46,4 +46,20 @@ router.get("/:id", async (req, res) => {
   }
 })
 
+// GET post by id
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await Posts.remove(id);
+    if (deleted > 0) {
+      res.status(200).json({ message: "The resource has been deleted." });
+    } else {
+      res.status(404).json({ error: "The resource could not be found." })
+    }
+  } catch (err) {
+    res.status(500).json({ message: "A network error occurred" });
+  }
+})
+
 module.exports = router;
