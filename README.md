@@ -117,19 +117,33 @@ yarn server
 # Endpoints
 
 ## All endpoints
-| Name                          | METHOD | endpoint      | description                                                |
-| ----------------------------- | ------ | ------------- | ---------------------------------------------------------- |
-| Register/Login                | POST   | `/api/auth`   | Register or logs user in                                   |
-| Get all trainingSeries        | GET    | ENDPOINT HERE | Gets all training series associates to logged in user      |
-| Get a specific trainingSeries | GET    | ENDPOINT HERE | Gets a specific training series                            |
-| Create new trainingSeries     | POST   | ENDPOINT HERE | Creates a new training series for user currently logged in |
-| Edit a trainingSeries         | PUT    | ENDPOINT HERE | Edits a specific training series                           |
-| Delete a trainingSeries       | DELETE | ENDPOINT HERE | Deletes a specified training series                        |
-| Get all team members          | GET    | ENDPOINT HERE | Gets all team members associates to logged in user         |
-| Get a specific team member    | GET    | ENDPOINT HERE | Gets a specific team member                                |
-| Create a new team member      | POST   | ENDPOINT HERE | Creates a new team member                                  |
-| Edit team member              | PUT    | ENDPOINT HERE | Edits a specified team member                              |
-| Delete a team member          | DELETE | ENDPOINT HERE | Deletes a specified team member                            |
+| METHOD | endpoint                         | description                                        |
+| ------ | -------------------------------- | -------------------------------------------------- |
+| POST   | `/api/auth`                      | Register or logs user in via Auth0                 |
+| POST   | ENDPOINT HERE                    | Adds user to database and returns user ID          |
+| GET    | `/api/users/:id`                 | Gets all information about the current user by ID  |
+| PUT    | ENDPOINT HERE                    | Updates a user's information (in local db)         |
+| DELETE | ENDPOINT HERE                    | Deletes a user's information (in local db)         |
+| GET    | `/api/users/:id/training-series` | Gets all training series created by logged in user |
+| GET    | ENDPOINT HERE                    | Gets a specific training series by ID              |
+| POST   | ENDPOINT HERE                    | Creates a new training series for logged in user   |
+| PUT    | ENDPOINT HERE                    | Edits a specific training series                   |
+| DELETE | ENDPOINT HERE                    | Deletes a specified training series                |
+| GET    | `/api/training-series/:id/posts` | Gets all posts related to a training series        |
+| GET    | ENDPOINT HERE                    | Gets a specific post by ID                         |
+| POST   | ENDPOINT HERE                    | Adds a post to a training series                   |
+| PUT    | ENDPOINT HERE                    | Updates a post                                     |
+| DELETE | ENDPOINT HERE                    | Deletes a post                                     |
+| GET    | `/api/users/:id/team-members`    | Gets all team members added by logged in user      |
+| GET    | `/api/team-members/:id`          | Gets a specific team member                        |
+| POST   | `/api/team-members`              | Creates a new team member                          |
+| PUT    | `/api/team-members/:id`          | Edits a specified team member                      |
+| DELETE | `/api/team-members/:id`          | Deletes a specified team member                    |
+| POST   | ENDPOINT HERE                    | Assigns a member's training series start date      |
+| PUT    | ENDPOINT HERE                    | Updates a member's training series start date      |
+| DELETE | ENDPOINT HERE                    | Deletes a member's training series start date      |
+| PUT    | ENDPOINT HERE                    | Updates a user's account type (subscription)       |
+| DELETE | ENDPOINT HERE                    | Delete's a user account type (upon account del)    |
 
 
 # Data responses 
