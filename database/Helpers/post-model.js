@@ -5,7 +5,9 @@ module.exports = {
   find,
   findBy,
   findById,
-  addPostSeeds
+  addPostSeeds,
+  update,
+  remove
 };
 
 function find() {
@@ -24,10 +26,26 @@ async function add(post) {
 
 function findById(id) {
   return db("Post")
-    .where({ id })
+    .where({ postID: id })
     .first();
 }
 
 function addPostSeeds(posts) {
   return db("Post").insert(posts);
 }
+
+
+async function update(id, post) {
+  await db("Post")
+    .where({ postID: id })
+    .update(post);
+
+  return await findById(id);
+}
+
+function remove(id) {
+  return db("Post")
+    .where({ postID: id })
+    .del();
+}
+
