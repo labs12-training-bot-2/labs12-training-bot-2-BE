@@ -10,7 +10,9 @@ module.exports = {
   findByEmail,
   findTrainingSeriesByUser,
   getUserAccountType,
-  getUserPosts
+  getUserPosts,
+  updateUser,
+  deleteUser
 };
 
 function find() {
@@ -29,7 +31,7 @@ async function add(user) {
 
 function findById(id) {
   return db("User")
-    .select("email", "userID")
+    .select("email", "userID", "name")
     .where("User.userID", id)
     .first();
 }
@@ -69,4 +71,18 @@ function getUserPosts(id) {
     .join("Post", "TrainingSeries.trainingSeriesID", "Post.trainingSeriesID")
     .where("User.userID", id)
     .groupBy("Post.trainingSeriesID");
+}
+
+async function updateUser(id, changes) {
+  await db("User")
+    .where("userID", id)
+    .update(changes);
+
+  return findById(id);
+}
+
+async function deleteUser(id) {
+  return db("User")
+    .where("userID", id)
+    .del();
 }
