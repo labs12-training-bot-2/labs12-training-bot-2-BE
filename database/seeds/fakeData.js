@@ -53,7 +53,6 @@ function createFakeTrainingSeries() {
   const fakeTrainingSeries = [];
 
   const fakeSeries = () => ({
-    trainingSeries: faker.lorem.sentences(2),
     title: faker.lorem.words(5),
     userID: faker.random.number({
       min: 1,
@@ -61,11 +60,13 @@ function createFakeTrainingSeries() {
     })
   });
 
-  for (let i = 0; i < numberOfUsers; i++) {
-    fakeTrainingSeries.push(fakeSeries());
-  }
+  // for (let i = 0; i < numberOfUsers; i++) {
+  //   fakeTrainingSeries.push(fakeSeries());
+  // }
 
-  return fakeTrainingSeries;
+  const newSeries = fakeSeries();
+
+  return newSeries;
 }
 
 // Creates 50 fake posts and adds them to users and training series randomly
