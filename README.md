@@ -56,56 +56,63 @@ yarn server
 ## Schema
 ![Schema Table](https://i.imgur.com/oPQ8FuF.png)
 
-(FK's not accounted for in tables yet)
+
 ## User
-| Name  | Type    |
-| ----- | ------- |
-| id    | int     |
-| email | varchar |
+| Name          | Type    | Details                             |
+| ------------- | ------- | ----------------------------------- | 
+| userID        | int     | PK                                  |
+| accountTypeID | int     | FK - refs accountType.accountTypeID |
+| email         | varchar |                                     |
+| name          | varchar |                                     |
 
-## Training Series
+## TrainingSeries
 
- | Column A       | Column B |
- | -------------- | -------- |
- | trainingId     | int      |
- | trainingSeries | varchar  |
- | title          | varchar  |
+ | Name             | Type       | Details               |
+ | ---------------- | ---------- | --------------------- |
+ | trainingSeriesID | int        | PK                    |
+ | title            | varchar    |                       |
+ | userID           | int        | FK - refs User.userID |
 
 
-## Team Member
+## TeamMember
 
-| Name           | Type    |
-| -------------- | ------- |
-| teamMemberId   | int     |
-| firstName      | varchar |
-| lastName       | varchar |
-| jobDescription | varchar |
-| email          | varchar |
-| phoneNumber    | varchar |
+| Name           | Type    | Details               |
+| -------------- | ------- | --------------------- |
+| teamMemberID   | int     | PK                    |
+| firstName      | varchar |                       |
+| lastName       | varchar |                       |
+| jobDescription | varchar |                       |
+| email          | varchar |                       |
+| phoneNumber    | varchar |                       |
+| userID         | int     | FK - refs User.userID |
 
 ## Post
-| Name        | Type    |
-| ----------- | ------- |
-| postId      | int     |
-| postDetails | varchar |
-| link        | varchar |
-| startDate   | date    |
-| postImage   | varchar |
+| Name             | Type      | Details                                   |
+| ---------------- | --------- | ----------------------------------------- |
+| postID           | int       | PK                                        |
+| postName         | varchar   |                                           |
+| postDetails      | varchar   |                                           |
+| link             | varchar   |                                           |
+| startDate        | timestamp |                                           |
+| postImage        | varchar   |                                           |
+| trainingSeriesID | int       | FK - refs TrainingSeries.trainingSeriesID |
 
-## Account Type
+## accountType
 
-| Name                 | Type    |
-| -------------------- | ------- |
-| idAccountType        | int     |
-| accountType          | varchar |
-| maxNotificationCount | int     |
+| Name                 | Type    | Details |
+| -------------------- | ------- | ------- |
+| accountTypeID        | int     | PK      |
+| accountType          | varchar |         |
+| maxNotificationCount | int     |         |
 
-## Relational Table
+## RelationalTable
 
-| Name              | Type |
-| ----------------- | ---- |
-| idRelationalTable | int  |
-| startDate         | date |
+| Name              | Type     | Details                                   |
+| ----------------- | -------- | ----------------------------------------- |
+| relationalTableID | int      | PK                                        |
+| startDate         | datetime |                                           |
+| trainingSeries_ID | int      | FK - refs TrainingSeries.trainingSeriesID |
+| teamMember_ID     | int      | FK - refs TeamMember.teamMemberID         |
 
 [Back to table of Contents](#table-of-contents)
 
