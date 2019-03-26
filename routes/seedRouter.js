@@ -64,7 +64,6 @@ router.post("/training-series", async (req, res) => {
 
 // Add Post Seeds
 router.post("/posts", async (req, res) => {
-  console.log("Working");
   try {
     const newPost = createFakePosts();
     await Posts.addPostSeeds(newPost);
