@@ -7,7 +7,9 @@ module.exports = {
   findById,
   addTrainingSeriesSeeds,
   getAllPosts,
-  getTrainingSeriesPosts
+  getTrainingSeriesPosts,
+  update,
+  remove
 };
 
 function find() {
@@ -40,5 +42,19 @@ function getAllPosts() {
 }
 
 function getTrainingSeriesPosts(id) {
-  return db("Post").where({ trainingSeriesID: id}).first();
+  return db("Post").where({ trainingSeriesID: id })
+}
+
+async function update(id, series) {
+  await db("TrainingSeries")
+    .where({ trainingSeriesID: id })
+    .update(series);
+
+  return await findById(id);
+}
+
+function remove(id) {
+  return db("TrainingSeries")
+    .where({ trainingSeriesID: id })
+    .del();
 }

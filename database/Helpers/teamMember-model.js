@@ -6,7 +6,9 @@ module.exports = {
   findBy,
   findById,
   update,
-  remove
+  remove,
+  addToTrainingSeries,
+  getTrainingSeriesAssignments
 };
 
 function find() {
@@ -41,4 +43,24 @@ function remove(id) {
   return db("TeamMember")
     .where({ teamMemberID: id })
     .del();
+}
+
+//assign team member to a training series
+async function addToTrainingSeries(assignment) {
+  const [id] = await db("RelationalTable").insert(assignment);
+
+  return db("RelationalTable").where({ relationalTableID: id}).first();
+}
+
+function getTrainingSeriesAssignments(teamMemberId) {
+  return db("TeamMember")
+    .join(
+      "RelationalTable",
+      "TeamMember.teamMemberID",
+      "RelationalTable.teamMember_ID"
+    )
+    .join("TrainingSeries", "TrainingSeries.trainingSeriesID", "RelationalTable.trainingSeries_ID")
+    .select("RelationalTable.trainingSeries_ID",
+    "TrainingSeries.title", "RelationalTable.startDate")
+    .where("RelationalTable.teamMember_ID", teamMemberId);
 }
