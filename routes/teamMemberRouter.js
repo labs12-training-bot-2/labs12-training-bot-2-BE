@@ -107,11 +107,9 @@ router.post("/:id/training-series", async (req, res) => {
       // nest try catch
       await TeamMember.addToTrainingSeries(req.body);
 
-      res
-        .status(201)
-        .json({
-          message: "The team member has been assigned to the training series."
-        });
+      res.status(201).json({
+        message: "The team member has been assigned to the training series."
+      });
     }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
@@ -133,12 +131,10 @@ router.put("/:id/training-series/:ts_id", async (req, res) => {
         startDate
       );
       console.log("updates", updates);
-      res
-        .status(200)
-        .json({
-          message: "Successfully updated team member's start date",
-          updates
-        });
+      res.status(200).json({
+        message: "Successfully updated team member's start date",
+        updates
+      });
     }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
@@ -148,10 +144,16 @@ router.put("/:id/training-series/:ts_id", async (req, res) => {
 router.delete("/:id/training-series/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;
-
-  } catch(err) {
-
+    const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
+    console.log("deleted", deleted)
+    if (deleted > 0) {
+      res.status(200).json({ message: "The resource has been deleted." });
+    } else {
+      res.status(404).json({ error: "The resource could not be found." });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "A network error occurred" });
   }
-})
+});
 
 module.exports = router;
