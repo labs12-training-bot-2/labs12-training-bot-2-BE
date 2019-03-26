@@ -117,33 +117,30 @@ yarn server
 # Endpoints
 
 ## All endpoints
-| METHOD | endpoint                         | description                                        |
-| ------ | -------------------------------- | -------------------------------------------------- |
-| POST   | `/api/auth`                      | Register or logs user in via Auth0                 |
-| POST   | ENDPOINT HERE                    | Adds user to database and returns user ID          |
-| GET    | `/api/users/:id`                 | Gets all information about the current user by ID  |
-| PUT    | ENDPOINT HERE                    | Updates a user's information (in local db)         |
-| DELETE | ENDPOINT HERE                    | Deletes a user's information (in local db)         |
-| GET    | `/api/users/:id/training-series` | Gets all training series created by logged in user |
-| GET    | `/api/training-series/:id`       | Gets a specific training series by ID              |
-| POST   | `/api/training-series`           | Creates a new training series for logged in user   |
-| PUT    | `/api/training-series/:id`       | Edits a specific training series                   |
-| DELETE | `/api/training-series/:id`       | Deletes a specified training series                |
-| GET    | `/api/training-series/:id/posts` | Gets all posts related to a training series        |
-| GET    | `/api/posts/:id`                 | Gets a specific post by ID                         |
-| POST   | `/api/posts`                     | Adds a post to a training series                   |
-| PUT    | `/api/posts/:id`                 | Updates a post                                     |
-| DELETE | `/api/posts/:id`                 | Deletes a post                                     |
-| GET    | `/api/users/:id/team-members`    | Gets all team members added by logged in user      |
-| GET    | `/api/team-members/:id`          | Gets a specific team member                        |
-| POST   | `/api/team-members`              | Creates a new team member                          |
-| PUT    | `/api/team-members/:id`          | Edits a specified team member                      |
-| DELETE | `/api/team-members/:id`          | Deletes a specified team member                    |
-| POST   | ENDPOINT HERE                    | Assigns a member's training series start date      |
-| PUT    | ENDPOINT HERE                    | Updates a member's training series start date      |
-| DELETE | ENDPOINT HERE                    | Deletes a member's training series start date      |
-| PUT    | ENDPOINT HERE                    | Updates a user's account type (subscription)       |
-| DELETE | ENDPOINT HERE                    | Delete's a user account type (upon account del)    |
+| Endpoint                                       | METHOD | Description                                              |
+| ---------------------------------------------- | ------ | -------------------------------------------------------- |
+| `/api/auth`                                    | POST   | Adds user to db (if they don't exist), returns user info |
+| `/api/users/:id`                               | GET    | Gets all information about the current user by ID        |
+| `/api/users/:id`                               | PUT    | Updates a user's information (in local db)               |
+| `/api/users/:id`                               | DELETE | Deletes a user's information (in local db)               |
+| `/api/users/:id/training-series`               | GET    | Gets all training series created by logged in user       |
+| `/api/training-series/:id`                     | GET    | Gets a specific training series by ID                    |
+| `/api/training-series`                         | POST   | Creates a new training series for logged in user         |
+| `/api/training-series/:id`                     | PUT    | Edits a specific training series                         |
+| `/api/training-series/:id`                     | DELETE | Deletes a specified training series                      |
+| `/api/training-series/:id/posts`               | GET    | Gets all posts related to a training series              |
+| `/api/posts/:id`                               | GET    | Gets a specific post by ID                               |
+| `/api/posts`                                   | POST   | Adds a post to a training series                         |
+| `/api/posts/:id`                               | PUT    | Updates a post                                           |
+| `/api/posts/:id`                               | DELETE | Deletes a post                                           |
+| `/api/users/:id/team-members`                  | GET    | Gets all team members added by logged in user            |
+| `/api/team-members/:id`                        | GET    | Gets a specific team member                              |
+| `/api/team-members`                            | POST   | Creates a new team member                                |
+| `/api/team-members/:id`                        | PUT    | Edits a specified team member                            |
+| `/api/team-members/:id`                        | DELETE | Deletes a specified team member                          |
+| `/api/team-members/:id/training-series`        | POST   | Assigns a member's training series start date            |
+| `/api/team-members/:id/training-series/:ts_id` | PUT    | Updates a member's training series start date            |
+| `/api/team-members/:id/training-series/:ts_id` | DELETE | Deletes a member's training series start date            |
 
 
 # Data responses 
