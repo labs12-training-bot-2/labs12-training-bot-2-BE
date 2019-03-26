@@ -10,9 +10,9 @@ const Posts = require('../database/Helpers/post-model')
 // POST a new post
 router.post("/", async (req, res) => {
   try {
-    const { postName, postDetails, link, startDate, trainingSeriesID } = req.body;
+    const { postName, postDetails, link, daysFromStart, trainingSeriesID } = req.body;
 
-    if (!postName || !postDetails || !link || !startDate || !trainingSeriesID) {
+    if (!postName || !postDetails || !link || !daysFromStart || !trainingSeriesID) {
       res.status(400).json({ error: "Client must provide all fields." })
     } else {
       const newPost = await Posts.add(req.body);

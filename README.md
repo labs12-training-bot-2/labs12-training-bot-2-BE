@@ -91,7 +91,7 @@ yarn server
 | postName         | varchar   |                                           |
 | postDetails      | varchar   |                                           |
 | link             | varchar   |                                           |
-| startDate        | timestamp |                                           |
+| daysFromStart    | int       |                                           |
 | postImage        | varchar   |                                           |
 | trainingSeriesID | int       | FK - refs TrainingSeries.trainingSeriesID |
 
@@ -107,7 +107,7 @@ yarn server
 
 | Name              | Type     | Details                                   |
 | ----------------- | -------- | ----------------------------------------- |
-| relationalTableID | int      | PK                                        |
+| relationalTableID | int      | PK, auto-incremements                     |
 | startDate         | datetime |                                           |
 | trainingSeries_ID | int      | FK - refs TrainingSeries.trainingSeriesID |
 | teamMember_ID     | int      | FK - refs TeamMember.teamMemberID         |
@@ -353,7 +353,7 @@ Structure of request object:
     postName: "Lorem ipsum", // required
     postDetails: "Lorem ipsum dolor", // required
     link: <url>, // required
-    startDate: 2, // required
+    daysFromStart: 2, // required
     trainingSeriesID: 1, // required
     postImage: <url>
 }
@@ -389,7 +389,7 @@ Structure of request object:
     postName: "Lorem ipsum",
     postDetails: "Lorem ipsum dolor",
     link: <url>,
-    startDate: 2,
+    daysFromStart: 2,
     trainingSeriesID: 1,
     postImage: <url>
 }

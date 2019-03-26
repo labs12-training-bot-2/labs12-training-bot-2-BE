@@ -74,7 +74,10 @@ function createFakePosts() {
     postName: faker.lorem.words(5),
     postDetails: faker.lorem.sentences(3),
     link: faker.internet.url(),
-    startDate: `2019-04-05T19:32:00.960Z`,
+    daysFromStart: faker.random.number({
+      min: 1,
+      max: 21
+    }),
     postImage: faker.image.imageUrl(),
     trainingSeriesID: faker.random.number({
       min: 1,
