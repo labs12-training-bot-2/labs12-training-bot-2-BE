@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-// GET post by id
+// DELETE post by id
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 

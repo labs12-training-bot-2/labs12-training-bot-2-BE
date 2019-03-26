@@ -19,7 +19,6 @@ router.get("/", async (req, res) => {
 });
 
 //GET a team member by teamMemberId
-// note from Leigh-Ann: need to include training series assigned
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
