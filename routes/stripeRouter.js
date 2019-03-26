@@ -21,4 +21,21 @@ router.post('/', async (req, res) => {
 	}
 });
 
-module.exports = router;
+router.post('/', async (req, res) => {
+	try {
+		let response = await axios.post('api.stripe.com/v1/subscriptions', {
+			amount: 2000,
+			currency: 'usd',
+			description: 'An example charge',
+			source: req.body,
+		});
+
+		res.json({ status });
+	} catch (err) {
+		res.status(500).end();
+	}
+});
+
+//api.stripe.com
+
+https: module.exports = router;
