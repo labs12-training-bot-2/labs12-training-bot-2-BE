@@ -20,6 +20,7 @@
 	"homepage": "https://github.com/Blent1050/auth-ii#readme",
 	"dependencies": {
 		"bcrypt": "^3.0.4",
+		"body-parser": "^1.18.3",
 		"connect-session-knex": "^1.4.0",
 		"cors": "^2.8.5",
 		"cron": "^1.7.0",
