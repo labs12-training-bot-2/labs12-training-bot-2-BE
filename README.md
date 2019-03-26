@@ -125,15 +125,15 @@ yarn server
 | PUT    | ENDPOINT HERE                    | Updates a user's information (in local db)         |
 | DELETE | ENDPOINT HERE                    | Deletes a user's information (in local db)         |
 | GET    | `/api/users/:id/training-series` | Gets all training series created by logged in user |
-| GET    | ENDPOINT HERE                    | Gets a specific training series by ID              |
-| POST   | ENDPOINT HERE                    | Creates a new training series for logged in user   |
-| PUT    | ENDPOINT HERE                    | Edits a specific training series                   |
-| DELETE | ENDPOINT HERE                    | Deletes a specified training series                |
+| GET    | `/api/training-series/:id`       | Gets a specific training series by ID              |
+| POST   | `/api/training-series`           | Creates a new training series for logged in user   |
+| PUT    | `/api/training-series/:id`       | Edits a specific training series                   |
+| DELETE | `/api/training-series/:id`       | Deletes a specified training series                |
 | GET    | `/api/training-series/:id/posts` | Gets all posts related to a training series        |
-| GET    | ENDPOINT HERE                    | Gets a specific post by ID                         |
-| POST   | ENDPOINT HERE                    | Adds a post to a training series                   |
-| PUT    | ENDPOINT HERE                    | Updates a post                                     |
-| DELETE | ENDPOINT HERE                    | Deletes a post                                     |
+| GET    | `/api/posts/:id`                 | Gets a specific post by ID                         |
+| POST   | `/api/posts`                     | Adds a post to a training series                   |
+| PUT    | `/api/posts/:id`                 | Updates a post                                     |
+| DELETE | `/api/posts/:id`                 | Deletes a post                                     |
 | GET    | `/api/users/:id/team-members`    | Gets all team members added by logged in user      |
 | GET    | `/api/team-members/:id`          | Gets a specific team member                        |
 | POST   | `/api/team-members`              | Creates a new team member                          |
