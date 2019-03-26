@@ -10,8 +10,8 @@ module.exports = {
   addToTrainingSeries,
   getTrainingSeriesAssignments,
   updateTrainingSeriesStartDate,
-  findTrainingSeriesBy
-
+  findTrainingSeriesBy,
+  removeFromTrainingSeries
 };
 
 function find() {
@@ -94,7 +94,8 @@ async function updateTrainingSeriesStartDate(
   });
 }
 
-/*find training series using a filter
+/*
+find training series using a filter
 
 if you want to find a single training series assigned to the user, you should use two keys:
 trainingSeries_ID and teamMember_ID.
@@ -104,4 +105,10 @@ teamMember_ID
 */
 function findTrainingSeriesBy(filter) {
   return db("RelationalTable").where(filter);
+}
+
+function removeFromTrainingSeries(teamMemberId, trainingSeriesId) {
+  return db("RelationalTable")
+    .where({ teamMember_ID: teamMemberId, trainingSeries_ID: trainingSeriesId })
+    .del();
 }

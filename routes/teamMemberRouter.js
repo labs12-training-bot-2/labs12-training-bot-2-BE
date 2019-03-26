@@ -118,18 +118,18 @@ router.post("/:id/training-series", async (req, res) => {
   }
 });
 
-//Update a team member's training series start date (this route will not update the training series name)
-router.put("/:id/training-series", async (req, res) => {
+//Update a team member's training series start date (this route will not update the training series to which they are assigned)
+router.put("/:id/training-series/:ts_id", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { trainingSeries_ID, startDate } = req.body;
+    const { id, ts_id } = req.params;
+    const { startDate } = req.body;
 
-    if (!trainingSeries_ID || !startDate) {
+    if (!startDate) {
       res.status(400).json({ message: "Client must provide all fields" });
     } else {
       const updates = await TeamMember.updateTrainingSeriesStartDate(
         id,
-        trainingSeries_ID,
+        ts_id,
         startDate
       );
       console.log("updates", updates);
@@ -144,5 +144,14 @@ router.put("/:id/training-series", async (req, res) => {
     res.status(500).json({ message: "A network error occurred" });
   }
 });
+
+router.delete("/:id/training-series/:ts_id", async (req, res) => {
+  try {
+    const { id, ts_id } = req.params;
+
+  } catch(err) {
+
+  }
+})
 
 module.exports = router;
