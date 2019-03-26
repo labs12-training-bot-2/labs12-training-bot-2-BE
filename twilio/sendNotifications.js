@@ -14,7 +14,7 @@ function sendNotifications(notifications) {
   notifications.forEach(notification => {
     // Create options to send the message
     const options = {
-      to: notification.phoneNumber, // input dynamic number from user
+      to: notification.phoneNumber,
       from: process.env.TWILIO_NUMBER,
       body: `${notification.postName}  ${notification.postDetails} Read more: ${notification.link}`
     };
