@@ -16,18 +16,19 @@ const TeamMember = require("../database/Helpers/teamMember-model"),
   Posts = require("../database/Helpers/post-model");
 
 // Endpoint to create 10 fake team members
-router.post("/team-members", (req, res) => {
+router.post("/team-members", async (req, res) => {
   // Creates 10 fake team members
 
-  TeamMember.add(createFakeTeamMembers())
-    .then(teamMembers => {
-      res
-        .status(201)
-        .json({ message: "Team Members added successfully", teamMembers });
-    })
-    .catch(
-      res.status(500).json({ message: "There was an error with the network" })
-    );
+  console.log("Working");
+  const teamMember = createFakeTeamMembers();
+  console.log(teamMember);
+
+  try {
+    await TeamMember.add(teamMember);
+    res.status(201).json({ message: "Team Members added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "There was an error with the network" });
+  }
 });
 
 // Endpoint to create fake user datate

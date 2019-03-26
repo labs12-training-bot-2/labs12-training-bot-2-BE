@@ -11,8 +11,6 @@ const numberOfUsers = 10;
 const numberOfPosts = 50;
 
 function createFakeTeamMembers() {
-  const fakeTeamMembers = [];
-
   const fakeTeamMember = () => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
@@ -20,17 +18,12 @@ function createFakeTeamMembers() {
     email: faker.internet.email(),
     phoneNumber: faker.phone.phoneNumber(),
     TeamMemberCol: 1,
-    user_ID: faker.random.number({
-      min: 1,
-      max: 10
-    })
+    user_ID: 56
   });
 
-  for (let i = 0; i < numberOfUsers; i++) {
-    fakeTeamMembers.push(fakeTeamMember());
-  }
+  const newTeamMember = fakeTeamMember();
 
-  return fakeTeamMembers;
+  return newTeamMember;
 }
 
 // Creates 10 fake users
@@ -50,8 +43,6 @@ function createFakeUsers() {
 }
 
 function createFakeTrainingSeries() {
-  const fakeTrainingSeries = [];
-
   const fakeSeries = () => ({
     title: faker.lorem.words(5),
     userID: faker.random.number({
@@ -59,10 +50,6 @@ function createFakeTrainingSeries() {
       max: 10
     })
   });
-
-  // for (let i = 0; i < numberOfUsers; i++) {
-  //   fakeTrainingSeries.push(fakeSeries());
-  // }
 
   const newSeries = fakeSeries();
 
@@ -78,8 +65,8 @@ function createFakePosts() {
     startDate: `2019-04-05T19:32:00.960Z`,
     postImage: faker.image.imageUrl(),
     trainingSeriesID: faker.random.number({
-      min: 1,
-      max: 10
+      min: 28,
+      max: 33
     })
   });
 
