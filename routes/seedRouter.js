@@ -16,18 +16,19 @@ const TeamMember = require("../database/Helpers/teamMember-model"),
   Posts = require("../database/Helpers/post-model");
 
 // Endpoint to create 10 fake team members
-router.post("/team-members", (req, res) => {
+router.post("/team-members", async (req, res) => {
   // Creates 10 fake team members
 
-  TeamMember.add(createFakeTeamMembers())
-    .then(teamMembers => {
-      res
-        .status(201)
-        .json({ message: "Team Members added successfully", teamMembers });
-    })
-    .catch(
-      res.status(500).json({ message: "There was an error with the network" })
-    );
+  console.log("Working");
+  const teamMember = createFakeTeamMembers();
+  console.log(teamMember);
+
+  try {
+    await TeamMember.add(teamMember);
+    res.status(201).json({ message: "Team Members added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "There was an error with the network" });
+  }
 });
 
 // Endpoint to create fake user datate
@@ -48,8 +49,10 @@ router.post("/users", (req, res) => {
 router.post("/training-series", async (req, res) => {
   // console.log(createFakeTrainingSeries())
 
+  const newSeries = createFakeTrainingSeries();
+
   try {
-    await TrainingSeries.addTrainingSeriesSeeds(createFakeTrainingSeries());
+    await TrainingSeries.addTrainingSeriesSeeds(newSeries);
 
     res
       .status(201)
@@ -61,10 +64,11 @@ router.post("/training-series", async (req, res) => {
 
 // Add Post Seeds
 router.post("/posts", async (req, res) => {
+  console.log("Working");
   try {
     const newPost = createFakePosts();
     await Posts.addPostSeeds(newPost);
-
+    console.log(newPost);
     return res.status(201).json({ message: "Post seeds added successfully" });
   } catch (error) {
     res.status(500).json({ message: "A network error occurred" });
