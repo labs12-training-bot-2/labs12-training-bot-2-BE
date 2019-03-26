@@ -15,17 +15,15 @@ Training bot allows managers of teams to send notifications to their teammates o
 - [Database Tables](#database-tables)
   - [Schema](#schema)
   - [User](#user)
-  - [Training Series](#training-series)
-  - [Team Member](#team-member)
+  - [Training Series](#trainingseries)
+  - [Team Member](#teammember)
   - [Post](#post)
-  - [Account Type](#account-type)
-  - [Relational Table](#relational-table)
+  - [Account Type](#accounttype)
+  - [Relational Table](#relationaltable)
 - [Endpoints](#endpoints)
   - [All endpoints](#all-endpoints)
-- [Data responses](#data-responses)
-  - [User - Registering & Logging in](#user---registering--logging-in)
-    - [Upon a 200 request](#upon-a-200-request)
-    - [Upon a 404 Request](#upon-a-404-request)
+- [Data requests and responses](#data-requests-and-responses)
+
 # Overview 
 
 ## What is Training Bot? 🤖
@@ -56,56 +54,63 @@ yarn server
 ## Schema
 ![Schema Table](https://i.imgur.com/oPQ8FuF.png)
 
-(FK's not accounted for in tables yet)
+
 ## User
-| Name  | Type    |
-| ----- | ------- |
-| id    | int     |
-| email | varchar |
+| Name          | Type    | Details                             |
+| ------------- | ------- | ----------------------------------- | 
+| userID        | int     | PK                                  |
+| accountTypeID | int     | FK - refs accountType.accountTypeID |
+| email         | varchar |                                     |
+| name          | varchar |                                     |
 
-## Training Series
+## TrainingSeries
 
- | Column A       | Column B |
- | -------------- | -------- |
- | trainingId     | int      |
- | trainingSeries | varchar  |
- | title          | varchar  |
+ | Name             | Type       | Details               |
+ | ---------------- | ---------- | --------------------- |
+ | trainingSeriesID | int        | PK                    |
+ | title            | varchar    |                       |
+ | userID           | int        | FK - refs User.userID |
 
 
-## Team Member
+## TeamMember
 
-| Name           | Type    |
-| -------------- | ------- |
-| teamMemberId   | int     |
-| firstName      | varchar |
-| lastName       | varchar |
-| jobDescription | varchar |
-| email          | varchar |
-| phoneNumber    | varchar |
+| Name           | Type    | Details               |
+| -------------- | ------- | --------------------- |
+| teamMemberID   | int     | PK                    |
+| firstName      | varchar |                       |
+| lastName       | varchar |                       |
+| jobDescription | varchar |                       |
+| email          | varchar |                       |
+| phoneNumber    | varchar |                       |
+| userID         | int     | FK - refs User.userID |
 
 ## Post
-| Name        | Type    |
-| ----------- | ------- |
-| postId      | int     |
-| postDetails | varchar |
-| link        | varchar |
-| startDate   | date    |
-| postImage   | varchar |
+| Name             | Type      | Details                                   |
+| ---------------- | --------- | ----------------------------------------- |
+| postID           | int       | PK                                        |
+| postName         | varchar   |                                           |
+| postDetails      | varchar   |                                           |
+| link             | varchar   |                                           |
+| daysFromStart    | int       |                                           |
+| postImage        | varchar   |                                           |
+| trainingSeriesID | int       | FK - refs TrainingSeries.trainingSeriesID |
 
-## Account Type
+## accountType
 
-| Name                 | Type    |
-| -------------------- | ------- |
-| idAccountType        | int     |
-| accountType          | varchar |
-| maxNotificationCount | int     |
+| Name                 | Type    | Details |
+| -------------------- | ------- | ------- |
+| accountTypeID        | int     | PK      |
+| accountType          | varchar |         |
+| maxNotificationCount | int     |         |
 
-## Relational Table
+## RelationalTable
 
-| Name              | Type |
-| ----------------- | ---- |
-| idRelationalTable | int  |
-| startDate         | date |
+| Name              | Type     | Details                                   |
+| ----------------- | -------- | ----------------------------------------- |
+| relationalTableID | int      | PK, auto-incremements                     |
+| startDate         | datetime |                                           |
+| trainingSeries_ID | int      | FK - refs TrainingSeries.trainingSeriesID |
+| teamMember_ID     | int      | FK - refs TeamMember.teamMemberID         |
 
 [Back to table of Contents](#table-of-contents)
 
@@ -124,18 +129,18 @@ yarn server
 | `/api/users/:id`                               | PUT    | Updates a user's information (in local db)               |
 | `/api/users/:id`                               | DELETE | Deletes a user's information (in local db)               |
 | `/api/users/:id/training-series`               | GET    | Gets all training series created by logged in user       |
-| `/api/training-series/:id`                     | GET    | Gets a specific training series by ID                    |
+| `/api/users/:id/team-members`                  | GET    | Gets all team members added by logged in user            |
 | `/api/training-series`                         | POST   | Creates a new training series for logged in user         |
+| `/api/training-series/:id`                     | GET    | Gets a specific training series by ID                    |
 | `/api/training-series/:id`                     | PUT    | Edits a specific training series                         |
 | `/api/training-series/:id`                     | DELETE | Deletes a specified training series                      |
 | `/api/training-series/:id/posts`               | GET    | Gets all posts related to a training series              |
-| `/api/posts/:id`                               | GET    | Gets a specific post by ID                               |
 | `/api/posts`                                   | POST   | Adds a post to a training series                         |
+| `/api/posts/:id`                               | GET    | Gets a specific post by ID                               |
 | `/api/posts/:id`                               | PUT    | Updates a post                                           |
 | `/api/posts/:id`                               | DELETE | Deletes a post                                           |
-| `/api/users/:id/team-members`                  | GET    | Gets all team members added by logged in user            |
-| `/api/team-members/:id`                        | GET    | Gets a specific team member                              |
 | `/api/team-members`                            | POST   | Creates a new team member                                |
+| `/api/team-members/:id`                        | GET    | Gets a specific team member                              |
 | `/api/team-members/:id`                        | PUT    | Edits a specified team member                            |
 | `/api/team-members/:id`                        | DELETE | Deletes a specified team member                          |
 | `/api/team-members/:id/training-series`        | POST   | Assigns a member's training series start date            |
@@ -143,24 +148,396 @@ yarn server
 | `/api/team-members/:id/training-series/:ts_id` | DELETE | Deletes a member's training series start date            |
 
 
-# Data responses 
-Below are all expected data responses
+# Data requests and responses 
+Below are all expected request body shapes and data responses
 
-## User - Registering & Logging in
-[Expected Data](#User)
-### Upon a 200 request
+## `/api/auth`
+
+**Method:** POST
+
+Structure of request object (if registering for first time):
 ```
 {
-    data sent back here
-}
-```
-### Upon a 404 Request
-```
-{
-
+    email: "example@email.com" // required
+    name: "John Doe" // required
 }
 ```
 
+**HTTP Status:** 201 Created
 
+Structure of response:
+```
+{
+    message: "Account created successfully",
+    newUser
+}
+```
 
+Structure of request object (if already registered):
+```
+{
+    email: "example@email.com" // required
+    name: "John Doe"
+}
+```
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "Login successful",
+    user,
+    trainingSeries
+}
+```
+
+## `/api/users/:id`
+
+**Method:** GET
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    user,
+    account,
+    members,
+    userTrainingSeries,
+    posts
+}
+```
+
+**Method:** PUT
+
+Structure of request object:
+```
+{
+    name: "John Doe",
+    email: "example@email.com"
+}
+```
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "Update successful",
+    updatedUser
+}
+```
+
+**Method:** DELETE
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "User account removed successfully"
+}
+```
+
+## `/api/users/:id/training-series`
+
+**Method:** GET
+
+**HTTP Status:**  200 OK
+
+Structure of response:
+```
+{
+    userTrainingSeries
+}
+```
+
+## `/api/users/:id/team-members`
+
+**Method:** GET
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    members
+}
+```
+
+## `/api/training-series`
+
+**Method:** POST
+
+Structure of request object:
+```
+{
+    title: "Lorem ipsum", // required
+    userID: 1 // required
+}
+```
+
+**HTTP Status:** 201 Created
+
+Structure of response:
+```
+{
+    newTrainingSeries
+}
+```
+
+## `/api/training-series/:id`
+
+**Method:** GET
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    trainingSeries
+}
+```
+
+**Method:** PUT
+
+Structure of request object:
+```
+{
+    title: "Lorem ipsum"
+}
+```
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    updatedTrainingSeries
+}
+```
+
+**Method:** DELETE
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "The resource has been deleted"
+}
+```
+
+## `/api/training-series/:id/posts`
+
+**Method:** GET
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    trainingSeries,
+    posts
+}
+```
+
+## `/api/posts`
+
+**Method:** POST
+
+Structure of request object:
+```
+{
+    postName: "Lorem ipsum", // required
+    postDetails: "Lorem ipsum dolor", // required
+    link: <url>, // required
+    daysFromStart: 2, // required
+    trainingSeriesID: 1, // required
+    postImage: <url>
+}
+```
+
+**HTTP Status:** 201 Created
+
+Structure of response:
+```
+{
+    newPost
+}
+```
+
+## `/api/posts/:id`
+
+**Method:** GET
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    post
+}
+```
+
+**Method:** PUT
+
+Structure of request object:
+```
+{
+    postName: "Lorem ipsum",
+    postDetails: "Lorem ipsum dolor",
+    link: <url>,
+    daysFromStart: 2,
+    trainingSeriesID: 1,
+    postImage: <url>
+}
+```
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    updatedPost
+}
+```
+
+**Method:** DELETE
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "The resource has been deleted."
+}
+```
+
+## `/api/team-members`
+
+**Method:** POST
+
+Structure of request object:
+```
+{
+    firstName: "John", // required
+    lastName: "Doe", // required
+    jobDescription: "Produce", // required
+    email: "example@email.com", // required
+    phoneNumber: "424-242-4242", // required
+    user_ID: 1 // required
+}
+```
+
+**HTTP Status:** 201 Created
+
+Structure of response:
+```
+{
+    newTeamMember
+}
+```
+
+## `/api/team-members/:id`
+
+**Method:** GET
+
+**HTTP Status:**  200 OK
+
+Structure of response:
+```
+{
+    teamMember,
+    assignments
+}
+```
+
+**Method:** PUT
+
+Structure of request object:
+```
+{
+    firstName: "John",
+    lastName: "Doe",
+    jobDescription: "Produce",
+    email: "example@email.com",
+    phoneNumber: "424-242-4242",
+    user_ID: 1
+}
+```
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    updatedTeamMember
+}
+```
+
+**Method:** DELETE
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "The resource has been deleted."
+}
+```
+
+## `/api/team-members/:id/training-series`
+
+**Method:** POST
+
+Structure of request object:
+```
+{
+    trainingSeries_ID: 2, // required
+    startDate: "2019-12-20" // required
+}
+```
+
+**HTTP Status:** 201 Created
+
+Structure of response:
+```
+{
+    message: "The team member has been assigned to the training series."
+}
+```
+
+## `/api/team-members/:id/training-series/:ts_id`
+
+**Method:** PUT
+
+Structure of request object:
+```
+{
+    startDate: "2019-12-31" // required
+}
+```
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "Successfully updated team member's start date",
+    updates
+}
+```
+
+**Method:** DELETE
+
+**HTTP Status:** 200 OK
+
+Structure of response:
+```
+{
+    message: "The resource has been deleted."
+}
+```
 [Back to table of Contents](#table-of-contents)

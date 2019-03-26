@@ -19,7 +19,6 @@ router.get("/", async (req, res) => {
 });
 
 //GET a team member by teamMemberId
-// note from Leigh-Ann: need to include training series assigned
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -106,6 +105,11 @@ router.post("/:id/training-series", async (req, res) => {
 
       // nest try catch
       await TeamMember.addToTrainingSeries(req.body);
+
+      // need to get all the posts for the training series
+
+      // send all the posts to the Notifications table and convert the integer of Post.startFromDate into a date using moment.js (use forEach)
+      // colums are sendDate, postName, postDetails, link, phoneNumber, email, firstName, lastName (name is nullable)
 
       res.status(201).json({
         message: "The team member has been assigned to the training series."
