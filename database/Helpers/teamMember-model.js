@@ -11,7 +11,8 @@ module.exports = {
   getTrainingSeriesAssignments,
   updateTrainingSeriesStartDate,
   findTrainingSeriesBy,
-  removeFromTrainingSeries
+  removeFromTrainingSeries,
+  addToNotificationsTable
 };
 
 function find() {
@@ -111,4 +112,8 @@ function removeFromTrainingSeries(teamMemberId, trainingSeriesId) {
   return db("RelationalTable")
     .where({ teamMember_ID: teamMemberId, trainingSeries_ID: trainingSeriesId })
     .del();
+}
+
+function addToNotificationsTable(data) {
+  return db("Notifications").insert(data);
 }

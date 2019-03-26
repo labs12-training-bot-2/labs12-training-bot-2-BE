@@ -131,10 +131,12 @@ router.post("/:id/training-series", async (req, res) => {
       });
 
       console.log(formattedPosts);
+      
+      // add each returned object to Notifications table
+      formattedPosts.forEach(async obj => await TeamMember.addToNotificationsTable(obj))
 
       res.status(201).json({
-        message: "The team member has been assigned to the training series.",
-        posts
+        message: "The team member has been assigned to the training series."
       });
     }
   } catch (err) {
