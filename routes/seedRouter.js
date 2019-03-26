@@ -48,8 +48,10 @@ router.post("/users", (req, res) => {
 router.post("/training-series", async (req, res) => {
   // console.log(createFakeTrainingSeries())
 
+  const newSeries = createFakeTrainingSeries();
+
   try {
-    await TrainingSeries.addTrainingSeriesSeeds(createFakeTrainingSeries());
+    await TrainingSeries.addTrainingSeriesSeeds(newSeries);
 
     res
       .status(201)
@@ -61,10 +63,11 @@ router.post("/training-series", async (req, res) => {
 
 // Add Post Seeds
 router.post("/posts", async (req, res) => {
+  console.log("Working");
   try {
     const newPost = createFakePosts();
     await Posts.addPostSeeds(newPost);
-
+    console.log(newPost);
     return res.status(201).json({ message: "Post seeds added successfully" });
   } catch (error) {
     res.status(500).json({ message: "A network error occurred" });
