@@ -33,6 +33,6 @@ server.get("/", (req, res) => {
   res.send("It works!");
 });
 
-// notificationSystem.start();
+notificationSystem.start();
 
 module.exports = server;

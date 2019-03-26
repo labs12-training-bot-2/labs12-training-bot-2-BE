@@ -62,4 +62,15 @@ router.delete("/:id", async (req, res) => {
   }
 })
 
+// GET all posts for notification system - for server use only
+router.get("/notification-system", async (req, res) => {
+  try {
+    const posts = await Posts.find();
+    res.status(200).json({ posts });
+  } catch (err) {
+    res.status(500).json({ message: "A network error occurred" });
+  }
+})
+
+
 module.exports = router;
