@@ -1,8 +1,7 @@
 // To execute recurring logic, use worker function that queries the database for upcoming posts and sends reminders as necessary.
 const sendNotifications = require('./sendNotifications');
 
-// bring in array of notifications needing to be sent.
-// TEST DATA
+// bring in array of notifications table.
 const testArray = [
   {
     startDate: "2019-04-05 00:00:00",
@@ -32,17 +31,13 @@ const testArray = [
 
 
 const runNotification = () => {
-  let count = 0
   return {
     run: () => {
       sendNotifications(testArray);
-      // connect to post data model here
-      // sendNotification would be a function to post to twilio API with post information to send message
+      // connect to notification table to get array of notifications that need to be sent each day
+      // sendNotification takes in array of notifications
+      // then loops through each notification and sends to twilio
     },
-    test: (currentTime) => {
-      count++;
-      console.log("Count:", count, "Current Time:", currentTime)
-    }
   };
 };
 
