@@ -8,43 +8,11 @@ const Users = require('../database/Helpers/user-model.js');
 // 	api_key: 'sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw',
 // });
 
-router.post('/', async (req, res) => {
-	const { token, name, email, userID } = req.body;
-	try {
-		let { customer } = await stripe.customers.create(
-			{
-				description: name,
-				email: email,
-				source: token, // obtained with Stripe.js
-			},
-			async function(err, customer) {
-				console.log(customer);
-				console.log(userID);
-
-				// add strip user_id to the database
-				const changes = { stripe: customer.id };
-				await Users.updateUser(userID, changes);
-			}
-		);
-
-		// let { status } = await stripe.charges.create({
-		// 	amount: 500,
-		// 	currency: 'usd',
-		// 	description: 'Training Bot Pro',
-		// 	source: req.body,
-		// });
-		// console.log(req.body);
-
-		// res.json({ status });
-	} catch (err) {
-		res.status(500).end();
-	}
-});
-
-router.post('/subscribe', async (req, res) => {
+function subscribe(stripeID, userID) {
+	// API for subscribing a custoemr to a plan on Stripe
 	stripe.subscriptions.create(
 		{
-			customer: req.body.stripe_id,
+			customer: stripeID,
 			items: [
 				{
 					plan: 'plan_ElvuS8dCu0De0C',
@@ -53,9 +21,60 @@ router.post('/subscribe', async (req, res) => {
 		},
 		function(err, subscription) {
 			// asynchronously called
+			const changes = { accountTypeID: 3 };
+			// updates accountTypeID for the user in the database
+			Users.updateUser(userID, changes); 
+			return subscription;
+		}
+		);
+	}
+	function registerSubscribe(name, email, token, userID) {
+		// API for creating a customer in Stripe's system
+		stripe.customers.create(
+			{
+				description: name,
+				email: email,
+				source: token, // obtained with Stripe.js
+			},
+			function(err, customer) {
+				// asynchronously called
+			// add strip user_id to the database
+			const changes = { stripe: customer.id };
+			Users.updateUser(userID, changes);
+
+			// calls subscribe function to subsribe the user
+			let sub = subscribe(customer.id, userID);
+			return sub;
 		}
 	);
+}
+
+router.post('/', async (req, res) => {
+	const { token, name, email, userID, stripe } = req.body;
+	if (stripe) {
+		try {
+			console.log('Subscribe Only');
+
+			// calls subscribe function to subsribe the user
+			let sub = subscribe(stripe, userID);
+			res.status(200).json(sub);
+		} catch (err) {
+			res.status(500).end();
+		}
+	} else {
+		try {
+			console.log('Register & Subscribe');
+
+			// calls registerSubscribe function to register and then subsribe the user to the plan
+			let sub =  registerSubscribe(name, email, token, userID);
+			res.status(200).json(sub);
+		} catch (err) {
+			res.status(500).end();
+		}
+	}
 });
+
+// Cancel subscription route
 
 router.post('/paymentintent', async (req, res) => {
 	const paymentIntent = await stripe.paymentIntents.create({
