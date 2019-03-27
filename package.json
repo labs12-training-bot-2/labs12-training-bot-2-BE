@@ -40,6 +40,7 @@
 		"twilio": "^3.29.2"
 	},
 	"devDependencies": {
+		"morgan": "^1.9.1",
 		"nodemon": "^1.18.10"
 	}
 }

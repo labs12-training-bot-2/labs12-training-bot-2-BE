@@ -2,34 +2,40 @@
 const router = require('express').Router();
 const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
 
-// const Users = require('../database/Helpers/user-model.js');
+const Users = require('../database/Helpers/user-model.js');
 
 // stripe.charges.retrieve('ch_1EHzLXChlDwQi04Iono5543P', {
 // 	api_key: 'sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw',
 // });
 
 router.post('/', async (req, res) => {
-	// const { id } = req.body;
-
+	const { token, name, email, userID } = req.body;
 	try {
-		// let { customer } = await stripe.customers.create(
-		// 	{
-		// 		description: 'Customer',
-		// 		source: 'tok_amex', // obtained with Stripe.js
-		// 	},
-		// 	function(err, customer) {
-		// 		// asynchronously called
-		// 	}
-		// );
-		console.log(req.body);
-		let { status } = await stripe.charges.create({
-			amount: 500,
-			currency: 'usd',
-			description: 'Training Bot Pro',
-			source: req.body,
-		});
+		let { customer } = await stripe.customers.create(
+			{
+				description: name,
+				email: email,
+				source: token, // obtained with Stripe.js
+			},
+			async function(err, customer) {
+				console.log(customer);
+				console.log(userID);
 
-		res.json({ status });
+				// add strip user_id to the database
+				const changes = { stripe: customer.id };
+				await Users.updateUser(userID, changes);
+			}
+		);
+
+		// let { status } = await stripe.charges.create({
+		// 	amount: 500,
+		// 	currency: 'usd',
+		// 	description: 'Training Bot Pro',
+		// 	source: req.body,
+		// });
+		// console.log(req.body);
+
+		// res.json({ status });
 	} catch (err) {
 		res.status(500).end();
 	}

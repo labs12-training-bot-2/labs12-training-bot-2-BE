@@ -2,12 +2,13 @@
 const express = require('express'),
 	helmet = require('helmet'),
 	cors = require('cors');
+morgan = require('morgan');
 
 //Server to point to
 const server = express();
 
 //Library Middleware
-server.use(helmet(), express.json(), cors());
+server.use(helmet(), express.json(), cors(), morgan('dev'));
 server.use(require('body-parser').text());
 
 // twilio notification system import
