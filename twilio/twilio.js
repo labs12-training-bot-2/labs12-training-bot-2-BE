@@ -1,6 +1,9 @@
 require('dotenv').config();
 
 const twilio = require('twilio');
+const moment = require('moment');
+
+const { getDailyTextNotifications, getDailyEmailNotifications } = require('../database/Helpers/notifications-model');
 
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_TOKEN;
@@ -17,6 +20,11 @@ const alexNumber = process.env.ALEX_NUMBER;
 //     from: twilioNumber
 //   })
 //   .then(message => console.log(message.sid));
+
+const today = moment().format('YYYY-MM-D');
+
+const textNotifications = getDailyTextNotifications(today).then(res => console.log(res));
+// const emailNotifications = getDailyEmailNotifications(today).then(res => console.log(res));
 
 const sampleNotificationData = [
   {
