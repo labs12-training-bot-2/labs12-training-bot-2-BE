@@ -23,21 +23,39 @@ function subscribe(stripeID, userID) {
 			// asynchronously called
 			const changes = { accountTypeID: 3 };
 			// updates accountTypeID for the user in the database
-			Users.updateUser(userID, changes); 
+			Users.updateUser(userID, changes);
 			return subscription;
 		}
-		);
-	}
-	function registerSubscribe(name, email, token, userID) {
-		// API for creating a customer in Stripe's system
-		stripe.customers.create(
-			{
-				description: name,
-				email: email,
-				source: token, // obtained with Stripe.js
-			},
-			function(err, customer) {
-				// asynchronously called
+	);
+}
+function unsubscribe(stripeID,userID) {
+	stripe.customers.retrieve(stripeID, function(err, customer) {
+		// asynchronously called
+		let subID = customer.subscriptions.data[0].id
+		console.log('customer', customer.subscriptions.data[0].id);
+		
+
+		// API for removing subscription
+
+		stripe.subscriptions.del(subID, function(err, confirmation) {
+			// asynchronously called
+			const changes = { accountTypeID: 1 };
+			// updates accountTypeID for the user in the database
+			Users.updateUser(userID, changes);
+			return confirmation;
+		});
+	});
+}
+function registerSubscribe(name, email, token, userID) {
+	// API for creating a customer in Stripe's system
+	stripe.customers.create(
+		{
+			description: name,
+			email: email,
+			source: token, // obtained with Stripe.js
+		},
+		function(err, customer) {
+			// asynchronously called
 			// add strip user_id to the database
 			const changes = { stripe: customer.id };
 			Users.updateUser(userID, changes);
@@ -66,8 +84,21 @@ router.post('/', async (req, res) => {
 			console.log('Register & Subscribe');
 
 			// calls registerSubscribe function to register and then subsribe the user to the plan
-			let sub =  registerSubscribe(name, email, token, userID);
+			let sub = registerSubscribe(name, email, token, userID);
 			res.status(200).json(sub);
+		} catch (err) {
+			res.status(500).end();
+		}
+	}
+});
+
+router.post('/unsubscribe', async (req, res) => {
+	const { token, name, email, userID, stripe } = req.body;
+	if (stripe) {
+		try {
+			let res = unsubscribe(stripe,userID);
+			console.log(res);
+			res.status(204).json(res);
 		} catch (err) {
 			res.status(500).end();
 		}
