@@ -41,6 +41,22 @@ router.post('/', async (req, res) => {
 	}
 });
 
+router.post('/subscribe', async (req, res) => {
+	stripe.subscriptions.create(
+		{
+			customer: req.body.stripe_id,
+			items: [
+				{
+					plan: 'plan_ElvuS8dCu0De0C',
+				},
+			],
+		},
+		function(err, subscription) {
+			// asynchronously called
+		}
+	);
+});
+
 router.post('/paymentintent', async (req, res) => {
 	const paymentIntent = await stripe.paymentIntents.create({
 		amount: 1099,
