@@ -1,9 +1,10 @@
 //Dependencies
 const router = require("express").Router();
+const moment = require("moment");
 
 //Models
 const TeamMember = require("../database/Helpers/teamMember-model");
-
+const TrainingSeries = require("../database/Helpers/trainingSeries-model");
 //Middleware
 
 //Routes
@@ -28,7 +29,7 @@ router.get("/:id", async (req, res) => {
 
     // get team member's training series assignments
     const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-    console.log("assignments", assignments);
+
     res.status(200).json({ teamMember, assignments });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
@@ -101,10 +102,38 @@ router.post("/:id/training-series", async (req, res) => {
       res.status(400).json({ message: "Client must provide all fields" });
     } else {
       req.body.teamMember_ID = id;
-      console.log("req.body", req.body);
 
-      // nest try catch
-      await TeamMember.addToTrainingSeries(req.body);
+      // nest try catch - to check if team member exists?
+      const assignment = await TeamMember.addToTrainingSeries(req.body);
+
+      // get teamMember by ID
+      const member = await TeamMember.findById(id);
+
+      // need to get all the posts for the training series
+      const posts = await TrainingSeries.getTrainingSeriesPosts(
+        trainingSeries_ID
+      );
+
+      // send all the posts to the Notifications table and convert the integer of Post.startFromDate into a date using
+      const formattedPosts = posts.map(post => {
+        return {
+          postName: post.postName,
+          postDetails: post.postDetails,
+          link: post.link,
+          sendDate: moment(assignment.startDate)
+            .add(post.daysFromStart, "days")
+            .format(),
+          phoneNumber: member.phoneNumber,
+          email: member.email,
+          firstName: member.firstName,
+          lastName: member.lastName
+        };
+      });
+
+      console.log(formattedPosts);
+      
+      // add each returned object to Notifications table
+      formattedPosts.forEach(async obj => await TeamMember.addToNotificationsTable(obj))
 
       // need to get all the posts for the training series
 
@@ -149,7 +178,7 @@ router.delete("/:id/training-series/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;
     const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
-    console.log("deleted", deleted)
+    console.log("deleted", deleted);
     if (deleted > 0) {
       res.status(200).json({ message: "The resource has been deleted." });
     } else {
