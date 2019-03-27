@@ -2,7 +2,7 @@
 const express = require('express'),
 	helmet = require('helmet'),
 	cors = require('cors');
-morgan = require('morgan');
+	// morgan = require('morgan');
 
 //Server to point to
 const server = express();
