@@ -5,8 +5,6 @@ const router = require("express").Router();
 const Users = require("../database/Helpers/user-model.js");
 const TeamMembers = require("../database/Helpers/teamMember-model");
 
-//Middleware
-
 //Routes
 router.get("/", async (req, res) => {
   try {
@@ -77,7 +75,6 @@ router.get("/:id/training-series", async (req, res) => {
 });
 
 // PUT update user information
-
 router.put("/:id", async (req, res) => {
   const changes = req.body;
   const { id } = req.params;
@@ -97,6 +94,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// DELETE a user account
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 

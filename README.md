@@ -125,6 +125,20 @@ yarn server
 | trainingSeries_ID | int      | FK - refs TrainingSeries.trainingSeriesID |
 | teamMember_ID     | int      | FK - refs TeamMember.teamMemberID         |
 
+## Notifications
+
+| Name           | Type     | Details |
+| -------------- | -------- | ------- |
+| notificationID | int      | PK      |
+| sendDate       | date     |         |
+| postName       | tinytext |         |
+| post Details   | tinytext |         |
+| link           | tinytext |         |
+| phoneNumber    | varchar  |         |
+| email          | varchar  |         |
+| firstName      | varchar  |         |
+| lastName       | varchar  |         |
+
 [Back to table of Contents](#table-of-contents)
 
 
