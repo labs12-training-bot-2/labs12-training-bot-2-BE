@@ -28,10 +28,10 @@ function subscribe(stripeID, userID) {
 		}
 	);
 }
-function unsubscribe(stripeID,userID) {
+function unsubscribe(stripeID, userID) {
 	stripe.customers.retrieve(stripeID, function(err, customer) {
 		// asynchronously called
-		let subID = customer.subscriptions.data[0].id //Gets the one subscription ID the customer can have
+		let subID = customer.subscriptions.data[0].id; //Gets the one subscription ID the customer can have
 
 		// API for removing subscription
 		stripe.subscriptions.del(subID, function(err, confirmation) {
@@ -90,16 +90,40 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/unsubscribe', async (req, res) => {
-	const { token, name, email, userID, stripe } = req.body;
+	const { userID, stripe } = req.body;
 	if (stripe) {
 		try {
-			let res = unsubscribe(stripe,userID);
+			let res = unsubscribe(stripe, userID);
 			console.log(res);
 			res.status(204).json(res);
 		} catch (err) {
 			res.status(500).end();
 		}
 	}
+});
+
+router.get('/plans', (req, res) => {
+	stripe.plans.list(
+		{
+			limit: 3,
+			product: 'prod_EmJZbRNGEjlOY4',
+		},
+		function(err, plans) {
+			console.log('plans', plans.data);
+			res.send(plans.data);
+		}
+	);
+});
+router.get('/subscriptions', (req, res) => {
+	stripe.subscriptions.list(
+		{
+			limit: 3,
+		},
+		function(err, subscriptions) {
+			console.log('subscriptions', subscriptions.data);
+			res.send(subscriptions.data);
+		}
+	);
 });
 
 // Cancel subscription route
