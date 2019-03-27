@@ -15,14 +15,27 @@ Training bot allows managers of teams to send notifications to their teammates o
 - [Database Tables](#database-tables)
   - [Schema](#schema)
   - [User](#user)
-  - [Training Series](#trainingseries)
-  - [Team Member](#teammember)
+  - [TrainingSeries](#trainingseries)
+  - [TeamMember](#teammember)
   - [Post](#post)
-  - [Account Type](#accounttype)
-  - [Relational Table](#relationaltable)
+  - [accountType](#accounttype)
+  - [RelationalTable](#relationaltable)
 - [Endpoints](#endpoints)
   - [All endpoints](#all-endpoints)
-- [Data requests and responses](#data-requests-and-responses)
+- [🖥 Data requests and responses 🖥](#%F0%9F%96%A5-data-requests-and-responses-%F0%9F%96%A5)
+  - [`/api/auth`](#apiauth)
+  - [`/api/users/:id`](#apiusersid)
+  - [`/api/users/:id/training-series`](#apiusersidtraining-series)
+  - [`/api/users/:id/team-members`](#apiusersidteam-members)
+  - [`/api/training-series`](#apitraining-series)
+  - [`/api/training-series/:id`](#apitraining-seriesid)
+  - [`/api/training-series/:id/posts`](#apitraining-seriesidposts)
+  - [`/api/posts`](#apiposts)
+  - [`/api/posts/:id`](#apipostsid)
+  - [`/api/team-members`](#apiteam-members)
+  - [`/api/team-members/:id`](#apiteam-membersid)
+  - [`/api/team-members/:id/training-series`](#apiteam-membersidtraining-series)
+  - [`/api/team-members/:id/training-series/:ts_id`](#apiteam-membersidtraining-seriestsid)
 
 # Overview 
 
@@ -57,7 +70,7 @@ yarn server
 
 ## User
 | Name          | Type    | Details                             |
-| ------------- | ------- | ----------------------------------- | 
+| ------------- | ------- | ----------------------------------- |
 | userID        | int     | PK                                  |
 | accountTypeID | int     | FK - refs accountType.accountTypeID |
 | email         | varchar |                                     |
@@ -65,11 +78,11 @@ yarn server
 
 ## TrainingSeries
 
- | Name             | Type       | Details               |
- | ---------------- | ---------- | --------------------- |
- | trainingSeriesID | int        | PK                    |
- | title            | varchar    |                       |
- | userID           | int        | FK - refs User.userID |
+ | Name             | Type    | Details               |
+ | ---------------- | ------- | --------------------- |
+ | trainingSeriesID | int     | PK                    |
+ | title            | varchar |                       |
+ | userID           | int     | FK - refs User.userID |
 
 
 ## TeamMember
@@ -85,15 +98,15 @@ yarn server
 | userID         | int     | FK - refs User.userID |
 
 ## Post
-| Name             | Type      | Details                                   |
-| ---------------- | --------- | ----------------------------------------- |
-| postID           | int       | PK                                        |
-| postName         | varchar   |                                           |
-| postDetails      | varchar   |                                           |
-| link             | varchar   |                                           |
-| daysFromStart    | int       |                                           |
-| postImage        | varchar   |                                           |
-| trainingSeriesID | int       | FK - refs TrainingSeries.trainingSeriesID |
+| Name             | Type    | Details                                   |
+| ---------------- | ------- | ----------------------------------------- |
+| postID           | int     | PK                                        |
+| postName         | varchar |                                           |
+| postDetails      | varchar |                                           |
+| link             | varchar |                                           |
+| daysFromStart    | int     |                                           |
+| postImage        | varchar |                                           |
+| trainingSeriesID | int     | FK - refs TrainingSeries.trainingSeriesID |
 
 ## accountType
 
@@ -148,7 +161,7 @@ yarn server
 | `/api/team-members/:id/training-series/:ts_id` | DELETE | Deletes a member's training series start date            |
 
 
-# Data requests and responses 
+# 🖥 Data requests and responses 🖥
 Below are all expected request body shapes and data responses
 
 ## `/api/auth`
@@ -191,6 +204,7 @@ Structure of response:
     trainingSeries
 }
 ```
+[Back to table of Contents](#table-of-contents)
 
 ## `/api/users/:id`
 
@@ -286,7 +300,7 @@ Structure of response:
     newTrainingSeries
 }
 ```
-
+[Back to table of Contents](#table-of-contents)
 ## `/api/training-series/:id`
 
 **Method:** GET
@@ -414,6 +428,7 @@ Structure of response:
     message: "The resource has been deleted."
 }
 ```
+[Back to table of Contents](#table-of-contents)
 
 ## `/api/team-members`
 
@@ -508,6 +523,7 @@ Structure of response:
     message: "The team member has been assigned to the training series."
 }
 ```
+[Back to table of Contents](#table-of-contents)
 
 ## `/api/team-members/:id/training-series/:ts_id`
 
