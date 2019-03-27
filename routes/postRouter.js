@@ -10,9 +10,9 @@ const Posts = require('../database/Helpers/post-model')
 // POST a new post
 router.post("/", async (req, res) => {
   try {
-    const { postName, postDetails, link, startDate, trainingSeriesID } = req.body;
+    const { postName, postDetails, link, daysFromStart, trainingSeriesID } = req.body;
 
-    if (!postName || !postDetails || !link || !startDate || !trainingSeriesID) {
+    if (!postName || !postDetails || !link || !daysFromStart || !trainingSeriesID) {
       res.status(400).json({ error: "Client must provide all fields." })
     } else {
       const newPost = await Posts.add(req.body);
@@ -46,7 +46,7 @@ router.get("/:id", async (req, res) => {
   }
 })
 
-// GET post by id
+// DELETE post by id
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -61,5 +61,16 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "A network error occurred" });
   }
 })
+
+// GET all posts for notification system - for server use only
+router.get("/notification-system", async (req, res) => {
+  try {
+    const posts = await Posts.find();
+    res.status(200).json({ posts });
+  } catch (err) {
+    res.status(500).json({ message: "A network error occurred" });
+  }
+})
+
 
 module.exports = router;

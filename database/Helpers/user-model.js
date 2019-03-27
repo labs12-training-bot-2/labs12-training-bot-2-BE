@@ -44,11 +44,7 @@ function findByEmail(email) {
 
 function findTrainingSeriesByUser(id) {
   return db("User")
-    .select(
-      "TrainingSeries.trainingSeriesID",
-      "TrainingSeries.TrainingSeries",
-      "TrainingSeries.title"
-    )
+    .select("TrainingSeries.trainingSeriesID", "TrainingSeries.title")
     .join("TrainingSeries", "User.userID", "TrainingSeries.userID")
     .where("User.userID", id);
 }
