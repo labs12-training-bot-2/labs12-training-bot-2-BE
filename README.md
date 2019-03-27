@@ -127,17 +127,17 @@ yarn server
 
 ## Notifications
 
-| Name              | Type     | Details                                   |
-| -------------- | -------- | ----------------------------------------- |
-| notificationID |
-| sendDate       |
-| postName       |
-| post Details   |
-| link           |
-| phoneNumber
-| email
-| firstName
-| lastName
+| Name           | Type     | Details |
+| -------------- | -------- | ------- |
+| notificationID | int      | PK      |
+| sendDate       | date     |         |
+| postName       | tinytext |         |
+| post Details   | tinytext |         |
+| link           | tinytext |         |
+| phoneNumber    | varchar  |         |
+| email          | varchar  |         |
+| firstName      | varchar  |         |
+| lastName       | varchar  |         |
 
 [Back to table of Contents](#table-of-contents)
 
