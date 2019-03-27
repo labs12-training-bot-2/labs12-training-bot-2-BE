@@ -31,16 +31,13 @@ function subscribe(stripeID, userID) {
 function unsubscribe(stripeID,userID) {
 	stripe.customers.retrieve(stripeID, function(err, customer) {
 		// asynchronously called
-		let subID = customer.subscriptions.data[0].id
-		console.log('customer', customer.subscriptions.data[0].id);
-		
+		let subID = customer.subscriptions.data[0].id //Gets the one subscription ID the customer can have
 
 		// API for removing subscription
-
 		stripe.subscriptions.del(subID, function(err, confirmation) {
 			// asynchronously called
 			const changes = { accountTypeID: 1 };
-			// updates accountTypeID for the user in the database
+			// updates accountTypeID for the user in the database back to 1(free)
 			Users.updateUser(userID, changes);
 			return confirmation;
 		});
