@@ -15,9 +15,9 @@ const notificationSystem = function() {
         '00 * * * * *', // 1 minute interval for testing notification system.
         function() {
           const currentTime = new Date();
-          console.log('Run Text Notifications onTick:', currentTime);
+          console.log('Run Notifications onTick:', currentTime);
           // gatherTextNotifications.run();
-          gatherEmailNotifications.run();
+          // gatherEmailNotifications.run();
         },
         null,
         true,
