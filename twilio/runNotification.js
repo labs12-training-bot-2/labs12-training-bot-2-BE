@@ -1,43 +1,23 @@
-// To execute recurring logic, use worker function that queries the database for upcoming posts and sends reminders as necessary.
+// dependencies
+const moment = require('moment');
+
+// function imports
+const {
+  getDailyTextNotifications
+} = require('../database/Helpers/notifications-model');
 const sendNotifications = require('./sendNotifications');
 
-// bring in array of notifications table.
-const testArray = [
-  {
-    startDate: "2019-04-05 00:00:00",
-    trainingSeries: "modi deserunt distinctio suscipit at",
-    firstName: "Marcelina",
-    lastName: "Funk",
-    phoneNumber: "098-075-4149 x260",
-    postName: "ad ipsum minima dolorem dolore",
-    postDetails: "Placeat nam facere vitae nisi quis tenetur. E",
-    link: "http://dayton.com",
-    Post_StartDate: "2019-04-06 00:00:00"
-  },
-  {
-    startDate: "2019-04-05 00:00:00",
-    trainingSeries: "modi deserunt distinctio suscipit at",
-    firstName: "Marcelina",
-    lastName: "Funk",
-    phoneNumber: "098-075-4149 x260",
-    postName: "ea corrupti architecto provident dolores",
-    postDetails: "Voluptas pariatur itaque nostrum. Assumenda a",
-    link: "https://freeda.net",
-    Post_StartDate: "2019-04-06 00:00:00"
-  }
-]
+// format moment variable for query
+const today = moment().format('YYYY-MM-D');
 
-
-
-
+// query DB and get data from notification table
+// pass into sendNotifications which posts to twilio API
 const runNotification = () => {
   return {
-    run: () => {
-      sendNotifications(testArray);
-      // connect to notification table to get array of notifications that need to be sent each day
-      // sendNotification takes in array of notifications
-      // then loops through each notification and sends to twilio
-    },
+    run: async () => {
+      const notificationsToSend = await getDailyTextNotifications(today);
+      sendNotifications(notificationsToSend);
+    }
   };
 };
 
