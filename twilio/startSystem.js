@@ -15,7 +15,7 @@ const notificationSystem = function() {
         function() {
           const currentTime = new Date();
           console.log('Run Notifications onTick:', currentTime);
-          // runNotification.run();
+          runNotification.run();
         },
         null,
         true,
