@@ -5,20 +5,20 @@ const moment = require('moment');
 const {
   getDailyTextNotifications
 } = require('../database/Helpers/notifications-model');
-const sendNotifications = require('./sendNotifications');
+const sendTextNotifications = require('./runTextNotifications');
 
 // format moment variable for query
 const today = moment().format('YYYY-MM-D');
 
 // query DB and get data from notification table
 // pass into sendNotifications which posts to twilio API
-const runNotification = () => {
+const gatherTextNotifications = () => {
   return {
     run: async () => {
       const notificationsToSend = await getDailyTextNotifications(today);
-      sendNotifications(notificationsToSend);
+      sendTextNotifications(notificationsToSend);
     }
   };
 };
 
-module.exports = runNotification();
+module.exports = gatherTextNotifications();

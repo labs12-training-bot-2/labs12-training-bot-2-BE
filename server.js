@@ -10,7 +10,7 @@ const server = express();
 server.use(helmet(), express.json(), cors());
 
 // twilio notification system import
-const notificationSystem = require('./twilio/startSystem');
+const notificationSystem = require('./notificationSystem/startSystem');
 
 //Routes
 const usersRouter = require('./routes/userRouter');
