@@ -1,6 +1,7 @@
 const CronJob = require('cron').CronJob;
 
 const gatherTextNotifications = require('./gatherTextNotifications');
+const gatherEmailNotifications = require('./gatherEmailNotifications');
 
 // node-cron start function for notification system
 const notificationSystem = function() {
@@ -16,7 +17,7 @@ const notificationSystem = function() {
           const currentTime = new Date();
           console.log('Run Text Notifications onTick:', currentTime);
           // gatherTextNotifications.run();
-          // runEmailNotification.run();
+          gatherEmailNotifications.run();
         },
         null,
         true,
