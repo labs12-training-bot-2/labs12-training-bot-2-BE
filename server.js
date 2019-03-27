@@ -9,7 +9,7 @@ const server = express();
 
 //Library Middleware
 server.use(helmet(), express.json(), cors(), morgan('dev'));
-// server.use(require('body-parser').text());
+server.use(require('body-parser').text());
 
 // twilio notification system import
 const notificationSystem = require('./twilio/startSystem');
