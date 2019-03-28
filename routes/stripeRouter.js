@@ -9,31 +9,70 @@ const Users = require('../database/Helpers/user-model.js');
 // });
 
 function subscribe(stripeID, userID, plan) {
-	// API for subscribing a custoemr to a plan on Stripe
-
-	stripe.subscriptions.create(
-		{
-			customer: stripeID,
-			items: [
+	stripe.customers.retrieve(stripeID, function(err, customer) {
+		let subID = customer.subscriptions.data;
+		console.log(subID.length);
+		if (subID.length < 1) {
+			console.log('if');
+			stripe.subscriptions.create(
 				{
-					plan: plan,
+					customer: stripeID,
+					items: [
+						{
+							plan: plan,
+						},
+					],
 				},
-			],
-		},
-		function(err, subscription) {
-			// asynchronously called
-			let id = 0;
-			let changes = { accountTypeID: id };
-			if (plan === 'plan_EmJaXZor4Ef3co') {
-				id = 3;
-			} else if (plan === 'plan_EmJallrSdkqpPS') {
-				id = 2;
-			}
-			// updates accountTypeID for the user in the database
-			Users.updateUser(userID, changes);
-			return subscription;
+				function(err, subscription) {
+					// console.log('plan', plan);
+					// asynchronously called
+					let id;
+					if (plan === 'plan_EmJaXZor4Ef3co') {
+						id = 3;
+					} else if (plan === 'plan_EmJallrSdkqpPS') {
+						id = 2;
+					}
+					let changes = { accountTypeID: id };
+					console.log(changes);
+					// updates accountTypeID for the user in the database
+					Users.updateUser(userID, changes);
+					// return subscription;
+				}
+			);
+		} else {
+			console.log('else');
+			subID = customer.subscriptions.data[0].id;
+			stripe.subscriptions.del(subID, function(err, confirmation) {
+				// asynchronously called
+				stripe.subscriptions.create(
+					{
+						customer: stripeID,
+						items: [
+							{
+								plan: plan,
+							},
+						],
+					},
+					function(err, subscription) {
+						// console.log('plan', plan);
+						// asynchronously called
+						let id;
+						if (plan === 'plan_EmJaXZor4Ef3co') {
+							id = 3;
+						} else if (plan === 'plan_EmJallrSdkqpPS') {
+							id = 2;
+						}
+						let changes = { accountTypeID: id };
+						console.log(changes);
+
+						// updates accountTypeID for the user in the database
+						Users.updateUser(userID, changes);
+						// return subscription;
+					}
+				);
+			});
 		}
-	);
+	});
 }
 function unsubscribe(stripeID, userID) {
 	stripe.customers.retrieve(stripeID, function(err, customer) {
@@ -116,7 +155,7 @@ router.get('/plans', (req, res) => {
 			product: 'prod_EmJZbRNGEjlOY4',
 		},
 		function(err, plans) {
-			console.log('plans', plans.data);
+			// console.log('plans', plans.data);
 			res.send(plans.data);
 		}
 	);
