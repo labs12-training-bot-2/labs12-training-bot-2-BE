@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
       }
 })
 
-//GET all posts (not a production endpoint)
+// GET all posts (not a production endpoint)
 router.get("/posts", async (req, res) => {
     try {
         const posts = await TrainingSeries.getAllPosts();
@@ -79,7 +79,7 @@ router.delete("/:id", async (req, res) => {
     }
 })
 
-//GET all posts in a training series by training series ID
+// GET all posts in a training series by training series ID
 router.get("/:id/posts", async (req, res) => {
     try {
         const { id } = req.params;
@@ -88,7 +88,6 @@ router.get("/:id/posts", async (req, res) => {
         const trainingSeries = await TrainingSeries.findById(id);
 
         //get all posts of training series
-        // posts needs to be returned as an array, currently being returned as an object
         const posts = await TrainingSeries.getTrainingSeriesPosts(id);
 
         res.status(200).json({ trainingSeries, posts })

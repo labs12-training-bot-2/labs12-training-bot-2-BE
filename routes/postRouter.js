@@ -1,12 +1,10 @@
-
 // Dependencies 
 const router = require('express').Router();
 
 // Models
 const Posts = require('../database/Helpers/post-model')
 
-// existing models findById, add, update, remove
-
+// Routes
 // POST a new post
 router.post("/", async (req, res) => {
   try {

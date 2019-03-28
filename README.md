@@ -17,14 +17,29 @@ Training bot allows managers of teams to send notifications to their teammates o
 -   [Database Tables](#database-tables)
     -   [Schema](#schema)
     -   [User](#user)
-    -   [Training Series](#trainingseries)
-    -   [Team Member](#teammember)
+    -   [TrainingSeries](#trainingseries)
+    -   [TeamMember](#teammember)
     -   [Post](#post)
-    -   [Account Type](#accounttype)
-    -   [Relational Table](#relationaltable)
+    -   [accountType](#accounttype)
+    -   [RelationalTable](#relationaltable)
 -   [Endpoints](#endpoints)
     -   [All endpoints](#all-endpoints)
--   [Data requests and responses](#data-requests-and-responses)
+-   [🖥 Data requests and responses 🖥](#%F0%9F%96%A5-data-requests-and-responses-%F0%9F%96%A5)
+    -   [`/api/auth`](#apiauth)
+    -   [`/api/users/:id`](#apiusersid)
+    -   [`/api/users/:id/training-series`](#apiusersidtraining-series)
+    -   [`/api/users/:id/team-members`](#apiusersidteam-members)
+    -   [`/api/training-series`](#apitraining-series)
+    -   [`/api/training-series/:id`](#apitraining-seriesid)
+    -   [`/api/training-series/:id/posts`](#apitraining-seriesidposts)
+    -   [`/api/posts`](#apiposts)
+    -   [`/api/posts/:id`](#apipostsid)
+    -   [`/api/team-members`](#apiteam-members)
+    -   [`/api/team-members/:id`](#apiteam-membersid)
+    -   [`/api/team-members/:id/training-series`](#apiteam-membersidtraining-series)
+    -   [`/api/team-members/:id/training-series/:ts_id`](#apiteam-membersidtraining-seriestsid)
+    -   [`/api/stripe`](#apistripe)
+    -   [`/api/stripe/unsubscribe`](#apistripeunsubscribe)
 
 # Overview
 
@@ -123,6 +138,20 @@ yarn server
 | trainingSeries_ID | int      | FK - refs TrainingSeries.trainingSeriesID |
 | teamMember_ID     | int      | FK - refs TeamMember.teamMemberID         |
 
+## Notifications
+
+| Name           | Type     | Details |
+| -------------- | -------- | ------- |
+| notificationID | int      | PK      |
+| sendDate       | date     |         |
+| postName       | tinytext |         |
+| post Details   | tinytext |         |
+| link           | tinytext |         |
+| phoneNumber    | varchar  |         |
+| email          | varchar  |         |
+| firstName      | varchar  |         |
+| lastName       | varchar  |         |
+
 [Back to table of Contents](#table-of-contents)
 
 # Endpoints
@@ -157,6 +186,8 @@ yarn server
 | `/api/stripe/unsubscribe`                      | POST   | Unsubscribes a user from their subscription              |
 
 # Data requests and responses
+
+# 🖥 Data requests and responses 🖥
 
 Below are all expected request body shapes and data responses
 
@@ -204,6 +235,8 @@ Structure of response:
     trainingSeries
 }
 ```
+
+[Back to table of Contents](#table-of-contents)
 
 ## `/api/users/:id`
 
@@ -307,6 +340,8 @@ Structure of response:
     newTrainingSeries
 }
 ```
+
+[Back to table of Contents](#table-of-contents)
 
 ## `/api/training-series/:id`
 
@@ -447,6 +482,8 @@ Structure of response:
 }
 ```
 
+[Back to table of Contents](#table-of-contents)
+
 ## `/api/team-members`
 
 **Method:** POST
@@ -548,6 +585,8 @@ Structure of response:
     message: "The team member has been assigned to the training series."
 }
 ```
+
+[Back to table of Contents](#table-of-contents)
 
 ## `/api/team-members/:id/training-series/:ts_id`
 
