@@ -10,27 +10,30 @@ const Users = require('../database/Helpers/user-model.js');
 
 function subscribe(stripeID, userID, plan) {
 	// API for subscribing a custoemr to a plan on Stripe
-	if (plan === 'free') {
-		unsubscribe(stripeID, userID);
-	} else {
-		stripe.subscriptions.create(
-			{
-				customer: stripeID,
-				items: [
-					{
-						plan: plan,
-					},
-				],
-			},
-			function(err, subscription) {
-				// asynchronously called
-				const changes = { accountTypeID: 3 };
-				// updates accountTypeID for the user in the database
-				Users.updateUser(userID, changes);
-				return subscription;
+
+	stripe.subscriptions.create(
+		{
+			customer: stripeID,
+			items: [
+				{
+					plan: plan,
+				},
+			],
+		},
+		function(err, subscription) {
+			// asynchronously called
+			let id = 0;
+			let changes = { accountTypeID: id };
+			if (plan === 'plan_EmJaXZor4Ef3co') {
+				id = 3;
+			} else if (plan === 'plan_EmJallrSdkqpPS') {
+				id = 2;
 			}
-		);
-	}
+			// updates accountTypeID for the user in the database
+			Users.updateUser(userID, changes);
+			return subscription;
+		}
+	);
 }
 function unsubscribe(stripeID, userID) {
 	stripe.customers.retrieve(stripeID, function(err, customer) {
