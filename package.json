@@ -35,6 +35,7 @@
 		"mysql": "^2.16.0",
 		"pg": "^7.8.1",
 		"sqlite3": "^4.0.6",
+		"stripe": "^6.28.0",
 		"twilio": "^3.29.2"
 	},
 	"devDependencies": {
