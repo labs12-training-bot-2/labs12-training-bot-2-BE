@@ -8,25 +8,29 @@ const Users = require('../database/Helpers/user-model.js');
 // 	api_key: 'sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw',
 // });
 
-function subscribe(stripeID, userID) {
+function subscribe(stripeID, userID, plan) {
 	// API for subscribing a custoemr to a plan on Stripe
-	stripe.subscriptions.create(
-		{
-			customer: stripeID,
-			items: [
-				{
-					plan: 'plan_ElvuS8dCu0De0C',
-				},
-			],
-		},
-		function(err, subscription) {
-			// asynchronously called
-			const changes = { accountTypeID: 3 };
-			// updates accountTypeID for the user in the database
-			Users.updateUser(userID, changes);
-			return subscription;
-		}
-	);
+	if (plan === 'free') {
+		unsubscribe(stripeID, userID);
+	} else {
+		stripe.subscriptions.create(
+			{
+				customer: stripeID,
+				items: [
+					{
+						plan: plan,
+					},
+				],
+			},
+			function(err, subscription) {
+				// asynchronously called
+				const changes = { accountTypeID: 3 };
+				// updates accountTypeID for the user in the database
+				Users.updateUser(userID, changes);
+				return subscription;
+			}
+		);
+	}
 }
 function unsubscribe(stripeID, userID) {
 	stripe.customers.retrieve(stripeID, function(err, customer) {
@@ -65,13 +69,13 @@ function registerSubscribe(name, email, token, userID) {
 }
 
 router.post('/', async (req, res) => {
-	const { token, name, email, userID, stripe } = req.body;
+	const { token, name, email, userID, stripe, plan } = req.body;
 	if (stripe) {
 		try {
 			console.log('Subscribe Only');
 
 			// calls subscribe function to subsribe the user
-			let sub = subscribe(stripe, userID);
+			let sub = subscribe(stripe, userID, plan);
 			res.status(200).json(sub);
 		} catch (err) {
 			res.status(500).end();
@@ -81,7 +85,7 @@ router.post('/', async (req, res) => {
 			console.log('Register & Subscribe');
 
 			// calls registerSubscribe function to register and then subsribe the user to the plan
-			let sub = registerSubscribe(name, email, token, userID);
+			let sub = registerSubscribe(name, email, token, userID, plan);
 			res.status(200).json(sub);
 		} catch (err) {
 			res.status(500).end();
