@@ -137,13 +137,14 @@ router.post('/', async (req, res) => {
 
 router.post('/unsubscribe', async (req, res) => {
 	const { userID, stripe } = req.body;
+	console.log('req body', req.body);
 	if (stripe) {
 		try {
 			let res = unsubscribe(stripe, userID);
 			console.log(res);
-			res.status(204).json(res);
+			res.send(res);
 		} catch (err) {
-			res.status(500).end();
+			res.send(err);
 		}
 	}
 });
@@ -166,10 +167,15 @@ router.get('/subscriptions', (req, res) => {
 			limit: 3,
 		},
 		function(err, subscriptions) {
-			console.log('subscriptions', subscriptions.data);
 			res.send(subscriptions.data);
 		}
 	);
+});
+router.get('/customer/plan', (req, res) => {
+	console.log('customer plan', req.body);
+	stripe.customers.retrieve(req.body.stripe, function(err, customer) {
+		res.send(customer);
+	});
 });
 
 // Cancel subscription route
