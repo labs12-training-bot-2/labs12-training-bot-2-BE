@@ -1,10 +1,10 @@
-//Dependencies
+// Dependencies
 const router = require("express").Router();
 
-//Models
-
+// Models
 const Users = require("../database/Helpers/user-model.js");
 
+// Routes
 router.post("/", async (req, res) => {
   const { email, name } = req.body;
 

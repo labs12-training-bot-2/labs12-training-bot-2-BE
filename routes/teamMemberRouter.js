@@ -5,7 +5,6 @@ const moment = require("moment");
 //Models
 const TeamMember = require("../database/Helpers/teamMember-model");
 const TrainingSeries = require("../database/Helpers/trainingSeries-model");
-//Middleware
 
 //Routes
 
@@ -19,7 +18,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-//GET a team member by teamMemberId
+// GET a team member by teamMemberId
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,7 +65,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-//PUT team member information
+// PUT team member information
 router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -77,7 +76,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-//DELETE a team member
+// DELETE a team member
 router.delete("/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -103,18 +102,20 @@ router.post("/:id/training-series", async (req, res) => {
     } else {
       req.body.teamMember_ID = id;
 
-      // nest try catch - to check if team member exists?
+      // STILL NEEDED: nest another try catch - to check if team member exists
+
+      //assign member to training series, return information
       const assignment = await TeamMember.addToTrainingSeries(req.body);
 
-      // get teamMember by ID
+      // get teamMember info by ID
       const member = await TeamMember.findById(id);
 
-      // need to get all the posts for the training series
+      // get all the posts for the training series assigned
       const posts = await TrainingSeries.getTrainingSeriesPosts(
         trainingSeries_ID
       );
 
-      // send all the posts to the Notifications table and convert the integer of Post.startFromDate into a date using
+      // convert the integer of Post.daysFromStart into a date using, assemble obj to send to Notifications table
       const formattedPosts = posts.map(post => {
         return {
           postName: post.postName,
@@ -130,15 +131,10 @@ router.post("/:id/training-series", async (req, res) => {
         };
       });
 
-      console.log(formattedPosts);
-      
       // add each returned object to Notifications table
-      formattedPosts.forEach(async obj => await TeamMember.addToNotificationsTable(obj))
-
-      // need to get all the posts for the training series
-
-      // send all the posts to the Notifications table and convert the integer of Post.startFromDate into a date using moment.js (use forEach)
-      // colums are sendDate, postName, postDetails, link, phoneNumber, email, firstName, lastName (name is nullable)
+      formattedPosts.forEach(
+        async obj => await TeamMember.addToNotificationsTable(obj)
+      );
 
       res.status(201).json({
         message: "The team member has been assigned to the training series."
@@ -174,6 +170,7 @@ router.put("/:id/training-series/:ts_id", async (req, res) => {
   }
 });
 
+// Remove team member from a training series
 router.delete("/:id/training-series/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;

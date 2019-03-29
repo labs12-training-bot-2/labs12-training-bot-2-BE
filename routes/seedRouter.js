@@ -1,4 +1,4 @@
-//Dependencies
+// Dependencies
 const router = require("express").Router();
 
 const {
@@ -8,8 +8,7 @@ const {
   createFakePosts
 } = require("../database/seeds/fakeData");
 
-//Models
-
+// Models
 const TeamMember = require("../database/Helpers/teamMember-model"),
   Users = require("../database/Helpers/user-model"),
   TrainingSeries = require("../database/Helpers/trainingSeries-model"),
