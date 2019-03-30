@@ -4,107 +4,120 @@ const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
 
 const Users = require('../database/Helpers/user-model.js');
 
-// stripe.charges.retrieve('ch_1EHzLXChlDwQi04Iono5543P', {
-// 	api_key: 'sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw',
-// });
+async function subscribe(stripeID, userID, plan) {
+	try {
+		// let subID;
+		let subID = await stripe.customers.retrieve(stripeID);
+		console.log('subID', subID);
 
-function subscribe(stripeID, userID, plan) {
-	stripe.customers.retrieve(stripeID, function(err, customer) {
-		let subID = customer.subscriptions.data;
-		console.log(subID.length);
-		if (subID.length < 1) {
-			console.log('if');
-			stripe.subscriptions.create(
-				{
-					customer: stripeID,
-					items: [
-						{
-							plan: plan,
-						},
-					],
-				},
+		if (subID.subscriptions.total_count === 0) {
+			let sub = await stripe.subscriptions.create(
+				{ customer: stripeID, items: [{ plan: plan }] },
 				function(err, subscription) {
-					// console.log('plan', plan);
-					// asynchronously called
-					let id;
-					if (plan === 'plan_EmJaXZor4Ef3co') {
-						id = 3;
-					} else if (plan === 'plan_EmJallrSdkqpPS') {
-						id = 2;
-					}
-					let changes = { accountTypeID: id };
-					console.log(changes);
-					// updates accountTypeID for the user in the database
-					Users.updateUser(userID, changes);
-					// return subscription;
+					console.log('subscription', subscription);
+					return subscription;
 				}
 			);
+			console.log('sub', sub);
 		} else {
-			console.log('else');
-			subID = customer.subscriptions.data[0].id;
-			stripe.subscriptions.del(subID, function(err, confirmation) {
-				// asynchronously called
-				stripe.subscriptions.create(
+			subID = subID.subscriptions.data[0].id;
+			let cancelled = await stripe.subscriptions.del(subID);
+			let sub = await stripe.subscriptions.create({
+				customer: stripeID,
+				items: [
 					{
-						customer: stripeID,
-						items: [
-							{
-								plan: plan,
-							},
-						],
+						plan: plan,
 					},
-					function(err, subscription) {
-						// console.log('plan', plan);
-						// asynchronously called
-						let id;
-						if (plan === 'plan_EmJaXZor4Ef3co') {
-							id = 3;
-						} else if (plan === 'plan_EmJallrSdkqpPS') {
-							id = 2;
-						}
-						let changes = { accountTypeID: id };
-						console.log(changes);
-
-						// updates accountTypeID for the user in the database
-						Users.updateUser(userID, changes);
-						// return subscription;
-					}
-				);
+				],
 			});
+			if (sub) {
+				let id;
+				if (plan === 'plan_EmJaXZor4Ef3co') {
+					id = 3;
+				} else if (plan === 'plan_EmJallrSdkqpPS') {
+					id = 2;
+				}
+				let changes = { accountTypeID: id };
+				Users.updateUser(userID, changes);
+				return id;
+			}
 		}
-	});
+	} catch (error) {
+		console.log('error', error);
+	}
 }
 const unsubscribe = async (stripeID, userID) => {
-	return await stripe.customers.retrieve(stripeID, async function(err, customer) {
-		// asynchronously called
-		let subID = customer.subscriptions.data[0].id; //Gets the one subscription ID the customer can have
+	try {
+		return await stripe.customers.retrieve(stripeID, async function(err, customer) {
+			// asynchronously called
+			let subID = customer.subscriptions.data[0].id; //Gets the one subscription ID the customer can have
 
-		// API for removing subscription
-		let confirmation = await stripe.subscriptions.del(subID);
-		// need to add back in the update to accountID in database. Would prefer it to be handled by the actions though
-		console.log('confirmation', confirmation);
-		return 1;
-	});
+			// API for removing subscription
+			let confirmation = await stripe.subscriptions.del(subID);
+			// need to add back in the update to accountID in database. Would prefer it to be handled by the actions though
+			console.log('confirmation', confirmation);
+			return 1;
+		});
+	} catch (error) {
+		console.log(error);
+	}
 };
-function registerSubscribe(name, email, token, userID) {
-	// API for creating a customer in Stripe's system
-	stripe.customers.create(
-		{
+async function registerSubscribe(name, email, token, userID, plan) {
+	// not currently updating the store with the new account typeid
+	try {
+		let customer = await stripe.customers.create({
 			description: name,
 			email: email,
 			source: token, // obtained with Stripe.js
-		},
-		function(err, customer) {
-			// asynchronously called
-			// add strip user_id to the database
-			const changes = { stripe: customer.id };
-			Users.updateUser(userID, changes);
+		});
 
-			// calls subscribe function to subsribe the user
-			let sub = subscribe(customer.id, userID);
-			return sub;
+		const changes = { stripe: customer.id };
+		Users.updateUser(userID, changes);
+
+		let sub = await stripe.subscriptions.create({
+			customer: customer.id,
+			items: [
+				{
+					plan: plan,
+				},
+			],
+		});
+		if (sub) {
+			let id;
+			if (plan === 'plan_EmJaXZor4Ef3co') {
+				id = 3;
+			} else if (plan === 'plan_EmJallrSdkqpPS') {
+				id = 2;
+			}
+			let changes = { accountTypeID: id };
+			Users.updateUser(userID, changes);
+			return id;
 		}
-	);
+
+		return { stripe: customer.id, subscription: sub };
+	} catch (error) {
+		console.log(error);
+	}
+
+	///////====================
+	// API for creating a customer in Stripe's system
+	// stripe.customers.create(
+	// 	{
+	// 		description: name,
+	// 		email: email,
+	// 		source: token, // obtained with Stripe.js
+	// 	},
+	// 	function(err, customer) {
+	// 		// asynchronously called
+	// 		// add strip user_id to the database
+	// 		const changes = { stripe: customer.id };
+	// 		Users.updateUser(userID, changes);
+
+	// 		// calls subscribe function to subsribe the user
+	// 		let sub = subscribe(customer.id, userID);
+	// 		return sub;
+	// 	}
+	// );
 }
 
 router.post('/', async (req, res) => {
@@ -114,7 +127,7 @@ router.post('/', async (req, res) => {
 			console.log('Subscribe Only');
 
 			// calls subscribe function to subsribe the user
-			let sub = subscribe(stripe, userID, plan);
+			let sub = await subscribe(stripe, userID, plan);
 			res.status(200).json(sub);
 		} catch (err) {
 			res.status(500).end();
@@ -125,6 +138,7 @@ router.post('/', async (req, res) => {
 
 			// calls registerSubscribe function to register and then subsribe the user to the plan
 			let sub = registerSubscribe(name, email, token, userID, plan);
+			console.log('sub', sub);
 			res.status(200).json(sub);
 		} catch (err) {
 			res.status(500).end();
@@ -138,8 +152,10 @@ router.post('/unsubscribe', async (req, res) => {
 	if (stripe) {
 		try {
 			let res = unsubscribe(stripe, userID);
-			console.log(res);
-			res.send(res);
+			let changes = { accountTypeID: 1 };
+			Users.updateUser(userID, changes);
+
+			res.send(1);
 		} catch (err) {
 			res.send(err);
 		}
