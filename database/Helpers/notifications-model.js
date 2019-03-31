@@ -4,7 +4,8 @@ module.exports = {
   getDailyTextNotifications,
   getDailyEmailNotifications,
   updateNotificationContent,
-  updateNotificationMember
+  updateNotificationMember,
+  getNotificationByPostId
 };
 
 function getDailyTextNotifications(day) {
@@ -17,6 +18,11 @@ function getDailyEmailNotifications(day) {
   return db('Notifications')
     .select('email', 'postName', 'postDetails', 'link', 'firstName', 'lastName')
     .where({ sendDate: day });
+}
+
+function getNotificationByPostId(id) {
+  return db('Notifications')
+    .where({ postID: id });
 }
 
 function updateNotificationContent(id, postContent) {
