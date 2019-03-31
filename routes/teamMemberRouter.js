@@ -128,7 +128,9 @@ router.post("/:id/training-series", async (req, res) => {
           phoneNumber: member.phoneNumber,
           email: member.email,
           firstName: member.firstName,
-          lastName: member.lastName
+          lastName: member.lastName,
+          postID: post.postID,
+          teamMemberID: member.teamMemberID
         };
       });
 
