@@ -18,7 +18,8 @@ const gatherEmailNotification = () => {
     run: async () => {
       const notifications = await getDailyEmailNotifications(today);
 
-      sendEmailNotifications(notifications);
+      // sendEmailNotifications(notifications);
+      console.log(notifications);
     }
   };
 };

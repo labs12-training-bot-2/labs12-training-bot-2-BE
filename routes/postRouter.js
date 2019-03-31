@@ -3,6 +3,7 @@ const router = require('express').Router();
 
 // Models
 const Posts = require('../database/Helpers/post-model')
+const Notifications = require('../database/Helpers/notifications-model')
 
 // Routes
 // POST a new post
@@ -26,6 +27,7 @@ router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const updatedPost = await Posts.update(id, req.body);
+    await Notifications.updateNotificationContent(id, req.body);
     res.status(200).json({ updatedPost })
   } catch (err) {
     res.status(500).json(err);

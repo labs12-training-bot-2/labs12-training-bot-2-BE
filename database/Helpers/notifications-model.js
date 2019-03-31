@@ -2,7 +2,9 @@ const db = require('../dbConfig.js');
 
 module.exports = {
   getDailyTextNotifications,
-  getDailyEmailNotifications
+  getDailyEmailNotifications,
+  updateNotificationContent,
+  updateNotificationMember
 };
 
 function getDailyTextNotifications(day) {
@@ -17,10 +19,19 @@ function getDailyEmailNotifications(day) {
     .where({ sendDate: day });
 }
 
-function updateNotifications() {
-  // user updates sendDate on a post
+function updateNotificationContent(id, postContent) {
+  // update post information on notification
+  return db('Notifications')
+    .where({ postID: id })
+    .update(postContent);
   // update matching post with new date
   // if multiple team members in system, this will have to update all matching posts with new date
+}
+
+function updateNotificationMember(id, memberInformation) {
+  return db('Notifications')
+    .where({ teamMemberID: id })
+    .update(memberInformation);
 }
 
 function deleteNotification() {
