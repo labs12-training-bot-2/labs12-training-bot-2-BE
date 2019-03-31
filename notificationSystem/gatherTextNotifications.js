@@ -16,8 +16,8 @@ const gatherTextNotifications = () => {
   return {
     run: async () => {
       const notifications = await getDailyTextNotifications(today);
-      // sendTextNotifications(notifications);
-      console.log(notifications);
+      sendTextNotifications(notifications);
+      // console.log(notifications);
     }
   };
 };
