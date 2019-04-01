@@ -158,37 +158,12 @@ router.post("/assign", async (req, res) => {
   }
 });
 
-//Update a team member's training series start date (this route will not update the training series to which they are assigned)
-router.put("/:id/training-series/:ts_id", async (req, res) => {
-  try {
-    const { id, ts_id } = req.params;
-    const { startDate } = req.body;
-
-    if (!startDate) {
-      res.status(400).json({ message: "Client must provide all fields" });
-    } else {
-      const updates = await TeamMember.updateTrainingSeriesStartDate(
-        id,
-        ts_id,
-        startDate
-      );
-      console.log("updates", updates);
-      res.status(200).json({
-        message: "Successfully updated team member's start date",
-        updates
-      });
-    }
-  } catch (err) {
-    res.status(500).json({ message: "A network error occurred" });
-  }
-});
-
 // Remove team member from a training series
-router.delete("/:id/training-series/:ts_id", async (req, res) => {
+router.delete("/:id/assign/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;
     const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
-    console.log("deleted", deleted);
+
     if (deleted > 0) {
       res.status(200).json({ message: "The resource has been deleted." });
     } else {
