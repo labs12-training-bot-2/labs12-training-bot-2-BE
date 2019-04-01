@@ -23,9 +23,10 @@ async function subscribe(stripeID, plan) {
 }
 
 // pass in subscription ID
-async function unsubscribe(userID, stripe) {
+async function unsubscribe(userID, stripeID, plan) {
 	try {
-		let customer = await getStripeUser(stripe);
+		let customer = await getStripeUser(stripeID);
+		console.log('unsubscribe customer', customer.subscriptions.data[0].id);
 		let subID = customer.subscriptions.data[0].id;
 		await stripe.subscriptions.del(subID);
 		updateUserAccountType(userID, plan);
@@ -51,7 +52,6 @@ async function register(email) {
 }
 
 function updateUserAccountType(userID, plan) {
-	console.log('update user account', plan);
 	let accountTypeID;
 	if (plan === 'plan_EmJallrSdkqpPS') {
 		accountTypeID = 2;
@@ -60,8 +60,7 @@ function updateUserAccountType(userID, plan) {
 	} else {
 		accountTypeID = 1;
 	}
-	console.log('accountTypeID', accountTypeID);
-
+	console.log('AccountTypeID', accountTypeID);
 	Users.updateUser(userID, { accountTypeID: accountTypeID });
 }
 
@@ -76,10 +75,7 @@ router.post('/', async (req, res) => {
 				updateUserAccountType(userID, plan);
 				res.status(200).json(subscription);
 			} else {
-				let subID = customer.subscriptions.data[0].id;
-				console.log('subID', subID);
-				await unsubscribe(userID, subID);
-				updateUserAccountType(userID, plan);
+				await unsubscribe(userID, stripe);
 				let subscription = await subscribe(stripe, plan);
 				updateUserAccountType(userID, plan);
 
@@ -91,9 +87,13 @@ router.post('/', async (req, res) => {
 		}
 	} else {
 		try {
-			let sub = register(email, token);
+			let customer = await register(email, token);
+			let stripe = customer.id;
+			let subscription = await subscribe(stripe, plan);
+			updateUserAccountType(userID, plan);
+			res.status(200).json(subscription);
 
-			res.status(200).json(sub);
+			res.status(200).json(customer);
 		} catch (err) {
 			res.status(500).end();
 		}
@@ -105,11 +105,10 @@ router.post('/unsubscribe', async (req, res) => {
 	// console.log('req body', req.body);
 	if (stripe) {
 		try {
-			let res = unsubscribe(stripe, userID);
-			let changes = { accountTypeID: 1 };
-			Users.updateUser(userID, changes);
+			let res = unsubscribe(userID, stripe);
+			updateUserAccountType(userID);
 
-			res.send(1);
+			res.status(404);
 		} catch (err) {
 			res.send(err);
 		}
