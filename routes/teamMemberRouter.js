@@ -92,15 +92,22 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Assign a team member to a training series with a start date
+// Assigns one or multiple team members to training series with the same start date
 router.post("/assign", async (req, res) => {
   try {
     // store array of objects in a new variable
-    const incomingAssignments = req.body;
+    const { startDate } = req.body;
+    const incomingAssignments = req.body.assignments;
+
+    if (!startDate) {
+      return res.status(400).json({error: "Start date required."})
+    };
 
     // for each object in array, perform a series of tasks
     incomingAssignments.forEach(async assignment => {
       try {
+        assignment.startDate = startDate;
+
         // 1. assign member to training series, return information
         await TeamMember.addToTrainingSeries(assignment);
 
