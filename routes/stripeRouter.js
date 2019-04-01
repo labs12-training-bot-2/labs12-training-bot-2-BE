@@ -35,17 +35,15 @@ async function unsubscribe(userID, stripeID, plan) {
 	}
 }
 
-async function register(email) {
+async function register(userID, name, email, token) {
 	try {
-		await stripe.customers.create(
-			{
-				description: email,
-				source: token, // obtained with Stripe.js
-			},
-			function(err, customer) {
-				// asynchronously called
-			}
-		);
+		let customer = await stripe.customers.create({
+			description: name,
+			email: email,
+			source: token, // obtained with Stripe.js
+		});
+		Users.updateUser(userID, { stripe: customer.id });
+		return customer;
 	} catch (error) {
 		console.log(error);
 	}
@@ -87,16 +85,33 @@ router.post('/', async (req, res) => {
 		}
 	} else {
 		try {
-			let customer = await register(email, token);
+			let customer = await register(userID, name, email, token);
 			let stripe = customer.id;
-			let subscription = await subscribe(stripe, plan);
+			await subscribe(stripe, plan);
 			updateUserAccountType(userID, plan);
-			res.status(200).json(subscription);
 
-			res.status(200).json(customer);
+			console.log(customer);
+			res.send(customer);
 		} catch (err) {
 			res.status(500).end();
 		}
+	}
+});
+router.post('/register', async (req, res) => {
+	console.log('register');
+	const { token, name, email, userID, plan } = req.body;
+
+	try {
+		let customer = await register(userID, name, email, token);
+		let stripe = customer.id;
+		await subscribe(stripe, plan);
+		customer = await getStripeUser(customer.id);
+		updateUserAccountType(userID, plan);
+
+		console.log('customer', customer);
+		res.send(customer);
+	} catch (err) {
+		res.status(500).end();
 	}
 });
 
