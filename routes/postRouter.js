@@ -1,8 +1,10 @@
 // Dependencies 
 const router = require('express').Router();
+const moment = require('moment');
 
 // Models
 const Posts = require('../database/Helpers/post-model')
+const Notifications = require('../database/Helpers/notifications-model')
 
 // Routes
 // POST a new post
@@ -25,7 +27,23 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    const updatedPost = await Posts.update(id, req.body);
+    const incomingPostUpdate = req.body;
+    const updatedPost = await Posts.update(id, incomingPostUpdate);
+
+    // get notification to update by post id
+    const notificationToUpdate = await Notifications.getNotificationByPostId(id);
+
+    // calculate new send date for notification
+    const newSendDate = moment(notificationToUpdate.startDate)
+      .add(incomingPostUpdate.daysFromStart, "days")
+      .format()
+
+    // create updated notification, including new send date if daysFromStart changed
+    const updatedNotification = { ...incomingPostUpdate, sendDate: newSendDate }
+
+    // update notifications
+    await Notifications.updateNotificationContent(id, updatedNotification);
+
     res.status(200).json({ updatedPost })
   } catch (err) {
     res.status(500).json(err);
