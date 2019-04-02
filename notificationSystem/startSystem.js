@@ -4,7 +4,7 @@ const gatherTextNotifications = require('./gatherTextNotifications');
 const gatherEmailNotifications = require('./gatherEmailNotifications');
 
 // node-cron start function for notification system
-const notificationSystem = function() {
+const notificationSystem = function () {
   return {
     start: () => {
       new CronJob(
@@ -13,7 +13,7 @@ const notificationSystem = function() {
         // * === first to last
         // runs on  Coordinated Universal Time (UTC)
         // '00 * * * * *', // 1 minute interval for testing notification system.
-        function() {
+        function () {
           const currentTime = new Date();
           console.log('Run Notifications onTick:', currentTime);
           gatherTextNotifications.run();

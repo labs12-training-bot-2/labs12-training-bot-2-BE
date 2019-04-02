@@ -4,189 +4,186 @@ const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
 
 const Users = require('../database/Helpers/user-model.js');
 
-// stripe.charges.retrieve('ch_1EHzLXChlDwQi04Iono5543P', {
-// 	api_key: 'sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw',
-// });
-
-function subscribe(stripeID, userID, plan) {
-	stripe.customers.retrieve(stripeID, function(err, customer) {
-		let subID = customer.subscriptions.data;
-		console.log(subID.length);
-		if (subID.length < 1) {
-			console.log('if');
-			stripe.subscriptions.create(
-				{
-					customer: stripeID,
-					items: [
-						{
-							plan: plan,
-						},
-					],
-				},
-				function(err, subscription) {
-					// console.log('plan', plan);
-					// asynchronously called
-					let id;
-					if (plan === 'plan_EmJaXZor4Ef3co') {
-						id = 3;
-					} else if (plan === 'plan_EmJallrSdkqpPS') {
-						id = 2;
-					}
-					let changes = { accountTypeID: id };
-					console.log(changes);
-					// updates accountTypeID for the user in the database
-					Users.updateUser(userID, changes);
-					// return subscription;
-				}
-			);
-		} else {
-			console.log('else');
-			subID = customer.subscriptions.data[0].id;
-			stripe.subscriptions.del(subID, function(err, confirmation) {
-				// asynchronously called
-				stripe.subscriptions.create(
-					{
-						customer: stripeID,
-						items: [
-							{
-								plan: plan,
-							},
-						],
-					},
-					function(err, subscription) {
-						// console.log('plan', plan);
-						// asynchronously called
-						let id;
-						if (plan === 'plan_EmJaXZor4Ef3co') {
-							id = 3;
-						} else if (plan === 'plan_EmJallrSdkqpPS') {
-							id = 2;
-						}
-						let changes = { accountTypeID: id };
-						console.log(changes);
-
-						// updates accountTypeID for the user in the database
-						Users.updateUser(userID, changes);
-						// return subscription;
-					}
-				);
-			});
-		}
-	});
+// pass in stripeID
+async function getStripeUser(stripeID) {
+	try {
+		return await stripe.customers.retrieve(stripeID);
+	} catch (error) {
+		console.log(error);
+	}
 }
-function unsubscribe(stripeID, userID) {
-	stripe.customers.retrieve(stripeID, function(err, customer) {
-		// asynchronously called
-		let subID = customer.subscriptions.data[0].id; //Gets the one subscription ID the customer can have
 
-		// API for removing subscription
-		stripe.subscriptions.del(subID, function(err, confirmation) {
-			// asynchronously called
-			const changes = { accountTypeID: 1 };
-			// updates accountTypeID for the user in the database back to 1(free)
-			Users.updateUser(userID, changes);
-			return confirmation;
-		});
-	});
+// pass in stripeID and plan ID
+async function subscribe(stripeID, plan) {
+	try {
+		return await stripe.subscriptions.create({ customer: stripeID, items: [{ plan: plan }] });
+	} catch (error) {
+		console.log(error);
+	}
 }
-function registerSubscribe(name, email, token, userID) {
-	// API for creating a customer in Stripe's system
-	stripe.customers.create(
-		{
+
+// pass in subscription ID
+async function unsubscribe(userID, stripeID, plan) {
+	try {
+		let customer = await getStripeUser(stripeID);
+		console.log('unsubscribe customer', customer.subscriptions.data[0].id);
+		let subID = customer.subscriptions.data[0].id;
+		await stripe.subscriptions.del(subID);
+		updateUserAccountType(userID, plan);
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+async function register(userID, name, email, token) {
+	try {
+		let customer = await stripe.customers.create({
 			description: name,
 			email: email,
 			source: token, // obtained with Stripe.js
-		},
-		function(err, customer) {
-			// asynchronously called
-			// add strip user_id to the database
-			const changes = { stripe: customer.id };
-			Users.updateUser(userID, changes);
+		});
+		Users.updateUser(userID, { stripe: customer.id });
+		return customer;
+	} catch (error) {
+		console.log(error);
+	}
+}
 
-			// calls subscribe function to subsribe the user
-			let sub = subscribe(customer.id, userID);
-			return sub;
-		}
-	);
+function updateUserAccountType(userID, plan) {
+	let accountTypeID;
+	if (plan === 'plan_EmJallrSdkqpPS') {
+		accountTypeID = 2;
+	} else if (plan === 'plan_EmJaXZor4Ef3co') {
+		accountTypeID = 3;
+	} else {
+		accountTypeID = 1;
+	}
+	console.log('AccountTypeID', accountTypeID);
+	Users.updateUser(userID, { accountTypeID: accountTypeID });
 }
 
 router.post('/', async (req, res) => {
 	const { token, name, email, userID, stripe, plan } = req.body;
 	if (stripe) {
 		try {
-			console.log('Subscribe Only');
+			let customer = await getStripeUser(stripe);
 
-			// calls subscribe function to subsribe the user
-			let sub = subscribe(stripe, userID, plan);
-			res.status(200).json(sub);
+			if (customer.subscriptions.total_count === 0) {
+				let subscription = await subscribe(stripe, plan);
+				updateUserAccountType(userID, plan);
+				res.status(200).json(subscription);
+			} else {
+				await unsubscribe(userID, stripe);
+				let subscription = await subscribe(stripe, plan);
+				updateUserAccountType(userID, plan);
+
+				res.status(200).json(subscription);
+			}
 		} catch (err) {
+			console.log(err);
 			res.status(500).end();
 		}
 	} else {
 		try {
-			console.log('Register & Subscribe');
+			let customer = await register(userID, name, email, token);
+			let stripe = customer.id;
+			await subscribe(stripe, plan);
+			updateUserAccountType(userID, plan);
 
-			// calls registerSubscribe function to register and then subsribe the user to the plan
-			let sub = registerSubscribe(name, email, token, userID, plan);
-			res.status(200).json(sub);
+			console.log(customer);
+			res.send(customer);
 		} catch (err) {
 			res.status(500).end();
 		}
 	}
 });
+router.post('/register', async (req, res) => {
+	console.log('register');
+	const { token, name, email, userID, plan } = req.body;
+
+	try {
+		let customer = await register(userID, name, email, token);
+		let stripe = customer.id;
+		await subscribe(stripe, plan);
+		customer = await getStripeUser(customer.id);
+		updateUserAccountType(userID, plan);
+
+		console.log('customer', customer);
+		res.send(customer);
+	} catch (err) {
+		res.status(500).end();
+	}
+});
 
 router.post('/unsubscribe', async (req, res) => {
 	const { userID, stripe } = req.body;
-	console.log('req body', req.body);
+	// console.log('req body', req.body);
 	if (stripe) {
 		try {
-			let res = unsubscribe(stripe, userID);
-			console.log(res);
-			res.send(res);
+			let res = unsubscribe(userID, stripe);
+			updateUserAccountType(userID);
+
+			res.status(404);
 		} catch (err) {
 			res.send(err);
 		}
 	}
 });
 
-router.get('/plans', (req, res) => {
-	stripe.plans.list(
-		{
-			limit: 3,
-			product: 'prod_EmJZbRNGEjlOY4',
-		},
-		function(err, plans) {
-			// console.log('plans', plans.data);
-			res.send(plans.data);
-		}
-	);
+router.get('/plans', async (req, res) => {
+	try {
+		stripe.plans.list(
+			{
+				limit: 3,
+				product: 'prod_EmJZbRNGEjlOY4',
+			},
+			function(err, plans) {
+				// console.log('plans', plans.data);
+				res.send(plans.data);
+			}
+		);
+	} catch (error) {
+		console.log(error);
+	}
 });
-router.get('/subscriptions', (req, res) => {
-	stripe.subscriptions.list(
-		{
-			limit: 3,
-		},
-		function(err, subscriptions) {
-			res.send(subscriptions.data);
-		}
-	);
+router.get('/subscriptions', async (req, res) => {
+	try {
+		await stripe.subscriptions.list(
+			{
+				limit: 3,
+			},
+			function(err, subscriptions) {
+				res.send(subscriptions.data);
+			}
+		);
+	} catch (error) {
+		console.log(error);
+	}
 });
-router.get('/customer/plan', (req, res) => {
+router.get('/customer/plan', async (req, res) => {
 	console.log('customer plan', req.body);
-	stripe.customers.retrieve(req.body.stripe, function(err, customer) {
-		res.send(customer);
-	});
+	try {
+		await stripe.customers.retrieve(req.body.stripe, function(err, customer) {
+			res.send(customer);
+		});
+	} catch (error) {
+		console.log(error);
+	}
 });
 
 // Cancel subscription route
 
 router.post('/paymentintent', async (req, res) => {
-	const paymentIntent = await stripe.paymentIntents.create({
-		amount: 1099,
-		currency: 'usd',
-		payment_method_types: ['card'],
-	});
-	res.json({ paymentIntent });
+	try {
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount: 1099,
+			currency: 'usd',
+			payment_method_types: ['card'],
+		});
+		res.json({ paymentIntent });
+	} catch (error) {
+		console.log(error);
+	}
 });
 
 module.exports = router;
