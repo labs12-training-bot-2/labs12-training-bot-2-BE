@@ -133,7 +133,7 @@ router.post("/assign", async (req, res) => {
             postDetails: post.postDetails,
             link: post.link,
             daysFromStart: post.daysFromStart,
-            sendDate: moment(assignment.startDate)
+            sendDate: moment(startDate)
               .add(post.daysFromStart, "days")
               .format(),
             teamMemberID: member.teamMemberID,
