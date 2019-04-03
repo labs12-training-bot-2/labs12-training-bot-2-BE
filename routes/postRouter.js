@@ -16,6 +16,11 @@ router.post("/", async (req, res) => {
       res.status(400).json({ error: "Client must provide all fields." })
     } else {
       const newPost = await Posts.add(req.body);
+
+      // see if training series new post belongs to exists in Relational/Notifications table
+
+      // if it does, for each assignment per team member id, add the new post to the Notifications table with the proper send date
+      
       res.status(201).json({ newPost });
     }
   } catch (err) {
