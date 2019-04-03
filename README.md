@@ -36,8 +36,8 @@ Training bot allows managers of teams to send notifications to their teammates o
     -   [`/api/posts/:id`](#apipostsid)
     -   [`/api/team-members`](#apiteam-members)
     -   [`/api/team-members/:id`](#apiteam-membersid)
-    -   [`/api/team-members/:id/training-series`](#apiteam-membersidtraining-series)
-    -   [`/api/team-members/:id/training-series/:ts_id`](#apiteam-membersidtraining-seriestsid)
+    -   [`/api/team-members/assign`](#apiteam-membersidtraining-series)
+    -   [`/api/team-members/assign/:id`](#apiteam-membersidtraining-seriestsid)
     -   [`/api/stripe`](#apistripe)
     -   [`/api/stripe/unsubscribe`](#apistripeunsubscribe)
 
@@ -563,7 +563,7 @@ Structure of response:
 }
 ```
 
-## `/api/team-members/:id/training-series`
+## `/api/team-members/assign`
 
 **Method:** POST
 
@@ -571,8 +571,9 @@ Structure of request object:
 
 ```
 {
-    trainingSeries_ID: 2, // required
-    startDate: "2019-12-20" // required
+    trainingSeriesID: 2, // required
+    startDate: "2019-12-20", // required, date in ISO format (use .toISOString())
+    assignments: [51, 72, 123] // required, each index is a teamMemberID
 }
 ```
 
@@ -588,28 +589,7 @@ Structure of response:
 
 [Back to table of Contents](#table-of-contents)
 
-## `/api/team-members/:id/training-series/:ts_id`
-
-**Method:** PUT
-
-Structure of request object:
-
-```
-{
-    startDate: "2019-12-31" // required
-}
-```
-
-**HTTP Status:** 200 OK
-
-Structure of response:
-
-```
-{
-    message: "Successfully updated team member's start date",
-    updates
-}
-```
+## `/api/team-members/assign/:id`
 
 **Method:** DELETE
 
