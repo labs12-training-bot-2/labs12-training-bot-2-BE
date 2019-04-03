@@ -96,27 +96,33 @@ router.delete("/:id", async (req, res) => {
 router.post("/assign", async (req, res) => {
   try {
     // store array of objects in a new variable
-    const { startDate } = req.body;
+    const { startDate, trainingSeriesID } = req.body;
     const incomingAssignments = req.body.assignments;
 
-    if (!startDate) {
-      return res.status(400).json({error: "Start date required."})
+    if (!startDate || !trainingSeriesID) {
+      return res.status(400).json({error: "Start date and training series ID required."})
     };
 
     // for each object in array, perform a series of tasks
     incomingAssignments.forEach(async assignment => {
       try {
-        assignment.startDate = startDate;
 
+        const newObject = {
+          startDate: startDate,
+          trainingSeries_ID: trainingSeriesID,
+          teamMember_ID: assignment
+
+        }
+      
         // 1. assign member to training series, return information
-        await TeamMember.addToTrainingSeries(assignment);
+        await TeamMember.addToTrainingSeries(newObject);
 
         // 2. get team member info by ID
-        const member = await TeamMember.findById(assignment.teamMember_ID);
+        const member = await TeamMember.findById(newObject.teamMember_ID);
 
         // 3. get all the posts for the training series assigned
         const posts = await TrainingSeries.getTrainingSeriesPosts(
-          assignment.trainingSeries_ID
+          newObject.trainingSeries_ID
         );
 
         // 4. convert the integer of Post.daysFromStart into a date, assemble obj to send to Notifications table
@@ -127,7 +133,7 @@ router.post("/assign", async (req, res) => {
             postDetails: post.postDetails,
             link: post.link,
             daysFromStart: post.daysFromStart,
-            sendDate: moment(assignment.startDate)
+            sendDate: moment(startDate)
               .add(post.daysFromStart, "days")
               .format(),
             teamMemberID: member.teamMemberID,
