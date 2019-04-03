@@ -52,5 +52,10 @@ function addToExistingTrainingSeries() {
 }
 
 function getTrainingSeriesOfNewPost(id) {
-  return db("Notifications").where({ trainingSeriesID: id })
+  return db("Notifications")
+  .select("Notifications.teamMemberID", "Notifications.firstName", "Notifications.lastName", "Notifications.jobDescription", "Notifications.phoneNumber", "Notifications.email", "RelationalTable.startDate")
+  .join("RelationalTable", function() {
+    this.on("Notifications.teamMemberID", "RelationalTable.teamMember_ID").andOn("Notifications.trainingSeriesID", "RelationalTable.trainingSeries_ID")
+  })
+  .where({ trainingSeriesID: id }).groupBy("teamMemberID");
 }
