@@ -5,7 +5,8 @@ module.exports = {
   getDailyEmailNotifications,
   updateNotificationContent,
   updateNotificationMember,
-  getNotificationByPostId
+  getNotificationByPostId,
+  getTrainingSeriesOfNewPost
 };
 
 function getDailyTextNotifications(day) {
@@ -48,4 +49,8 @@ function deleteNotification() {
 function addToExistingTrainingSeries() {
   // when user adds a post to an existing training series with assigned team members
   // add post to notification table for each user
+}
+
+function getTrainingSeriesOfNewPost(id) {
+  return db("Notifications").where({ trainingSeriesID: id })
 }
