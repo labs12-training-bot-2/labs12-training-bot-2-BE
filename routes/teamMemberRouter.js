@@ -141,7 +141,8 @@ router.post("/assign", async (req, res) => {
             email: member.email,
             firstName: member.firstName,
             lastName: member.lastName,
-            jobDescription: member.jobDescription
+            jobDescription: member.jobDescription,
+            trainingSeriesID: trainingSeriesID
           };
         });
 
