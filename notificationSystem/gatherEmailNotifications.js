@@ -3,7 +3,8 @@ const moment = require('moment');
 
 // function imports
 const {
-  getDailyEmailNotifications
+  getDailyEmailNotifications,
+  asyncForEach
 } = require('../database/Helpers/notifications-model');
 
 const sendEmailNotifications = require('./sendEmailNotifications'); // write with sendgrid function
@@ -18,7 +19,7 @@ const gatherEmailNotification = () => {
     run: async () => {
       const notifications = await getDailyEmailNotifications(today);
 
-      sendEmailNotifications(notifications);
+      await asyncForEach(notifications, sendEmailNotifications);
     }
   };
 };
