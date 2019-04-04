@@ -2,6 +2,7 @@ const CronJob = require('cron').CronJob;
 
 const gatherTextNotifications = require('./gatherTextNotifications');
 const gatherEmailNotifications = require('./gatherEmailNotifications');
+const Notifications = require('../database/Helpers/notifications-model');
 
 // node-cron start function for notification system
 const notificationSystem = function() {
@@ -25,6 +26,32 @@ const notificationSystem = function() {
       );
       console.log('Notification System Instantiation');
       console.log(new Date());
+    },
+    resetCountOnFirstOfMonth: () => {
+      new CronJob(
+        // runs at midnight on first of every month
+        '00 00 00 01 * *',
+        async function() {
+          // reset notification count to 0 for all users
+          await Notifications.resetNotificationCount();
+          console.log('reset count triggered');
+        },
+        null,
+        true,
+        ''
+      );
+    },
+    clearOldNotifications: () => {
+      new CronJob(
+        // runs every night at midnight
+        '00 00 00 * * *',
+        async function() {
+          // helper function to clear old notifications
+        },
+        null,
+        true,
+        ''
+      );
     }
   };
 };

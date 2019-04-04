@@ -9,7 +9,8 @@ module.exports = {
   getTrainingSeriesOfNewPost,
   getUserNotificationCountData,
   increaseUserNotificationCount,
-  asyncForEach
+  asyncForEach,
+  resetNotificationCount
 };
 
 function getDailyTextNotifications(day) {
@@ -90,9 +91,16 @@ function increaseUserNotificationCount(id, count) {
     .update({ notificationCount: count });
 }
 
-// async function mimicing a forEach
+// async function mimicking a forEach
 async function asyncForEach(notifications, callback) {
   for (let i = 0; i < notifications.length; i++) {
     await callback(notifications[i]);
   }
+}
+
+// reset notification count at first of month for all users.
+function resetNotificationCount() {
+  return db('User')
+    .where('notificationCount', '>', 0)
+    .update({ notificationCount: 0 });
 }

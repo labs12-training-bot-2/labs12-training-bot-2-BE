@@ -1,7 +1,7 @@
 //Dependencies
 const express = require('express'),
-	helmet = require('helmet'),
-	cors = require('cors');
+  helmet = require('helmet'),
+  cors = require('cors');
 
 //Server to point to
 const server = express();
@@ -32,9 +32,10 @@ server.use('/api/stripe', stripeRouter);
 
 //Default Endpoints
 server.get('/', (req, res) => {
-	res.send('It works!');
+  res.send('It works!');
 });
 
+notificationSystem.resetCountOnFirstOfMonth();
 notificationSystem.start();
 
 module.exports = server;
