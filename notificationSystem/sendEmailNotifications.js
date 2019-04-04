@@ -2,11 +2,26 @@
 require('dotenv').config();
 
 const sgMail = require('@sendgrid/mail');
+const Notifications = require('../database/Helpers/notifications-model');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailNotifications = notifications => {
-  notifications.forEach(notification => {
+  notifications.forEach(async notification => {
+
+    const userCountData = await Notifications.getUserNotificationCountData(
+      notification.userID
+    );
+
+    if (userCountData.notificationCount < userCountData.maxNotificationCount) {
+
+      let newValue = userCountData.notificationCount + 1;
+
+      await Notifications.increaseUserNotificationCount(
+        notification.userID,
+        newValue
+      );
+
     const options = {
       to: `${notification.email}`,
       from: 'trainingbotlabs11@gmail.com',
@@ -238,7 +253,8 @@ const sendEmailNotifications = notifications => {
       `
     };
 
-    sgMail.send(options);
+    // sgMail.send(options);
+  }
   });
 };
 

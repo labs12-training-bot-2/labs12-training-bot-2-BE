@@ -5,7 +5,7 @@ const moment = require('moment');
 const {
   getDailyTextNotifications
 } = require('../database/Helpers/notifications-model');
-const sendTextNotifications = require('./sendTextNotifications');
+const {sendTextNotifications, asyncForEach} = require('./sendTextNotifications');
 
 // format moment variable for query
 const today = moment().format('YYYY-MM-D');
@@ -16,7 +16,8 @@ const gatherTextNotifications = () => {
   return {
     run: async () => {
       const notifications = await getDailyTextNotifications(today);
-      sendTextNotifications(notifications);
+    
+      await asyncForEach(notifications, sendTextNotifications);
     }
   };
 };
