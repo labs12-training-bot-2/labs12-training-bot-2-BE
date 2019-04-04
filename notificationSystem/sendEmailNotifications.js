@@ -1,31 +1,30 @@
 // using SendGrid's v3 Node.js Library
-require("dotenv").config();
+require('dotenv').config();
 
-const sgMail = require("@sendgrid/mail");
-const Notifications = require("../database/Helpers/notifications-model");
+const sgMail = require('@sendgrid/mail');
+const Notifications = require('../database/Helpers/notifications-model');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // 4/3/19, Leigh-Ann: This function may need reworking based on edits to sendTextNotifications
-const sendEmailNotifications = notifications => {
-  notifications.forEach(async notification => {
-    const userCountData = await Notifications.getUserNotificationCountData(
-      notification.userID
-    );
+async function sendEmailNotifications(notification) {
+  const userCountData = await Notifications.getUserNotificationCountData(
+    notification.userID
+  );
+  console.log('userCountData', userCountData);
 
-    if (userCountData.notificationCount < userCountData.maxNotificationCount) {
-      let newValue = userCountData.notificationCount + 1;
+  // compare User.notificationCount to accountType.maxNotificationCount
+  if (userCountData.notificationCount < userCountData.maxNotificationCount) {
+    // if less than, continue sending messages and increase notification count by 1
+    let newValue = userCountData.notificationCount + 1;
+    console.log('newValue', newValue);
 
-      await Notifications.increaseUserNotificationCount(
-        notification.userID,
-        newValue
-      );
-
-      const options = {
-        to: `${notification.email}`,
-        from: "trainingbotlabs11@gmail.com",
-        subject: `${notification.postName} - A Reminder from Training Bot `,
-        html: `
+    // Create options to send the email
+    const options = {
+      to: `${notification.email}`,
+      from: 'trainingbotlabs11@gmail.com',
+      subject: `${notification.postName} - A Reminder from Training Bot `,
+      html: `
       <head>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -250,11 +249,15 @@ const sendEmailNotifications = notifications => {
       </table>
       </body>
       `
-      };
-
-      sgMail.send(options);
-    }
-  });
-};
+    };
+    // Send the email!
+    sgMail.send(options);
+    // send updated notificationCount to the database
+    await Notifications.increaseUserNotificationCount(
+      notification.userID,
+      newValue
+    );
+  }
+}
 
 module.exports = sendEmailNotifications;
