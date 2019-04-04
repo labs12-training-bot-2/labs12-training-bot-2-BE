@@ -26,13 +26,19 @@ async function sendTextNotifications(notification) {
   const userCountData = await Notifications.getUserNotificationCountData(
     notification.userID
   );
-  console.log('userCountData', userCountData);
+  console.log(
+    'From text: ',
+    'userID',
+    notification.userID,
+    'userCountData',
+    userCountData
+  );
 
   // compare User.notificationCount to accountType.maxNotificationCount
   if (userCountData.notificationCount < userCountData.maxNotificationCount) {
     // if less than, continue sending messages and increase notification count by 1
     let newValue = (await userCountData.notificationCount) + 1;
-    console.log('newValue', newValue);
+    console.log('From text: ', 'newValue', newValue);
 
     // Create options to send the message
     const options = {

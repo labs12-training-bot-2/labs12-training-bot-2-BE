@@ -13,11 +13,11 @@ const notificationSystem = function() {
         // * === first to last
         // runs on  Coordinated Universal Time (UTC)
         '00 * * * * *', // 1 minute interval for testing notification system.
-        function() {
+        async function() {
           const currentTime = new Date();
           console.log('Run Notifications onTick:', currentTime);
-          gatherTextNotifications.run();
-          gatherEmailNotifications.run();
+          await gatherTextNotifications.run();
+          await gatherEmailNotifications.run();
         },
         null,
         true,

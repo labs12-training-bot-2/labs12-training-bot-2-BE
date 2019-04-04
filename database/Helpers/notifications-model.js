@@ -74,7 +74,11 @@ function getTrainingSeriesOfNewPost(id) {
 
 function getUserNotificationCountData(id) {
   return db('User')
-    .select('User.notificationCount', 'accountType.maxNotificationCount')
+    .select(
+      'User.notificationCount',
+      'accountType.maxNotificationCount',
+      'User.userID'
+    )
     .join('accountType', 'User.accountTypeID', 'accountType.accountTypeID')
     .where({ userID: id })
     .first();
