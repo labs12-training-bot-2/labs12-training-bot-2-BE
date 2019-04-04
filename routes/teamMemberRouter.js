@@ -141,11 +141,14 @@ router.post("/assign", async (req, res) => {
             email: member.email,
             firstName: member.firstName,
             lastName: member.lastName,
-            jobDescription: member.jobDescription
+            jobDescription: member.jobDescription,
+            trainingSeriesID: trainingSeriesID,
+            userID: member.user_ID
           };
         });
 
         // 5. add each returned object to Notifications table
+        // increase User.notificationCount forEach notification
         formattedPosts.forEach(
           async obj => await TeamMember.addToNotificationsTable(obj)
         );

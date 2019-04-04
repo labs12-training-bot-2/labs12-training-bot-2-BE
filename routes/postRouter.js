@@ -5,6 +5,7 @@ const moment = require('moment');
 // Models
 const Posts = require('../database/Helpers/post-model')
 const Notifications = require('../database/Helpers/notifications-model')
+const TeamMember = require('../database/Helpers/teamMember-model');
 
 // Routes
 // POST a new post
@@ -15,7 +16,40 @@ router.post("/", async (req, res) => {
     if (!postName || !postDetails || !link || !daysFromStart || !trainingSeriesID) {
       res.status(400).json({ error: "Client must provide all fields." })
     } else {
+      // add new post to database
       const newPost = await Posts.add(req.body);
+
+      // see if the training series the new post belongs to exists in Notifications table
+      const rows = await Notifications.getTrainingSeriesOfNewPost(trainingSeriesID);
+      
+      
+      // if it does, for each assignment per team member id, assemble a new object to be inserted to the notifications table with the new post information
+        if (rows.length > 0) {
+
+        const entriesToInsert = rows.map(row => {
+          return {
+            postID: newPost.postID,
+            postName: newPost.postName,
+            postDetails: newPost.postDetails,
+            link: newPost.link,
+            daysFromStart: newPost.daysFromStart,
+            sendDate: moment(row.startDate)
+            .add(newPost.daysFromStart, "days")
+            .format(),
+            firstName: row.firstName,
+            lastName: row.lastName,
+            teamMemberID: row.teamMemberID,
+            jobDescription: row.jobDescription,
+            phoneNumber: row.phoneNumber,
+            email: row.email,
+            trainingSeriesID: newPost.trainingSeriesID
+          }
+        })
+        
+        // for each new object, insert it into the notifications table
+        entriesToInsert.forEach(async entry => await TeamMember.addToNotificationsTable(entry));
+      }
+
       res.status(201).json({ newPost });
     }
   } catch (err) {

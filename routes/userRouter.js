@@ -35,7 +35,6 @@ router.get("/:id", async (req, res) => {
       const posts = await Users.getUserPosts(id);
 
       const members = await TeamMembers.findBy({ user_ID: id });
-      console.log(members);
 
       const userInfo = {
         ...user,
