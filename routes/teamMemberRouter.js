@@ -172,7 +172,7 @@ router.delete("/:id/assign/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;
     const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
-
+    console.log("deleted", deleted);
     if (deleted > 0) {
       res.status(200).json({ message: "The resource has been deleted." });
     } else {
