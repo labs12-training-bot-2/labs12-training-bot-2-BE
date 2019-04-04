@@ -11,19 +11,11 @@ async function sendEmailNotifications(notification) {
   const userCountData = await Notifications.getUserNotificationCountData(
     notification.userID
   );
-  console.log(
-    'From email: ',
-    'userID',
-    notification.userID,
-    'userCountData',
-    userCountData
-  );
 
   // compare User.notificationCount to accountType.maxNotificationCount
   if (userCountData.notificationCount < userCountData.maxNotificationCount) {
     // if less than, continue sending messages and increase notification count by 1
     let newValue = userCountData.notificationCount + 1;
-    console.log('From email: ', 'newValue', newValue);
 
     // Create options to send the email
     const options = {
