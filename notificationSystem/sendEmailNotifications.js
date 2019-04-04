@@ -1,17 +1,31 @@
 // using SendGrid's v3 Node.js Library
-require('dotenv').config();
+require("dotenv").config();
 
-const sgMail = require('@sendgrid/mail');
+const sgMail = require("@sendgrid/mail");
+const Notifications = require("../database/Helpers/notifications-model");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+// 4/3/19, Leigh-Ann: This function may need reworking based on edits to sendTextNotifications
 const sendEmailNotifications = notifications => {
-  notifications.forEach(notification => {
-    const options = {
-      to: `${notification.email}`,
-      from: 'trainingbotlabs11@gmail.com',
-      subject: `${notification.postName} - A Reminder from Training Bot `,
-      html: `
+  notifications.forEach(async notification => {
+    const userCountData = await Notifications.getUserNotificationCountData(
+      notification.userID
+    );
+
+    if (userCountData.notificationCount < userCountData.maxNotificationCount) {
+      let newValue = userCountData.notificationCount + 1;
+
+      await Notifications.increaseUserNotificationCount(
+        notification.userID,
+        newValue
+      );
+
+      const options = {
+        to: `${notification.email}`,
+        from: "trainingbotlabs11@gmail.com",
+        subject: `${notification.postName} - A Reminder from Training Bot `,
+        html: `
       <head>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -236,9 +250,10 @@ const sendEmailNotifications = notifications => {
       </table>
       </body>
       `
-    };
+      };
 
-    sgMail.send(options);
+      sgMail.send(options);
+    }
   });
 };
 

@@ -1,4 +1,4 @@
-const db = require('../dbConfig.js');
+const db = require("../dbConfig.js");
 
 module.exports = {
   getDailyTextNotifications,
@@ -6,56 +6,71 @@ module.exports = {
   updateNotificationContent,
   updateNotificationMember,
   getNotificationByPostId,
-  getTrainingSeriesOfNewPost
+  getTrainingSeriesOfNewPost,
+  getUserNotificationCountData,
+  increaseUserNotificationCount
 };
 
 function getDailyTextNotifications(day) {
-  return db('Notifications')
-    .select('phoneNumber', 'postName', 'postDetails', 'link')
+  return db("Notifications")
+    .select("phoneNumber", "postName", "postDetails", "link", "userID")
     .where({ sendDate: day });
 }
 
 function getDailyEmailNotifications(day) {
-  return db('Notifications')
-    .select('email', 'postName', 'postDetails', 'link', 'firstName', 'lastName')
+  return db("Notifications")
+    .select("email", "postName", "postDetails", "link", "firstName", "lastName", "userID")
     .where({ sendDate: day });
 }
 
 function getNotificationByPostId(id) {
-  return db('Notifications')
-    .where({ postID: id });
+  return db("Notifications").where({ postID: id });
 }
 
 function updateNotificationContent(id, postContent) {
-  // update post information on notification
-  return db('Notifications')
+  return db("Notifications")
     .where({ postID: id })
     .update(postContent);
-  // update matching post with new date
-  // if multiple team members in system, this will have to update all matching posts with new date
 }
 
 function updateNotificationMember(id, memberInformation) {
-  return db('Notifications')
+  return db("Notifications")
     .where({ teamMemberID: id })
     .update(memberInformation);
 }
 
-function deleteNotification() {
-  // when user deletes a post
-  // delete matching posts from notification table
-}
-
-function addToExistingTrainingSeries() {
-  // when user adds a post to an existing training series with assigned team members
-  // add post to notification table for each user
-}
-
 function getTrainingSeriesOfNewPost(id) {
   return db("Notifications")
-  .select("Notifications.teamMemberID", "Notifications.firstName", "Notifications.lastName", "Notifications.jobDescription", "Notifications.phoneNumber", "Notifications.email", "RelationalTable.startDate")
-  .join("RelationalTable", function() {
-    this.on("Notifications.teamMemberID", "RelationalTable.teamMember_ID").andOn("Notifications.trainingSeriesID", "RelationalTable.trainingSeries_ID")
-  })
-  .where({ trainingSeriesID: id }).groupBy("teamMemberID");
+    .select(
+      "Notifications.teamMemberID",
+      "Notifications.firstName",
+      "Notifications.lastName",
+      "Notifications.jobDescription",
+      "Notifications.phoneNumber",
+      "Notifications.email",
+      "RelationalTable.startDate"
+    )
+    .join("RelationalTable", function() {
+      this.on(
+        "Notifications.teamMemberID",
+        "RelationalTable.teamMember_ID"
+      ).andOn(
+        "Notifications.trainingSeriesID",
+        "RelationalTable.trainingSeries_ID"
+      );
+    })
+    .where({ trainingSeriesID: id })
+    .groupBy("teamMemberID");
+}
+
+function getUserNotificationCountData(id) {
+  return db("User")
+    .select("User.notificationCount", "accountType.maxNotificationCount")
+    .join("accountType", "User.accountTypeID", "accountType.accountTypeID")
+    .where({userID: id})
+    .first();
+}
+
+function increaseUserNotificationCount(id, count) {
+  return db("User").where({userID: id}).update({notificationCount: count});
 }
