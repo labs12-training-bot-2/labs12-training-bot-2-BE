@@ -43,10 +43,16 @@ const notificationSystem = function() {
     },
     clearOldNotifications: () => {
       new CronJob(
-        // runs every night at midnight
-        '00 00 00 * * *',
+        '00 00 00 * * *', // runs every night at midnight
+        // '00 * * * * *', // runs every minute for testing
         async function() {
-          // helper function to clear old notifications
+          let today = new Date();
+          today.setUTCHours(00);
+          today.setUTCMinutes(00);
+          today.setUTCSeconds(00);
+
+          await Notifications.deleteOldNotifications(today);
+          console.log('delete old notifications');
         },
         null,
         true,

@@ -10,7 +10,8 @@ module.exports = {
   getUserNotificationCountData,
   increaseUserNotificationCount,
   asyncForEach,
-  resetNotificationCount
+  resetNotificationCount,
+  deleteOldNotifications
 };
 
 function getDailyTextNotifications(day) {
@@ -103,4 +104,10 @@ function resetNotificationCount() {
   return db('User')
     .where('notificationCount', '>', 0)
     .update({ notificationCount: 0 });
+}
+
+function deleteOldNotifications(today) {
+  return db('Notifications')
+    .where('sendDate', '<', today)
+    .del();
 }
