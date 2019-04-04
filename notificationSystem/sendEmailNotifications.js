@@ -6,6 +6,7 @@ const Notifications = require("../database/Helpers/notifications-model");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+// 4/3/19, Leigh-Ann: This function may need reworking based on edits to sendTextNotifications
 const sendEmailNotifications = notifications => {
   notifications.forEach(async notification => {
     const userCountData = await Notifications.getUserNotificationCountData(

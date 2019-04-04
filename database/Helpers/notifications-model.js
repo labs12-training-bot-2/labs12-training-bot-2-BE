@@ -28,12 +28,9 @@ function getNotificationByPostId(id) {
 }
 
 function updateNotificationContent(id, postContent) {
-  // update post information on notification
   return db("Notifications")
     .where({ postID: id })
     .update(postContent);
-  // update matching post with new date
-  // if multiple team members in system, this will have to update all matching posts with new date
 }
 
 function updateNotificationMember(id, memberInformation) {
@@ -77,15 +74,3 @@ function getUserNotificationCountData(id) {
 function increaseUserNotificationCount(id, count) {
   return db("User").where({userID: id}).update({notificationCount: count});
 }
-/* 
-Pseudocode for increasing user's notification count, and resetting it at the beginning of every month
-
-When a notification is sent through the notification system, User.notificationCount needs to increase
-We need to be able to dynamically update each user based on their ID, and increase count by 1 per notification (1 for email, 1 for text)
-Every time a notification is sent, we need to compare User.notificationCount and accountType.maxNotificationCount based on the user's account type
-If User.notificationCount < accountType.maxNotificationCount, notifications can still be sent
-If equal or greater than, notifications must stop and a message must be sent to the front end and restrict the endpoint on the backend
-
-Also, User.notificationCount must reset to 0 on the first of every month
-(New cron job to say if day = 1, reset count)
-*/
