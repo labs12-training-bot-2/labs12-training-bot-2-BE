@@ -1,20 +1,18 @@
 // using SendGrid's v3 Node.js Library
-require('dotenv').config();
+require("dotenv").config();
 
-const sgMail = require('@sendgrid/mail');
-const Notifications = require('../database/Helpers/notifications-model');
+const sgMail = require("@sendgrid/mail");
+const Notifications = require("../database/Helpers/notifications-model");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendEmailNotifications = notifications => {
   notifications.forEach(async notification => {
-
     const userCountData = await Notifications.getUserNotificationCountData(
       notification.userID
     );
 
     if (userCountData.notificationCount < userCountData.maxNotificationCount) {
-
       let newValue = userCountData.notificationCount + 1;
 
       await Notifications.increaseUserNotificationCount(
@@ -22,11 +20,11 @@ const sendEmailNotifications = notifications => {
         newValue
       );
 
-    const options = {
-      to: `${notification.email}`,
-      from: 'trainingbotlabs11@gmail.com',
-      subject: `${notification.postName} - A Reminder from Training Bot `,
-      html: `
+      const options = {
+        to: `${notification.email}`,
+        from: "trainingbotlabs11@gmail.com",
+        subject: `${notification.postName} - A Reminder from Training Bot `,
+        html: `
       <head>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -251,10 +249,10 @@ const sendEmailNotifications = notifications => {
       </table>
       </body>
       `
-    };
+      };
 
-    // sgMail.send(options);
-  }
+      sgMail.send(options);
+    }
   });
 };
 
