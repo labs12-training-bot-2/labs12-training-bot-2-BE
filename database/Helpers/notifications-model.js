@@ -18,7 +18,16 @@ module.exports = {
 
 function getTextNotifications(id) {
   return db('Notifications')
-    .select('phoneNumber', 'postName', 'postDetails', 'link', 'userID')
+    .select(
+      'phoneNumber',
+      'postName',
+      'postDetails',
+      'link',
+      'userID',
+      'sendDate',
+      'firstName',
+      'lastName'
+    )
     .where({ userID: id });
 }
 
@@ -31,7 +40,8 @@ function getEmailNotifications(id) {
       'link',
       'firstName',
       'lastName',
-      'userID'
+      'userID',
+      'sendDate'
     )
     .where({ userID: id });
 }
