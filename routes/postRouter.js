@@ -11,9 +11,9 @@ const TeamMember = require('../database/Helpers/teamMember-model');
 // POST a new post
 router.post("/", async (req, res) => {
   try {
-    const { postName, postDetails, link, daysFromStart, trainingSeriesID } = req.body;
+    const { postName, postDetails, daysFromStart, trainingSeriesID } = req.body;
 
-    if (!postName || !postDetails || !link || !daysFromStart || !trainingSeriesID) {
+    if (!postName || !postDetails || !daysFromStart || !trainingSeriesID) {
       res.status(400).json({ error: "Client must provide all fields." })
     } else {
       // add new post to database
