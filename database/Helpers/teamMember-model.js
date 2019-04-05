@@ -108,10 +108,17 @@ function findTrainingSeriesBy(filter) {
   return db("RelationalTable").where(filter);
 }
 
-function removeFromTrainingSeries(teamMemberId, trainingSeriesId) {
-  return db("RelationalTable")
+async function removeFromTrainingSeries(teamMemberId, trainingSeriesId) {
+  const deleted = await db("RelationalTable")
     .where({ teamMember_ID: teamMemberId, trainingSeries_ID: trainingSeriesId })
     .del();
+
+  await db("Notifications")
+    .where({ teamMemberID: teamMemberId, 
+      trainingSeriesID: trainingSeriesId })
+    .del();
+
+  return deleted;
 }
 
 function addToNotificationsTable(data) {
