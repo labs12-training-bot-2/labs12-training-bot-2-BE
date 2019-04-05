@@ -1,6 +1,8 @@
 const db = require('../dbConfig.js');
 
 module.exports = {
+  getTextNotifications,
+  getEmailNotifications,
   getDailyTextNotifications,
   getDailyEmailNotifications,
   updateNotificationContent,
@@ -13,6 +15,26 @@ module.exports = {
   resetNotificationCount,
   deleteOldNotifications
 };
+
+function getTextNotifications(id) {
+  return db('Notifications')
+    .select('phoneNumber', 'postName', 'postDetails', 'link', 'userID')
+    .where({ userID: id });
+}
+
+function getEmailNotifications(id) {
+  return db('Notifications')
+    .select(
+      'email',
+      'postName',
+      'postDetails',
+      'link',
+      'firstName',
+      'lastName',
+      'userID'
+    )
+    .where({ userID: id });
+}
 
 function getDailyTextNotifications(day) {
   return db('Notifications')
