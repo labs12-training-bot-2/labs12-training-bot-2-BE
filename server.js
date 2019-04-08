@@ -36,7 +36,7 @@ server.get('/', (req, res) => {
 });
 
 // turn on notification interval system
-notificationSystem.clearOldNotifications();
+// notificationSystem.clearOldNotifications();
 notificationSystem.resetCountOnFirstOfMonth();
 notificationSystem.start();
 

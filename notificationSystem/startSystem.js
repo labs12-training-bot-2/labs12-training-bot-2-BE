@@ -40,7 +40,7 @@ const notificationSystem = function() {
         true,
         ''
       );
-    },
+    }
     clearOldNotifications: () => {
       new CronJob(
         '00 00 00 * * *', // runs every night at midnight
