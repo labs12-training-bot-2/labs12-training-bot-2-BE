@@ -45,7 +45,8 @@ function getEmailNotifications(id) {
       'n.lastName',
       'n.userID',
       'n.sendDate',
-      't.title'
+      't.title',
+      't.trainingSeriesID'
     )
     .where('n.userID', id);
 }
