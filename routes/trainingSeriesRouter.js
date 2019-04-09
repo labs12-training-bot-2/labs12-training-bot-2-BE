@@ -31,12 +31,22 @@ router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
         const trainingSeries = await TrainingSeries.findById(id);
+        console.log("trainingSeries", trainingSeries)
         res.status(200).json({ trainingSeries });
     } catch(err) {
         res.status(500).json({ message: "A network error occurred" })
     }
 })
 
+router.get("/:id/assignments", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const assignments = await TrainingSeries.getMembersAssigned(id);
+        res.status(200).json({ assignments });
+    } catch(err) {
+        res.status(500).json({ message: "A network error occurred"})
+    }
+})
 // POST a new training series
 router.post("/", async (req, res) => {
     try {
