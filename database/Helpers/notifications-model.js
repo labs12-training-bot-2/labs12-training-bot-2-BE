@@ -17,33 +17,39 @@ module.exports = {
 };
 
 function getTextNotifications(id) {
-  return db('Notifications')
+  return db('Notifications as n')
+    .join('TrainingSeries as t', 'n.trainingSeriesID', 't.trainingSeriesID')
     .select(
-      'phoneNumber',
-      'postName',
-      'postDetails',
-      'link',
-      'userID',
-      'sendDate',
-      'firstName',
-      'lastName'
+      'n.phoneNumber',
+      'n.postName',
+      'n.postDetails',
+      'n.link',
+      'n.userID',
+      'n.sendDate',
+      'n.firstName',
+      'n.lastName',
+      't.title',
+      't.trainingSeriesID'
     )
-    .where({ userID: id });
+    .where('n.userID', id);
 }
 
 function getEmailNotifications(id) {
-  return db('Notifications')
+  return db('Notifications as n')
+    .join('TrainingSeries as t', 'n.trainingSeriesID', 't.trainingSeriesID')
     .select(
-      'email',
-      'postName',
-      'postDetails',
-      'link',
-      'firstName',
-      'lastName',
-      'userID',
-      'sendDate'
+      'n.email',
+      'n.postName',
+      'n.postDetails',
+      'n.link',
+      'n.firstName',
+      'n.lastName',
+      'n.userID',
+      'n.sendDate',
+      't.title',
+      't.trainingSeriesID'
     )
-    .where({ userID: id });
+    .where('n.userID', id);
 }
 
 function getDailyTextNotifications(day) {

@@ -53,7 +53,8 @@ function getUserAccountType(id) {
   return db("accountType")
     .select(
       "accountType.accountType as subscription",
-      "accountType.maxNotificationCount"
+      "accountType.maxNotificationCount",
+      "User.notificationCount"
     )
     .join("User", "User.accountTypeID", "accountType.accountTypeID")
     .where("User.userID", id)

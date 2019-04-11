@@ -9,7 +9,8 @@ module.exports = {
   getAllPosts,
   getTrainingSeriesPosts,
   update,
-  remove
+  remove,
+  getMembersAssigned
 };
 
 function find() {
@@ -57,4 +58,11 @@ function remove(id) {
   return db("TrainingSeries")
     .where({ trainingSeriesID: id })
     .del();
+}
+
+function getMembersAssigned(id) {
+  return db("RelationalTable as r")
+  .join("TeamMember as t","t.teamMemberID","r.teamMember_ID")
+  .select("r.teamMember_ID", "r.startDate", "t.firstName", "t.lastName")
+  .where("r.trainingSeries_ID", id)
 }
