@@ -58,6 +58,9 @@ async function sendTextNotifications(notification) {
       notification.userID,
       newValue
     );
+    await Notifications.updateNotificationSent(notification.notificationID, {
+      textSent: 1
+    });
   }
 }
 

@@ -6,6 +6,7 @@ module.exports = {
   getDailyTextNotifications,
   getDailyEmailNotifications,
   updateNotificationContent,
+  updateNotificationSent,
   updateNotificationMember,
   getNotificationByPostId,
   getTrainingSeriesOfNewPost,
@@ -29,7 +30,8 @@ function getTextNotifications(id) {
       'n.firstName',
       'n.lastName',
       't.title',
-      't.trainingSeriesID'
+      't.trainingSeriesID',
+      'n.sentText'
     )
     .where('n.userID', id);
 }
@@ -47,14 +49,23 @@ function getEmailNotifications(id) {
       'n.userID',
       'n.sendDate',
       't.title',
-      't.trainingSeriesID'
+      't.trainingSeriesID',
+      'n.sentEmail'
     )
     .where('n.userID', id);
 }
 
 function getDailyTextNotifications(day) {
   return db('Notifications')
-    .select('phoneNumber', 'postName', 'postDetails', 'link', 'userID')
+    .select(
+      'phoneNumber',
+      'postName',
+      'postDetails',
+      'link',
+      'userID',
+      'textSent',
+      'notificationID'
+    )
     .where({ sendDate: day });
 }
 
@@ -67,7 +78,9 @@ function getDailyEmailNotifications(day) {
       'link',
       'firstName',
       'lastName',
-      'userID'
+      'userID',
+      'emailSent',
+      'notificationID'
     )
     .where({ sendDate: day });
 }
@@ -80,6 +93,12 @@ function updateNotificationContent(id, postContent) {
   return db('Notifications')
     .where({ postID: id })
     .update(postContent);
+}
+
+function updateNotificationSent(id, content) {
+  return db('Notifications')
+    .where({ notificationID: id })
+    .update(content);
 }
 
 function updateNotificationMember(id, memberInformation) {
