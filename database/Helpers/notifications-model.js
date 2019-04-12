@@ -28,6 +28,7 @@ function getTextNotifications(id) {
       'n.sendDate',
       'n.firstName',
       'n.lastName',
+      'n.textSent',
       't.title',
       't.trainingSeriesID'
     )
@@ -46,6 +47,7 @@ function getEmailNotifications(id) {
       'n.lastName',
       'n.userID',
       'n.sendDate',
+      'n.emailSent',
       't.title',
       't.trainingSeriesID'
     )
