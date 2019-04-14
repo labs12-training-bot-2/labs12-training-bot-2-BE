@@ -35,7 +35,7 @@ router.get('/:id', async (req, res) => {
       // Get posts by user
       const posts = await Users.getUserPosts(id);
 
-      const members = await TeamMembers.findBy({ user_ID: id });
+      const members = await TeamMembers.findBy({ userID: id });
 
       const userInfo = {
         ...user,
@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/team-members', async (req, res) => {
   try {
     const userId = req.params.id;
-    const members = await TeamMembers.findBy({ user_ID: userId });
+    const members = await TeamMembers.findBy({ userID: userId });
     res.status(200).json({ members });
   } catch (err) {
     res.status(500).json({ message: 'A network error occurred' });
