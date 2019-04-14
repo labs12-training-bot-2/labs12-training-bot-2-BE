@@ -116,7 +116,8 @@ function getTrainingSeriesOfNewPost(id) {
       'Notifications.jobDescription',
       'Notifications.phoneNumber',
       'Notifications.email',
-      'RelationalTable.startDate'
+      'RelationalTable.startDate',
+      'Notifications.userID'
     )
     .join('RelationalTable', function() {
       this.on(
@@ -127,7 +128,7 @@ function getTrainingSeriesOfNewPost(id) {
         'RelationalTable.trainingSeries_ID'
       );
     })
-    .where({ trainingSeriesID: id })
+    .where('RelationalTable.trainingSeries_ID', '=', id)
     .groupBy('teamMemberID');
 }
 

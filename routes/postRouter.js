@@ -42,7 +42,8 @@ router.post('/', async (req, res) => {
             jobDescription: row.jobDescription,
             phoneNumber: row.phoneNumber,
             email: row.email,
-            trainingSeriesID: newPost.trainingSeriesID
+            trainingSeriesID: newPost.trainingSeriesID,
+            userID: row.userID
           };
         });
 
