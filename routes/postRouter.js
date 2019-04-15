@@ -27,24 +27,65 @@ router.post("/", async (req, res) => {
       // if team member has training series assignments, for each assignment, assemble a new object to be inserted to the notifications table with the new post information
       if (rows.length > 0) {
         const entriesToInsert = rows.map(row => {
-          return {
-            postID: newPost.postID,
-            postName: newPost.postName,
-            postDetails: newPost.postDetails,
-            link: newPost.link,
-            daysFromStart: newPost.daysFromStart,
-            sendDate: moment(row.startDate)
-              .add(newPost.daysFromStart, "days")
-              .format(),
-            firstName: row.firstName,
-            lastName: row.lastName,
-            teamMemberID: row.teamMemberID,
-            jobDescription: row.jobDescription,
-            phoneNumber: row.phoneNumber,
-            email: row.email,
-            trainingSeriesID: newPost.trainingSeriesID,
-            userID: row.userID
-          };
+          if (member.textOn === 1) {
+            return {
+              // generate only text notifications
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: member.phoneNumber,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          } else if (member.emailOn === 1) {
+            return {
+              // generate only email notifications
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              email: member.email,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          } else {
+            // generate both text and email notifications
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: member.phoneNumber,
+              email: member.email,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          }
         });
 
         // for each new object, insert it into the notifications table
