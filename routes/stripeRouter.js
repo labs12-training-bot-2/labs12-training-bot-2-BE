@@ -2,7 +2,7 @@
 const router = require("express").Router();
 // const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
 // const stripe = require("stripe")("pk_live_rT507CtR4I4vTsTDTp4YroFc00lFrmSMgJ");
-const stripe = require("stripe")(proces.env.PUBLISHABLE_KEY);
+const stripe = require("stripe")(process.env.PUBLISHABLE_KEY);
 
 const Users = require("../database/Helpers/user-model.js");
 
