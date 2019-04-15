@@ -55,7 +55,7 @@ async function register(userID, name, email, token) {
 }
 
 function updateUserAccountType(userID, plan) {
-  if (process.env.STRIPE_LIVE) {
+//   if (process.env.STRIPE_LIVE) {
     let accountTypeID;
     if (plan === "plan_EtJQBX3qzlXOiS") {
       // LIVE - PREMIUM PLAN
@@ -68,20 +68,20 @@ function updateUserAccountType(userID, plan) {
     }
     console.log("AccountTypeID", accountTypeID);
     Users.updateUser(userID, { accountTypeID: accountTypeID });
-  } else {
-    let accountTypeID;
-    if (plan === "plan_EmJallrSdkqpPS") {
-		// TEST - PREMIUM PLAN
-		accountTypeID = 2;
-    } else if (plan === "plan_EmJaXZor4Ef3co") {
-		// TEST - PRO PLAN
-      accountTypeID = 3;
-    } else {
-      accountTypeID = 1;
-    }
-    console.log("AccountTypeID", accountTypeID);
-    Users.updateUser(userID, { accountTypeID: accountTypeID });
-  }
+//   } else {
+//     let accountTypeID;
+//     if (plan === "plan_EmJallrSdkqpPS") {
+// 		// TEST - PREMIUM PLAN
+// 		accountTypeID = 2;
+//     } else if (plan === "plan_EmJaXZor4Ef3co") {
+// 		// TEST - PRO PLAN
+//       accountTypeID = 3;
+//     } else {
+//       accountTypeID = 1;
+//     }
+//     console.log("AccountTypeID", accountTypeID);
+//     Users.updateUser(userID, { accountTypeID: accountTypeID });
+//   }
 }
 
 router.post("/", async (req, res) => {
@@ -154,18 +154,19 @@ router.post("/unsubscribe", async (req, res) => {
 
 router.get("/plans", async (req, res) => {
   try {
-	  if(process.env.STRIPE_LIVE){
-    stripe.plans.list(
-      {
-        limit: 3,
-        product: "prod_EtJPhVbHZqV4nF" // LIVE
-      },
-      function(err, plans) {
-        // console.log('plans', plans.data);
-        res.send(plans.data);
-      }
-    )}
-    else{stripe.plans.list(
+	//   if(process.env.STRIPE_LIVE){
+    // stripe.plans.list(
+    //   {
+    //     limit: 3,
+    //     product: "prod_EtJPhVbHZqV4nF" // LIVE
+    //   },
+    //   function(err, plans) {
+    //     // console.log('plans', plans.data);
+    //     res.send(plans.data);
+    //   }
+    // )}
+    // else{
+		stripe.plans.list(
       {
         limit: 3,
         product: 'prod_EmJZbRNGEjlOY4', // TEST
@@ -174,7 +175,8 @@ router.get("/plans", async (req, res) => {
         // console.log('plans', plans.data);
         res.send(plans.data);
       }
-    )}
+	)
+// }
   } catch (error) {
     console.log(error);
   }
