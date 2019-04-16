@@ -117,7 +117,9 @@ function getTrainingSeriesOfNewPost(id) {
       "TeamMember.phoneNumber",
       "TeamMember.email",
       "RelationalTable.startDate",
-      "TeamMember.userID"
+      "TeamMember.userID",
+      "TeamMember.emailOn",
+      "TeamMember.textOn"
     )
     .join("RelationalTable", function() {
       this.on("TeamMember.teamMemberID", "RelationalTable.teamMember_ID");
