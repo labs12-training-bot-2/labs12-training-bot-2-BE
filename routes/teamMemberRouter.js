@@ -67,11 +67,35 @@ router.post("/", async (req, res) => {
 
 // PUT team member information
 router.put("/:id", async (req, res) => {
+  const { emailOn, textOn } = req.body;
+
   try {
     const id = req.params.id;
     const updatedTeamMember = await TeamMember.update(id, req.body);
-    console.log(req.body);
-    await Notifications.updateNotificationMember(id, req.body);
+
+    // build new object with accurate text / email provided based on toggle boolean
+    let updatedNotificationMemberInfo;
+    if (emailOn && !textOn) {
+      updatedNotificationMemberInfo = {
+        ...req.body,
+        phoneNumber: ""
+      };
+    } else if (textOn && !emailOn) {
+      updatedNotificationMemberInfo = {
+        ...req.body,
+        email: ""
+      };
+    } else {
+      updatedNotificationMemberInfo = req.body;
+    }
+
+    // update notification table with conditional email / phone number based on textOn / emailOn
+    await Notifications.updateNotificationMember(
+      id,
+      updatedNotificationMemberInfo
+    );
+
+    // send back updated team member information
     res.status(200).json({ updatedTeamMember });
   } catch (err) {
     res.status(500).json(err);
@@ -127,11 +151,9 @@ router.post("/assign", async (req, res) => {
         );
 
         // 4. convert the integer of Post.daysFromStart into a date, assemble obj to send to Notifications table
+        // generate new objects for notification table based on conditional provided
         const formattedPosts = posts.map(post => {
-          if (
-            (member.emailOn === 1 || member.email) &&
-            (member.textOn === 0 || !member.textOn)
-          ) {
+          if (member.emailOn && !member.textOn) {
             return {
               postID: post.postID,
               postName: post.postName,
@@ -150,10 +172,7 @@ router.post("/assign", async (req, res) => {
               trainingSeriesID: trainingSeriesID,
               userID: member.userID
             };
-          } else if (
-            (member.textOn === 1 || member.textOn) &&
-            (member.emailOn === 0 || !member.emailOn)
-          ) {
+          } else if (member.textOn && !member.emailOn) {
             return {
               postID: post.postID,
               postName: post.postName,
@@ -219,7 +238,6 @@ router.delete("/:id/assign/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;
     const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
-    console.log("deleted", deleted);
     if (deleted > 0) {
       res.status(200).json({ message: "The resource has been deleted." });
     } else {

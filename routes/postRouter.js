@@ -25,26 +25,67 @@ router.post("/", async (req, res) => {
       );
 
       // if it does, for each assignment per team member id, assemble a new object to be inserted to the notifications table with the new post information
+      // generate new object to update the notification table based on updated conditional
       if (rows.length > 0) {
         const entriesToInsert = rows.map(row => {
-          return {
-            postID: newPost.postID,
-            postName: newPost.postName,
-            postDetails: newPost.postDetails,
-            link: newPost.link,
-            daysFromStart: newPost.daysFromStart,
-            sendDate: moment(row.startDate)
-              .add(newPost.daysFromStart, "days")
-              .format(),
-            firstName: row.firstName,
-            lastName: row.lastName,
-            teamMemberID: row.teamMemberID,
-            jobDescription: row.jobDescription,
-            phoneNumber: row.phoneNumber,
-            email: row.email,
-            trainingSeriesID: newPost.trainingSeriesID,
-            userID: row.userID
-          };
+          if (row.emailOn && !row.textOn) {
+            return {
+              postID: newPost.postID,
+              postName: newPost.postName,
+              postDetails: newPost.postDetails,
+              link: newPost.link,
+              daysFromStart: newPost.daysFromStart,
+              sendDate: moment(row.startDate)
+                .add(newPost.daysFromStart, "days")
+                .format(),
+              firstName: row.firstName,
+              lastName: row.lastName,
+              teamMemberID: row.teamMemberID,
+              jobDescription: row.jobDescription,
+              phoneNumber: "",
+              email: row.email,
+              trainingSeriesID: newPost.trainingSeriesID,
+              userID: row.userID
+            };
+          } else if (row.textOn && !row.emailOn) {
+            return {
+              postID: newPost.postID,
+              postName: newPost.postName,
+              postDetails: newPost.postDetails,
+              link: newPost.link,
+              daysFromStart: newPost.daysFromStart,
+              sendDate: moment(row.startDate)
+                .add(newPost.daysFromStart, "days")
+                .format(),
+              firstName: row.firstName,
+              lastName: row.lastName,
+              teamMemberID: row.teamMemberID,
+              jobDescription: row.jobDescription,
+              phoneNumber: row.phoneNumber,
+              email: "",
+              trainingSeriesID: newPost.trainingSeriesID,
+              userID: row.userID
+            };
+          } else {
+            return {
+              postID: newPost.postID,
+              postName: newPost.postName,
+              postDetails: newPost.postDetails,
+              link: newPost.link,
+              daysFromStart: newPost.daysFromStart,
+              sendDate: moment(row.startDate)
+                .add(newPost.daysFromStart, "days")
+                .format(),
+              firstName: row.firstName,
+              lastName: row.lastName,
+              teamMemberID: row.teamMemberID,
+              jobDescription: row.jobDescription,
+              phoneNumber: row.phoneNumber,
+              email: row.email,
+              trainingSeriesID: newPost.trainingSeriesID,
+              userID: row.userID
+            };
+          }
         });
 
         // for each new object, insert it into the notifications table
