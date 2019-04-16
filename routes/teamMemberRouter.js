@@ -127,65 +127,24 @@ router.post("/assign", async (req, res) => {
 
         // 4. convert the integer of Post.daysFromStart into a date, assemble obj to send to Notifications table
         const formattedPosts = posts.map(post => {
-          if (member.textOn === 1) {
-            return {
-              // generate only text notifications
-              postID: post.postID,
-              postName: post.postName,
-              postDetails: post.postDetails,
-              link: post.link,
-              daysFromStart: post.daysFromStart,
-              sendDate: moment(startDate)
-                .add(post.daysFromStart, "days")
-                .format(),
-              teamMemberID: member.teamMemberID,
-              phoneNumber: member.phoneNumber,
-              firstName: member.firstName,
-              lastName: member.lastName,
-              jobDescription: member.jobDescription,
-              trainingSeriesID: trainingSeriesID,
-              userID: member.userID
-            };
-          } else if (member.emailOn === 1) {
-            return {
-              // generate only email notifications
-              postID: post.postID,
-              postName: post.postName,
-              postDetails: post.postDetails,
-              link: post.link,
-              daysFromStart: post.daysFromStart,
-              sendDate: moment(startDate)
-                .add(post.daysFromStart, "days")
-                .format(),
-              teamMemberID: member.teamMemberID,
-              email: member.email,
-              firstName: member.firstName,
-              lastName: member.lastName,
-              jobDescription: member.jobDescription,
-              trainingSeriesID: trainingSeriesID,
-              userID: member.userID
-            };
-          } else {
-            // generate both text and email notifications
-            return {
-              postID: post.postID,
-              postName: post.postName,
-              postDetails: post.postDetails,
-              link: post.link,
-              daysFromStart: post.daysFromStart,
-              sendDate: moment(startDate)
-                .add(post.daysFromStart, "days")
-                .format(),
-              teamMemberID: member.teamMemberID,
-              phoneNumber: member.phoneNumber,
-              email: member.email,
-              firstName: member.firstName,
-              lastName: member.lastName,
-              jobDescription: member.jobDescription,
-              trainingSeriesID: trainingSeriesID,
-              userID: member.userID
-            };
-          }
+          return {
+            postID: post.postID,
+            postName: post.postName,
+            postDetails: post.postDetails,
+            link: post.link,
+            daysFromStart: post.daysFromStart,
+            sendDate: moment(startDate)
+              .add(post.daysFromStart, "days")
+              .format(),
+            teamMemberID: member.teamMemberID,
+            phoneNumber: member.phoneNumber,
+            email: member.email,
+            firstName: member.firstName,
+            lastName: member.lastName,
+            jobDescription: member.jobDescription,
+            trainingSeriesID: trainingSeriesID,
+            userID: member.userID
+          };
         });
 
         // 5. add each returned object to Notifications table
