@@ -70,6 +70,7 @@ router.put("/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const updatedTeamMember = await TeamMember.update(id, req.body);
+    console.log(req.body);
     await Notifications.updateNotificationMember(id, req.body);
     res.status(200).json({ updatedTeamMember });
   } catch (err) {
@@ -127,24 +128,70 @@ router.post("/assign", async (req, res) => {
 
         // 4. convert the integer of Post.daysFromStart into a date, assemble obj to send to Notifications table
         const formattedPosts = posts.map(post => {
-          return {
-            postID: post.postID,
-            postName: post.postName,
-            postDetails: post.postDetails,
-            link: post.link,
-            daysFromStart: post.daysFromStart,
-            sendDate: moment(startDate)
-              .add(post.daysFromStart, "days")
-              .format(),
-            teamMemberID: member.teamMemberID,
-            phoneNumber: member.phoneNumber,
-            email: member.email,
-            firstName: member.firstName,
-            lastName: member.lastName,
-            jobDescription: member.jobDescription,
-            trainingSeriesID: trainingSeriesID,
-            userID: member.userID
-          };
+          if (
+            (member.emailOn === 1 || member.email) &&
+            (member.textOn === 0 || !member.textOn)
+          ) {
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: "",
+              email: member.email,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          } else if (
+            (member.textOn === 1 || member.textOn) &&
+            (member.emailOn === 0 || !member.emailOn)
+          ) {
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: member.phoneNumber,
+              email: "",
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          } else {
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: member.phoneNumber,
+              email: member.email,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          }
         });
 
         // 5. add each returned object to Notifications table

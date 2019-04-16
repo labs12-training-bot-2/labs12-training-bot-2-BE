@@ -79,7 +79,9 @@ router.get("/:id/text-notifications", async (req, res) => {
   try {
     const { id } = req.params;
     const textNotifications = await Notifications.getTextNotifications(id);
-    textNotifications.filter(notification => notification.email !== undefined);
+    const filteredTexts = await textNotifications.filter(
+      notification => notification.phoneNumber !== ""
+    );
     res.status(200).json({ textNotifications });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
@@ -91,7 +93,9 @@ router.get("/:id/email-notifications", async (req, res) => {
   try {
     const { id } = req.params;
     const emailNotifications = await Notifications.getEmailNotifications(id);
-    emailNotifications.filter(notification => notification.email !== undefined);
+    const filteredEmails = await emailNotifications.filter(
+      notification => notification.email !== ""
+    );
     res.status(200).json({ emailNotifications });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
