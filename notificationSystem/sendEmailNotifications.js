@@ -255,6 +255,9 @@ async function sendEmailNotifications(notification) {
       notification.userID,
       newValue
     );
+    await Notifications.updateNotificationSent(notification.notificationID, {
+      emailSent: 1
+    });
   }
 }
 
