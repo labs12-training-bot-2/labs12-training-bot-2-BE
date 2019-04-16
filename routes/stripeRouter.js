@@ -1,8 +1,8 @@
 //Dependencies
 const router = require("express").Router();
-const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
-// const stripe = require("stripe")("pk_live_rT507CtR4I4vTsTDTp4YroFc00lFrmSMgJ");
-// const stripe = require("stripe")(process.env.PUBLISHABLE_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
+
 
 const Users = require("../database/Helpers/user-model.js");
 
@@ -55,7 +55,8 @@ async function register(userID, name, email, token) {
 }
 
 function updateUserAccountType(userID, plan) {
-//   if (process.env.STRIPE_LIVE) {
+
+// LIVE
     let accountTypeID;
     if (plan === "plan_EtJQBX3qzlXOiS") {
       // LIVE - PREMIUM PLAN
@@ -68,20 +69,20 @@ function updateUserAccountType(userID, plan) {
     }
     console.log("AccountTypeID", accountTypeID);
     Users.updateUser(userID, { accountTypeID: accountTypeID });
-//   } else {
-//     let accountTypeID;
-//     if (plan === "plan_EmJallrSdkqpPS") {
-// 		// TEST - PREMIUM PLAN
-// 		accountTypeID = 2;
-//     } else if (plan === "plan_EmJaXZor4Ef3co") {
-// 		// TEST - PRO PLAN
-//       accountTypeID = 3;
-//     } else {
-//       accountTypeID = 1;
-//     }
-//     console.log("AccountTypeID", accountTypeID);
-//     Users.updateUser(userID, { accountTypeID: accountTypeID });
-//   }
+
+// TEST
+    // let accountTypeID;
+    // if (plan === "plan_EmJallrSdkqpPS") {
+	// 	// TEST - PREMIUM PLAN
+	// 	accountTypeID = 2;
+    // } else if (plan === "plan_EmJaXZor4Ef3co") {
+	// 	// TEST - PRO PLAN
+    //   accountTypeID = 3;
+    // } else {
+    //   accountTypeID = 1;
+    // }
+    // console.log("AccountTypeID", accountTypeID);
+    // Users.updateUser(userID, { accountTypeID: accountTypeID });
 }
 
 router.post("/", async (req, res) => {
@@ -154,29 +155,30 @@ router.post("/unsubscribe", async (req, res) => {
 
 router.get("/plans", async (req, res) => {
   try {
-	//   if(process.env.STRIPE_LIVE){
-    // stripe.plans.list(
-    //   {
-    //     limit: 3,
-    //     product: "prod_EtJPhVbHZqV4nF" // LIVE
-    //   },
-    //   function(err, plans) {
-    //     // console.log('plans', plans.data);
-    //     res.send(plans.data);
-    //   }
-    // )}
-    // else{
-		stripe.plans.list(
+// LIVE
+    stripe.plans.list(
       {
         limit: 3,
-        product: 'prod_EmJZbRNGEjlOY4', // TEST
+        product: "prod_EtJPhVbHZqV4nF" // LIVE
       },
       function(err, plans) {
         // console.log('plans', plans.data);
         res.send(plans.data);
       }
 	)
-// }
+
+// TEST
+	// 	stripe.plans.list(
+    //   {
+    //     limit: 3,
+    //     product: 'prod_EmJZbRNGEjlOY4', // TEST
+    //   },
+    //   function(err, plans) {
+    //     console.log('plans', plans.data);
+    //     res.send(plans.data);
+    //   }
+	// )
+
   } catch (error) {
     console.log(error);
   }
