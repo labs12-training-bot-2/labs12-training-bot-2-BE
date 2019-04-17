@@ -42,7 +42,6 @@ router.post("/", async (req, res) => {
       firstName,
       lastName,
       jobDescription,
-      email,
       phoneNumber,
       userID
     } = req.body;
@@ -51,7 +50,6 @@ router.post("/", async (req, res) => {
       !firstName ||
       !lastName ||
       !jobDescription ||
-      !email ||
       !phoneNumber ||
       !userID
     ) {
