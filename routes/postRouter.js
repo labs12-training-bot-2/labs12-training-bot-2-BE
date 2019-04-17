@@ -107,25 +107,41 @@ router.put("/:id", async (req, res) => {
     const id = req.params.id;
     const incomingPostUpdate = req.body;
     const updatedPost = await Posts.update(id, incomingPostUpdate);
+    console.log(updatedPost)
 
+
+    // FIX: must get all notifications by post id and team member id
     // get notification to update by post id
     const notificationToUpdate = await Notifications.getNotificationByPostId(
       id
     );
+    console.log(notificationToUpdate)
 
+    // start for each
+    // for each notification to update, do the following
+
+    // FIX: calculate new send date for each individual notification
     // calculate new send date for notification
     const newSendDate = moment(notificationToUpdate.startDate)
       .add(incomingPostUpdate.daysFromStart, "days")
       .format();
+    console.log(newSendDate)
 
+
+    // FIX: create new notification object for each team member with updated daysFromStart
     // create updated notification, including new send date if daysFromStart changed
     const updatedNotification = {
       ...incomingPostUpdate,
       sendDate: newSendDate
     };
+    console.log(updatedNotification);
 
+    // FIX: Update all notifications with newly updated send dates
     // update notifications
     await Notifications.updateNotificationContent(id, updatedNotification);
+
+
+    // end for each
 
     res.status(200).json({ updatedPost });
   } catch (err) {
