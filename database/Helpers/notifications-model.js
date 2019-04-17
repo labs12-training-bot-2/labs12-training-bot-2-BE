@@ -9,12 +9,13 @@ module.exports = {
   updateNotificationSent,
   updateNotificationMember,
   getNotificationByPostId,
+  getNotificationsToRecalculate,
   getTrainingSeriesOfNewPost,
   getUserNotificationCountData,
   increaseUserNotificationCount,
   asyncForEach,
   resetNotificationCount,
-  deleteOldNotifications
+  deleteOldNotifications,
 };
 
 function getTextNotifications(id) {
@@ -89,6 +90,16 @@ function getNotificationByPostId(id) {
   return db("Notifications").where({ postID: id });
 }
 
+function getNotificationsToRecalculate(postID, teamMemberID) {
+  return db("Notifications")
+    .join("RelationalTable", "RelationalTable.teamMember_ID", teamMemberID)
+    .select(
+      "Notifications.*",
+      "RelationalTable.startDate",
+    )
+    .where({ postID: postID })
+}
+
 function updateNotificationContent(id, postContent) {
   return db("Notifications")
     .where({ postID: id })
@@ -121,7 +132,7 @@ function getTrainingSeriesOfNewPost(id) {
       "TeamMember.emailOn",
       "TeamMember.textOn"
     )
-    .join("RelationalTable", function() {
+    .join("RelationalTable", function () {
       this.on("TeamMember.teamMemberID", "RelationalTable.teamMember_ID");
     })
     .where("RelationalTable.trainingSeries_ID", "=", id)

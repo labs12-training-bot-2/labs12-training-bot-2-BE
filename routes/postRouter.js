@@ -107,41 +107,39 @@ router.put("/:id", async (req, res) => {
     const id = req.params.id;
     const incomingPostUpdate = req.body;
     const updatedPost = await Posts.update(id, incomingPostUpdate);
-    console.log(updatedPost)
+    console.log('updated post', updatedPost)
 
-
-    // FIX: must get all notifications by post id and team member id
     // get notification to update by post id
-    const notificationToUpdate = await Notifications.getNotificationByPostId(
+    const notificationsToUpdate = await Notifications.getNotificationByPostId(
       id
     );
-    console.log(notificationToUpdate)
+    console.log('notifications to update', notificationsToUpdate);
 
-    // start for each
-    // for each notification to update, do the following
+    // callback function to calculate new send date for notifications
+    const test = async (notification) => {
+      console.log("*** INSIDE FOR EACH ***")
+      // pull in start date from relational table based on team member id and training series id
+      const member = await TeamMember.getTrainingSeriesAssignment(notification.teamMemberID, notification.trainingSeriesID);
+      console.log('member information', member)
 
-    // FIX: calculate new send date for each individual notification
-    // calculate new send date for notification
-    const newSendDate = moment(notificationToUpdate.startDate)
-      .add(incomingPostUpdate.daysFromStart, "days")
-      .format();
-    console.log(newSendDate)
+      const newSendDate = await moment(member.startDate)
+        .add(updatedPost.daysFromStart, "days")
+        .format("YYYY-MM-D");
+      console.log('new send date', newSendDate)
 
+      // create updated notification, including new send date if daysFromStart changed
+      const updatedNotification = {
+        ...incomingPostUpdate,
+        sendDate: newSendDate
+      };
+      console.log('new notification', updatedNotification);
 
-    // FIX: create new notification object for each team member with updated daysFromStart
-    // create updated notification, including new send date if daysFromStart changed
-    const updatedNotification = {
-      ...incomingPostUpdate,
-      sendDate: newSendDate
-    };
-    console.log(updatedNotification);
+      // update notifications
+      await Notifications.updateNotificationSent(notification.notificationID, updatedNotification);
+    }
 
-    // FIX: Update all notifications with newly updated send dates
-    // update notifications
-    await Notifications.updateNotificationContent(id, updatedNotification);
-
-
-    // end for each
+    // async await for each to PUT notifications with new send date
+    await Notifications.asyncForEach(notificationsToUpdate, test);
 
     res.status(200).json({ updatedPost });
   } catch (err) {
