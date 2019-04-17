@@ -9,6 +9,7 @@ module.exports = {
   remove,
   addToTrainingSeries,
   getTrainingSeriesAssignments,
+  getTrainingSeriesAssignment,
   updateTrainingSeriesStartDate,
   findTrainingSeriesBy,
   removeFromTrainingSeries,
@@ -79,6 +80,28 @@ function getTrainingSeriesAssignments(teamMemberId) {
     .where("RelationalTable.teamMember_ID", teamMemberId);
 }
 
+// get member information for updating notification send date
+function getTrainingSeriesAssignment(teamMemberId, trainingSeriesId) {
+  return db("TeamMember")
+    .join(
+      "RelationalTable",
+      "TeamMember.teamMemberID",
+      "RelationalTable.teamMember_ID"
+    )
+    .join(
+      "TrainingSeries",
+      "TrainingSeries.trainingSeriesID",
+      "RelationalTable.trainingSeries_ID"
+    )
+    .select(
+      "RelationalTable.trainingSeries_ID",
+      "TrainingSeries.title",
+      "RelationalTable.startDate"
+    )
+    .where({ "RelationalTable.teamMember_ID": teamMemberId, "RelationalTable.trainingSeries_ID": trainingSeriesId })
+    .first();
+}
+
 //update the start date ONLY of a team member's training series start date
 async function updateTrainingSeriesStartDate(
   teamMemberId,
@@ -114,8 +137,10 @@ async function removeFromTrainingSeries(teamMemberId, trainingSeriesId) {
     .del();
 
   await db("Notifications")
-    .where({ teamMemberID: teamMemberId, 
-      trainingSeriesID: trainingSeriesId })
+    .where({
+      teamMemberID: teamMemberId,
+      trainingSeriesID: trainingSeriesId
+    })
     .del();
 
   return deleted;

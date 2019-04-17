@@ -109,23 +109,31 @@ router.put("/:id", async (req, res) => {
     const updatedPost = await Posts.update(id, incomingPostUpdate);
 
     // get notification to update by post id
-    const notificationToUpdate = await Notifications.getNotificationByPostId(
+    const notificationsToUpdate = await Notifications.getNotificationByPostId(
       id
     );
 
-    // calculate new send date for notification
-    const newSendDate = moment(notificationToUpdate.startDate)
-      .add(incomingPostUpdate.daysFromStart, "days")
-      .format();
+    // callback function to calculate new send date for notifications
+    const dateRecalculation = async (notification) => {
+      // pull in start date from relational table based on team member id and training series id
+      const member = await TeamMember.getTrainingSeriesAssignment(notification.teamMemberID, notification.trainingSeriesID);
 
-    // create updated notification, including new send date if daysFromStart changed
-    const updatedNotification = {
-      ...incomingPostUpdate,
-      sendDate: newSendDate
-    };
+      const newSendDate = await moment(member.startDate)
+        .add(updatedPost.daysFromStart, "days")
+        .format("YYYY-MM-D");
 
-    // update notifications
-    await Notifications.updateNotificationContent(id, updatedNotification);
+      // create updated notification, including new send date if daysFromStart changed
+      const updatedNotification = {
+        ...incomingPostUpdate,
+        sendDate: newSendDate
+      };
+
+      // update notifications
+      await Notifications.updateNotificationContent(notification.notificationID, updatedNotification);
+    }
+
+    // async await for each to PUT notifications with new send date
+    await Notifications.asyncForEach(notificationsToUpdate, dateRecalculation);
 
     res.status(200).json({ updatedPost });
   } catch (err) {
