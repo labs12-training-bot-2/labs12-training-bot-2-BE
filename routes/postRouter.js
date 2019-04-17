@@ -107,39 +107,33 @@ router.put("/:id", async (req, res) => {
     const id = req.params.id;
     const incomingPostUpdate = req.body;
     const updatedPost = await Posts.update(id, incomingPostUpdate);
-    console.log('updated post', updatedPost)
 
     // get notification to update by post id
     const notificationsToUpdate = await Notifications.getNotificationByPostId(
       id
     );
-    console.log('notifications to update', notificationsToUpdate);
 
     // callback function to calculate new send date for notifications
-    const test = async (notification) => {
-      console.log("*** INSIDE FOR EACH ***")
+    const dateRecalculation = async (notification) => {
       // pull in start date from relational table based on team member id and training series id
       const member = await TeamMember.getTrainingSeriesAssignment(notification.teamMemberID, notification.trainingSeriesID);
-      console.log('member information', member)
 
       const newSendDate = await moment(member.startDate)
         .add(updatedPost.daysFromStart, "days")
         .format("YYYY-MM-D");
-      console.log('new send date', newSendDate)
 
       // create updated notification, including new send date if daysFromStart changed
       const updatedNotification = {
         ...incomingPostUpdate,
         sendDate: newSendDate
       };
-      console.log('new notification', updatedNotification);
 
       // update notifications
-      await Notifications.updateNotificationSent(notification.notificationID, updatedNotification);
+      await Notifications.updateNotificationContent(notification.notificationID, updatedNotification);
     }
 
     // async await for each to PUT notifications with new send date
-    await Notifications.asyncForEach(notificationsToUpdate, test);
+    await Notifications.asyncForEach(notificationsToUpdate, dateRecalculation);
 
     res.status(200).json({ updatedPost });
   } catch (err) {

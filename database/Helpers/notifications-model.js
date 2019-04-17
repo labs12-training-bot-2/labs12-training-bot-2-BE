@@ -6,7 +6,6 @@ module.exports = {
   getDailyTextNotifications,
   getDailyEmailNotifications,
   updateNotificationContent,
-  updateNotificationSent,
   updateNotificationMember,
   getNotificationByPostId,
   getNotificationsToRecalculate,
@@ -100,13 +99,7 @@ function getNotificationsToRecalculate(postID, teamMemberID) {
     .where({ postID: postID })
 }
 
-function updateNotificationContent(id, postContent) {
-  return db("Notifications")
-    .where({ postID: id })
-    .update(postContent);
-}
-
-function updateNotificationSent(id, content) {
+function updateNotificationContent(id, content) {
   return db("Notifications")
     .where({ notificationID: id })
     .update(content);
