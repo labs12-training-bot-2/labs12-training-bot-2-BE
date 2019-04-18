@@ -11,20 +11,18 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_TOKEN;
 
-/* 
-Notes for later (attempt less calls to the db):
-Can a variable be created outside of the functions that stores the notification count of the user?
-Then potentially pass it into sendNotifications for comparison, then increase it, and pass it in again every time
-Then, at the end of the loop, send the updated notificationCount to the db
-
-Additionally:
-User.notificationCount must reset to 0 on the first of every month
-(New cron job to say if day = 1, reset count)
-*/
-
 async function sendTextNotifications(notification) {
+  // phone validation to prevent empty numbers from progressing the function
+  if (notification.phoneNumber === "") {
+    await Notifications.markNotificationAsSent(notification.notificationID, {
+      textOn: 0,
+      textSent: 1
+    });
+    console.log('Empty phone number found, mark as inactive')
+  }
+
   // run logic to check which texts need to be sent
-  if (notification.textSent === 0 && notification.textOn === 1) {
+  else if (notification.textSent === 0 && notification.textOn === 1) {
     console.log(notification.phoneNumber, "text active, continue running send function")
     try {
       const client = new twilio(accountSid, authToken);
