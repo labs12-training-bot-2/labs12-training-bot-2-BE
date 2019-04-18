@@ -8,21 +8,23 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // 4/3/19, Leigh-Ann: This function may need reworking based on edits to sendTextNotifications
 async function sendEmailNotifications(notification) {
-  const userCountData = await Notifications.getUserNotificationCountData(
-    notification.userID
-  );
 
-  // compare User.notificationCount to accountType.maxNotificationCount
-  if (userCountData.notificationCount < userCountData.maxNotificationCount) {
-    // if less than, continue sending messages and increase notification count by 1
-    let newValue = userCountData.notificationCount + 1;
+  try {
+    const userCountData = await Notifications.getUserNotificationCountData(
+      notification.userID
+    );
 
-    // Create options to send the email
-    const options = {
-      to: `${notification.email}`,
-      from: 'trainingbotlabs11@gmail.com',
-      subject: `${notification.postName} - A Reminder from Training Bot `,
-      html: `
+    // compare User.notificationCount to accountType.maxNotificationCount
+    if (userCountData.notificationCount < userCountData.maxNotificationCount) {
+      // if less than, continue sending messages and increase notification count by 1
+      let newValue = userCountData.notificationCount + 1;
+
+      // Create options to send the email
+      const options = {
+        to: `${notification.email}`,
+        from: 'trainingbotlabs11@gmail.com',
+        subject: `${notification.postName} - A Reminder from Training Bot `,
+        html: `
       <head>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -247,17 +249,20 @@ async function sendEmailNotifications(notification) {
       </table>
       </body>
       `
-    };
-    // Send the email!
-    sgMail.send(options);
-    // send updated notificationCount to the database
-    await Notifications.increaseUserNotificationCount(
-      notification.userID,
-      newValue
-    );
-    await Notifications.updateNotificationSent(notification.notificationID, {
-      emailSent: 1
-    });
+      };
+      // Send the email!
+      sgMail.send(options);
+      // send updated notificationCount to the database
+      await Notifications.increaseUserNotificationCount(
+        notification.userID,
+        newValue
+      );
+      await Notifications.markNotificationAsSent(notification.notificationID, {
+        emailSent: 1
+      });
+    }
+  } catch (error) {
+    console.log('email notification system error', error)
   }
 }
 
