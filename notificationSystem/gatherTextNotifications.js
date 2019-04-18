@@ -18,8 +18,11 @@ const gatherTextNotifications = () => {
   return {
     run: async () => {
       const notifications = await getDailyTextNotifications(today);
-
-      await asyncForEach(notifications, sendTextNotifications);
+      if (notifications.length === 0) {
+        console.log('No text notifications from today.')
+      } else {
+        await asyncForEach(notifications, sendTextNotifications);
+      }
     }
   };
 };

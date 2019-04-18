@@ -15,10 +15,14 @@ const notificationSystem = function () {
         // runs on  Coordinated Universal Time (UTC)
         '00 * * * * *', // 1 minute interval for testing notification system.
         async function () {
-          const currentTime = new Date();
-          console.log('Run Notifications onTick:', currentTime);
-          await gatherTextNotifications.run();
-          // await gatherEmailNotifications.run();
+          try {
+            const currentTime = new Date();
+            console.log('Run Notifications onTick:', currentTime);
+            await gatherTextNotifications.run();
+            await gatherEmailNotifications.run();
+          } catch (error) {
+            console.log("Notification start async error", error)
+          }
         },
         null,
         true,

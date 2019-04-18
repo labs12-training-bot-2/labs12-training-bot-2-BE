@@ -83,7 +83,7 @@ function getDailyEmailNotifications(day) {
       "userID",
       "emailSent",
       "emailOn",
-      "notificationID"
+      "notificationID",
     )
     .where({ sendDate: day });
 }

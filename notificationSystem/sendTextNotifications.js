@@ -34,7 +34,7 @@ async function sendTextNotifications(notification) {
       );
 
       if (userCountData.notificationCount === userCountData.maxNotificationCount) {
-        console.log('User has reached maxiumum notification this month')
+        console.log('User has reached maximum notification this month')
       }
 
       // compare User.notificationCount to accountType.maxNotificationCount
@@ -79,8 +79,9 @@ async function sendTextNotifications(notification) {
           });
         } else {
           console.log(notification.phoneNumber, 'is not valid, skipping invalid phone number')
-          // if phone number is not valid mark as sent (temporary logic to ensure it doesn't keep trying to send this)
+          // if phone number is not valid, deactivate and mark as sent (temporary logic to ensure it doesn't keep trying to send this)
           await Notifications.markNotificationAsSent(notification.notificationID, {
+            textOn: 0,
             textSent: 1
           });
         }
@@ -91,7 +92,7 @@ async function sendTextNotifications(notification) {
       console.log('text notification function error', error)
     }
   } else {
-    return // text found, but already marked as sent
+    console.log("text marked as inactive or already marked as sent")
   }
 }
 
