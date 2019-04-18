@@ -5,7 +5,7 @@ const gatherEmailNotifications = require('./gatherEmailNotifications');
 const Notifications = require('../database/Helpers/notifications-model');
 
 // node-cron start function for notification system
-const notificationSystem = function() {
+const notificationSystem = function () {
   return {
     start: () => {
       new CronJob(
@@ -14,11 +14,15 @@ const notificationSystem = function() {
         // * === first to last
         // runs on  Coordinated Universal Time (UTC)
         // '00 * * * * *', // 1 minute interval for testing notification system.
-        async function() {
-          const currentTime = new Date();
-          console.log('Run Notifications onTick:', currentTime);
-          await gatherTextNotifications.run();
-          await gatherEmailNotifications.run();
+        async function () {
+          try {
+            const currentTime = new Date();
+            console.log('Run Notifications onTick:', currentTime);
+            await gatherTextNotifications.run();
+            await gatherEmailNotifications.run();
+          } catch (error) {
+            console.log("Notification start async error", error)
+          }
         },
         null,
         true,
@@ -31,7 +35,7 @@ const notificationSystem = function() {
       new CronJob(
         // runs at midnight on first of every month
         '00 00 00 01 * *',
-        async function() {
+        async function () {
           // reset notification count to 0 for all users
           await Notifications.resetNotificationCount();
           console.log('reset count triggered');
@@ -45,7 +49,7 @@ const notificationSystem = function() {
       new CronJob(
         '00 00 00 * * *', // runs every night at midnight
         // '00 * * * * *', // runs every minute for testing
-        async function() {
+        async function () {
           let today = new Date();
           today.setUTCHours(00);
           today.setUTCMinutes(00);

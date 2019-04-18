@@ -8,21 +8,42 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // 4/3/19, Leigh-Ann: This function may need reworking based on edits to sendTextNotifications
 async function sendEmailNotifications(notification) {
-  const userCountData = await Notifications.getUserNotificationCountData(
-    notification.userID
-  );
+  // email validation to prevent sending empty email to sendgrid
+  if (notification.email === "") {
+    await Notifications.markNotificationAsSent(notification.notificationID, {
+      emailOn: 0,
+      emailSent: 1
+    });
+    console.log('Empty email address found, mark as inactive')
+  }
+  // if validated, run logic for emails ready to be sent
+  else if (notification.emailSent === 0 && notification.emailOn === 1) {
+    console.log(notification.email, "email active, continue running send function")
+    try {
 
-  // compare User.notificationCount to accountType.maxNotificationCount
-  if (userCountData.notificationCount < userCountData.maxNotificationCount) {
-    // if less than, continue sending messages and increase notification count by 1
-    let newValue = userCountData.notificationCount + 1;
+      // use notification.userID to get user's current notification account and their account type's max count
+      const userCountData = await Notifications.getUserNotificationCountData(
+        notification.userID
+      );
 
-    // Create options to send the email
-    const options = {
-      to: `${notification.email}`,
-      from: 'trainingbotlabs11@gmail.com',
-      subject: `${notification.postName} - A Reminder from Training Bot `,
-      html: `
+      if (userCountData.notificationCount === userCountData.maxNotificationCount) {
+        console.log('User has reached maximum notification this month')
+      }
+
+      // compare User.notificationCount to accountType.maxNotificationCount
+      else if (userCountData.notificationCount < userCountData.maxNotificationCount) {
+        // if less than, continue sending messages and increase notification count by 1
+        let newValue = userCountData.notificationCount + 1;
+
+        // Create options to send the email
+        const options = {
+          to: `${notification.email}`,
+          from: {
+            email: "trainingbotlabs11@gmail.com",
+            name: "Training Bot"
+          },
+          subject: `${notification.postName} - A Reminder from Training Bot `,
+          html: `
       <head>
       <meta name="viewport" content="width=device-width" />
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -247,17 +268,27 @@ async function sendEmailNotifications(notification) {
       </table>
       </body>
       `
-    };
-    // Send the email!
-    sgMail.send(options);
-    // send updated notificationCount to the database
-    await Notifications.increaseUserNotificationCount(
-      notification.userID,
-      newValue
-    );
-    await Notifications.updateNotificationSent(notification.notificationID, {
-      emailSent: 1
-    });
+        };
+
+        // may need email validation before sending data to sendgrid
+        // Send the email!
+        sgMail.send(options);
+        // send updated notificationCount to the database
+        await Notifications.increaseUserNotificationCount(
+          notification.userID,
+          newValue
+        );
+        await Notifications.markNotificationAsSent(notification.notificationID, {
+          emailSent: 1
+        });
+      } else {
+        console.log("Maximum notification count has been reached for this user")
+      }
+    } catch (error) {
+      console.log('email notification system error', error)
+    }
+  } else {
+    console.log("email marked as inactive or already marked as sent")
   }
 }
 

@@ -7,6 +7,7 @@ module.exports = {
   getDailyEmailNotifications,
   updateNotificationContent,
   updateNotificationMember,
+  markNotificationAsSent,
   getNotificationByPostId,
   getNotificationsToRecalculate,
   getTrainingSeriesOfNewPost,
@@ -64,6 +65,7 @@ function getDailyTextNotifications(day) {
       "link",
       "userID",
       "textSent",
+      "textOn",
       "notificationID"
     )
     .where({ sendDate: day });
@@ -80,7 +82,8 @@ function getDailyEmailNotifications(day) {
       "lastName",
       "userID",
       "emailSent",
-      "notificationID"
+      "emailOn",
+      "notificationID",
     )
     .where({ sendDate: day });
 }
@@ -109,6 +112,12 @@ function updateNotificationMember(id, memberInformation) {
   return db("Notifications")
     .where({ teamMemberID: id })
     .update(memberInformation);
+}
+
+function markNotificationAsSent(id, content) {
+  return db("Notifications")
+    .where({ notificationID: id })
+    .update(content);
 }
 
 function getTrainingSeriesOfNewPost(id) {
@@ -152,8 +161,12 @@ function increaseUserNotificationCount(id, count) {
 
 // async function mimicking a forEach
 async function asyncForEach(notifications, callback) {
-  for (let i = 0; i < notifications.length; i++) {
-    await callback(notifications[i]);
+  try {
+    for (let i = 0; i < notifications.length; i++) {
+      await callback(notifications[i]);
+    }
+  } catch (error) {
+    console.log('async for each function error', error)
   }
 }
 

@@ -18,8 +18,11 @@ const gatherEmailNotification = () => {
   return {
     run: async () => {
       const notifications = await getDailyEmailNotifications(today);
-
-      await asyncForEach(notifications, sendEmailNotifications);
+      if (notifications.length === 0) {
+        console.log('No email notifications from today.')
+      } else {
+        await asyncForEach(notifications, sendEmailNotifications);
+      }
     }
   };
 };
