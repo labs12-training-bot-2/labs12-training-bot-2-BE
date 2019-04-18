@@ -38,7 +38,10 @@ async function sendEmailNotifications(notification) {
         // Create options to send the email
         const options = {
           to: `${notification.email}`,
-          from: 'trainingbotlabs11@gmail.com',
+          from: {
+            email: "trainingbotlabs11@gmail.com",
+            name: "Training Bot"
+          },
           subject: `${notification.postName} - A Reminder from Training Bot `,
           html: `
       <head>
