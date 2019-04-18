@@ -23,8 +23,9 @@ User.notificationCount must reset to 0 on the first of every month
 */
 
 async function sendTextNotifications(notification) {
+  // run logic to check which texts need to be sent
   if (notification.textSent === 0 && notification.textOn === 1) {
-    console.log(notification.phoneNumber, "text active, text message has not been sent")
+    console.log(notification.phoneNumber, "text active, continue running send function")
     try {
       const client = new twilio(accountSid, authToken);
 

@@ -8,6 +8,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // 4/3/19, Leigh-Ann: This function may need reworking based on edits to sendTextNotifications
 async function sendEmailNotifications(notification) {
+  // email validation to prevent sending empty email to sendgrid
   if (notification.email === "") {
     await Notifications.markNotificationAsSent(notification.notificationID, {
       emailOn: 0,
@@ -15,9 +16,9 @@ async function sendEmailNotifications(notification) {
     });
     console.log('Empty email address found, mark as inactive')
   }
-
+  // if validated, run logic for emails ready to be sent
   else if (notification.emailSent === 0 && notification.emailOn === 1) {
-    console.log(notification, "email active, email has not been sent")
+    console.log(notification.email, "email active, continue running send function")
     try {
 
       // use notification.userID to get user's current notification account and their account type's max count
