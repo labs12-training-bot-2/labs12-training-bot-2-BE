@@ -44,6 +44,8 @@ router.post("/", async (req, res) => {
               jobDescription: row.jobDescription,
               phoneNumber: "",
               email: row.email,
+              emailOn: row.emailOn,
+              textOn: row.textOn,
               trainingSeriesID: newPost.trainingSeriesID,
               userID: row.userID
             };
@@ -63,6 +65,8 @@ router.post("/", async (req, res) => {
               jobDescription: row.jobDescription,
               phoneNumber: row.phoneNumber,
               email: "",
+              emailOn: row.emailOn,
+              textOn: row.textOn,
               trainingSeriesID: newPost.trainingSeriesID,
               userID: row.userID
             };
@@ -82,6 +86,8 @@ router.post("/", async (req, res) => {
               jobDescription: row.jobDescription,
               phoneNumber: row.phoneNumber,
               email: row.email,
+              emailOn: row.emailOn,
+              textOn: row.textOn,
               trainingSeriesID: newPost.trainingSeriesID,
               userID: row.userID
             };
