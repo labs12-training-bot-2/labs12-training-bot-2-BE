@@ -1,16 +1,16 @@
 // dependencies
-const moment = require('moment');
+const moment = require("moment");
 
 // function imports
 const {
   getDailyTextNotifications,
   asyncForEach
-} = require('../database/Helpers/notifications-model');
+} = require("../database/Helpers/notifications-model");
 
-const sendTextNotifications = require('./sendTextNotifications');
+const sendTextNotifications = require("./sendTextNotifications");
 
 // format moment variable for query
-const today = moment().format('YYYY-MM-D');
+const today = moment().format("YYYY-MM-D");
 
 // query DB and get data from notification table
 // pass into asyncForEach which loops through all the notifications, edits db, and sends to Twilio API
@@ -18,8 +18,11 @@ const gatherTextNotifications = () => {
   return {
     run: async () => {
       const notifications = await getDailyTextNotifications(today);
-
-      await asyncForEach(notifications, sendTextNotifications);
+      if (notifications.length === 0) {
+        console.log('No text notifications from today.')
+      } else {
+        await asyncForEach(notifications, sendTextNotifications);
+      }
     }
   };
 };

@@ -5,7 +5,7 @@ const moment = require("moment");
 //Models
 const TeamMember = require("../database/Helpers/teamMember-model");
 const TrainingSeries = require("../database/Helpers/trainingSeries-model");
-const Notifications = require('../database/Helpers/notifications-model');
+const Notifications = require("../database/Helpers/notifications-model");
 //Routes
 
 // GET all team members in system (not a production endpoint)
@@ -42,18 +42,16 @@ router.post("/", async (req, res) => {
       firstName,
       lastName,
       jobDescription,
-      email,
       phoneNumber,
-      user_ID
+      userID
     } = req.body;
 
     if (
       !firstName ||
       !lastName ||
       !jobDescription ||
-      !email ||
       !phoneNumber ||
-      !user_ID
+      !userID
     ) {
       res.status(400).json({ error: "Client must provide all fields." });
     } else {
@@ -67,10 +65,35 @@ router.post("/", async (req, res) => {
 
 // PUT team member information
 router.put("/:id", async (req, res) => {
+  const { emailOn, textOn } = req.body;
+
   try {
     const id = req.params.id;
     const updatedTeamMember = await TeamMember.update(id, req.body);
-    await Notifications.updateNotificationMember(id, req.body);
+
+    // build new object with accurate text / email provided based on toggle boolean
+    let updatedNotificationMemberInfo;
+    if (emailOn && !textOn) {
+      updatedNotificationMemberInfo = {
+        ...req.body,
+        phoneNumber: ""
+      };
+    } else if (textOn && !emailOn) {
+      updatedNotificationMemberInfo = {
+        ...req.body,
+        email: ""
+      };
+    } else {
+      updatedNotificationMemberInfo = req.body;
+    }
+
+    // update notification table with conditional email / phone number based on textOn / emailOn
+    await Notifications.updateNotificationMember(
+      id,
+      updatedNotificationMemberInfo
+    );
+
+    // send back updated team member information
     res.status(200).json({ updatedTeamMember });
   } catch (err) {
     res.status(500).json(err);
@@ -100,20 +123,20 @@ router.post("/assign", async (req, res) => {
     const incomingAssignments = req.body.assignments;
 
     if (!startDate || !trainingSeriesID) {
-      return res.status(400).json({error: "Start date and training series ID required."})
-    };
+      return res
+        .status(400)
+        .json({ error: "Start date and training series ID required." });
+    }
 
     // for each object in array, perform a series of tasks
     incomingAssignments.forEach(async assignment => {
       try {
-
         const newObject = {
           startDate: startDate,
           trainingSeries_ID: trainingSeriesID,
           teamMember_ID: assignment
+        };
 
-        }
-      
         // 1. assign member to training series, return information
         await TeamMember.addToTrainingSeries(newObject);
 
@@ -126,25 +149,72 @@ router.post("/assign", async (req, res) => {
         );
 
         // 4. convert the integer of Post.daysFromStart into a date, assemble obj to send to Notifications table
+        // generate new objects for notification table based on conditional provided
         const formattedPosts = posts.map(post => {
-          return {
-            postID: post.postID,
-            postName: post.postName,
-            postDetails: post.postDetails,
-            link: post.link,
-            daysFromStart: post.daysFromStart,
-            sendDate: moment(startDate)
-              .add(post.daysFromStart, "days")
-              .format(),
-            teamMemberID: member.teamMemberID,
-            phoneNumber: member.phoneNumber,
-            email: member.email,
-            firstName: member.firstName,
-            lastName: member.lastName,
-            jobDescription: member.jobDescription,
-            trainingSeriesID: trainingSeriesID,
-            userID: member.user_ID
-          };
+          if (member.emailOn && !member.textOn) {
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: "",
+              email: member.email,
+              emailOn: member.emailOn,
+              textOn: member.textOn,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          } else if (member.textOn && !member.emailOn) {
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: member.phoneNumber,
+              email: "",
+              emailOn: member.emailOn,
+              textOn: member.textOn,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          } else {
+            return {
+              postID: post.postID,
+              postName: post.postName,
+              postDetails: post.postDetails,
+              link: post.link,
+              daysFromStart: post.daysFromStart,
+              sendDate: moment(startDate)
+                .add(post.daysFromStart, "days")
+                .format(),
+              teamMemberID: member.teamMemberID,
+              phoneNumber: member.phoneNumber,
+              email: member.email,
+              emailOn: member.emailOn,
+              textOn: member.textOn,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              jobDescription: member.jobDescription,
+              trainingSeriesID: trainingSeriesID,
+              userID: member.userID
+            };
+          }
         });
 
         // 5. add each returned object to Notifications table
@@ -172,7 +242,6 @@ router.delete("/:id/assign/:ts_id", async (req, res) => {
   try {
     const { id, ts_id } = req.params;
     const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
-    console.log("deleted", deleted);
     if (deleted > 0) {
       res.status(200).json({ message: "The resource has been deleted." });
     } else {
