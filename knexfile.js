@@ -1,36 +1,39 @@
-require('dotenv').config();
+require('dotenv').config()
 
 module.exports = {
-	development: {
-		client: 'mysql',
-		connection: {
-			host: process.env.DATABASE_URL_DEV,
-			user: process.env.DATABASE_USER_DEV,
-			port: process.env.DATABASE_PORT_DEV,
-			password: process.env.DATABASE_PASSWORD_DEV,
-			database: process.env.DATABASE_NAME_DEV,
-		},
-		pool: {
-			min: 2,
-			max: 10,
-		},
-
-		seeds: {
-			directory: './database/seeds',
-		},
-	},
-	production: {
-		client: 'mysql',
-		connection: {
-			host: process.env.DATABASE_URL,
-			user: process.env.DATABASE_USER,
-			port: process.env.DATABASE_PORT,
-			password: process.env.DATABASE_PASSWORD,
-			database: process.env.DATABASE_NAME,
-		},
-		pool: {
-			min: 2,
-			max: 10,
-		},
-	},
+  development: {
+    client: "postgresql",
+    connection: {
+      database: process.env.DB_LOCAL,
+      user: process.env.DB_LOCAL_USER
+    },
+    pool: {
+      min: 2,
+      max: 10
+    },
+    migrations: {
+      tableName: "knex_migrations",
+      directory: "./database/migrations/"
+    },
+    seeds: {
+      directory: "./database/seeds/"
+    },
+    useNullAsDefault: true
+  },
+  production: {
+    client: "postgresql",
+    connection: process.env.HEROKU_POSTGRESQL_MAUVE_URL,
+    pool: {
+      min: 2,
+      max: 10
+    },
+    migrations: {
+      tableName: "knex_migrations",
+      directory: "./database/migrations/"
+    },
+    seeds: {
+      directory: "./databse/seeds/"
+    },
+    useNullAsDefault: true
+  }
 };
