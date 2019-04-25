@@ -1,3 +1,5 @@
+// file marked for deletion upon successfully using knex-built seed files
+
 // Dependencies
 const router = require("express").Router();
 
