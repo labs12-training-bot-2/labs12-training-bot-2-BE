@@ -21,7 +21,8 @@ function createFakeUsers() {
   const newUsers = [];
   const fakeUser = () => ({
     accountTypeID: faker.random.number({ min: 1, max: 3 }),
-    email: faker.internet.email()
+    email: faker.internet.email(),
+    name: faker.name.findName()
   });
   for (let i = 0; i < userSeeds; i++) {
     newUsers.push(fakeUser());
