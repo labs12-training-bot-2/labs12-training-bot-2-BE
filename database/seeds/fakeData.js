@@ -1,27 +1,32 @@
 const faker = require("faker");
 
+//alter these values to generate different amounts of faked, seeded data for all tables minus accountTypes
 const userSeeds = 1;
 const seriesSeeds = 5;
 const memberSeeds = 500;
 const postSeeds = 20;
 
+//since any number of many-to-many relationships can exist between series and users, arbitrarily capped it at 20 initially
+const relationalSeeds = faker.random.number({ min: 1, max: 20 });
+
 module.exports = {
   createFakeUsers,
   createFakeTrainingSeries,
   createFakeTeamMembers,
+  createFakeRelationalEntries,
   createFakePosts
 };
 
 function createFakeUsers() {
-  const fakeUsers = [];
+  const newUsers = [];
   const fakeUser = () => ({
     accountTypeID: faker.random.number({ min: 1, max: 3 }),
     email: faker.internet.email()
   });
   for (let i = 0; i < userSeeds; i++) {
-    fakeUsers.push(fakeUser());
+    newUsers.push(fakeUser());
   }
-  return fakeUsers;
+  return newUsers;
 }
 
 function createFakeTrainingSeries() {
@@ -60,8 +65,21 @@ function createFakeTeamMembers() {
   return newTeamMembers;
 }
 
-// Creates 50 fake posts and adds them to users and training series randomly
+function createFakeRelationalEntries() {
+  const newRelationalEntries = [];
+  const fakeEntry = () => ({
+    date: faker.date.future(1),
+    teamMember_ID: faker.random.number({ min: 1, max: memberSeeds }),
+    trainingSeries_ID: faker.random.number({ min: 1, max: seriesSeeds })
+  });
+  for (let i = 0; i < relationalSeeds; i++) {
+    newRelationalEntries.push(fakeEntry());
+  }
+  return newRelationalEntries;
+}
+
 function createFakePosts() {
+  const newPosts = [];
   const fakePost = () => ({
     postName: faker.lorem.words(5),
     postDetails: faker.lorem.sentences(3),
@@ -76,8 +94,8 @@ function createFakePosts() {
       max: 33
     })
   });
-
-  const newPost = fakePost();
-
-  return newPost;
+  for (let i = 0; i < postSeeds; i++) {
+    newPosts.push(fakePost());
+  }
+  return newPosts;
 }
