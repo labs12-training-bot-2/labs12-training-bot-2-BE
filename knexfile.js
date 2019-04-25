@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 
 module.exports = {
   development: {
@@ -32,7 +32,7 @@ module.exports = {
       directory: "./database/migrations/"
     },
     seeds: {
-      directory: "./databse/seeds/"
+      directory: "./database/seeds/"
     },
     useNullAsDefault: true
   }
