@@ -1,14 +1,45 @@
 const faker = require("faker");
 
+const userSeeds = 1;
+const seriesSeeds = 5;
+const memberSeeds = 500;
+const postSeeds = 20;
+
 module.exports = {
-  createFakeTeamMembers,
   createFakeUsers,
   createFakeTrainingSeries,
+  createFakeTeamMembers,
   createFakePosts
 };
 
-const numberOfUsers = 10;
-const numberOfPosts = 50;
+function createFakeUsers() {
+  const fakeUsers = [];
+  const fakeUser = () => ({
+    accountTypeID: faker.random.number({ min: 1, max: 3 }),
+    email: faker.internet.email()
+  });
+  for (let i = 0; i < userSeeds; i++) {
+    fakeUsers.push(fakeUser());
+  }
+  return fakeUsers;
+}
+
+function createFakeTrainingSeries() {
+  const newSeries = [];
+  const fakeSeries = () => ({
+    title: faker.lorem.words(5),
+    userID: faker.random.number({
+      min: 1,
+      max: userSeeds
+    })
+  });
+
+  for (let i = 0; i < seriesSeeds; i++) {
+    newSeries.push(fakeSeries());
+  }
+
+  return newSeries;
+}
 
 function createFakeTeamMembers() {
   const fakeTeamMember = () => ({
@@ -24,36 +55,6 @@ function createFakeTeamMembers() {
   const newTeamMember = fakeTeamMember();
 
   return newTeamMember;
-}
-
-// Creates 10 fake users
-function createFakeUsers() {
-  const fakeUsers = [];
-
-  const fakeUser = () => ({
-    accountTypeID: faker.random.number(2) + 1,
-    email: faker.internet.email()
-  });
-
-  for (let i = 0; i < numberOfUsers; i++) {
-    fakeUsers.push(fakeUser());
-  }
-
-  return fakeUsers;
-}
-
-function createFakeTrainingSeries() {
-  const fakeSeries = () => ({
-    title: faker.lorem.words(5),
-    userID: faker.random.number({
-      min: 1,
-      max: 10
-    })
-  });
-
-  const newSeries = fakeSeries();
-
-  return newSeries;
 }
 
 // Creates 50 fake posts and adds them to users and training series randomly
