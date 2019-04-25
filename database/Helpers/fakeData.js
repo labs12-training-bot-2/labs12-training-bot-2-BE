@@ -68,7 +68,7 @@ function createFakeTeamMembers() {
 function createFakeRelationalEntries() {
   const newRelationalEntries = [];
   const fakeEntry = () => ({
-    date: faker.date.future(1),
+    startDate: faker.date.future(1),
     teamMember_ID: faker.random.number({ min: 1, max: memberSeeds }),
     trainingSeries_ID: faker.random.number({ min: 1, max: seriesSeeds })
   });
@@ -90,8 +90,8 @@ function createFakePosts() {
     }),
     postImage: faker.image.imageUrl(),
     trainingSeriesID: faker.random.number({
-      min: 28,
-      max: 33
+      min: 1,
+      max: seriesSeeds
     })
   });
   for (let i = 0; i < postSeeds; i++) {
