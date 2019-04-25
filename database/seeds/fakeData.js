@@ -42,19 +42,22 @@ function createFakeTrainingSeries() {
 }
 
 function createFakeTeamMembers() {
+  const newTeamMembers = [];
   const fakeTeamMember = () => ({
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     jobDescription: faker.commerce.department(),
     email: faker.internet.email(),
     phoneNumber: faker.phone.phoneNumber(),
-    TeamMemberCol: 1,
-    user_ID: 56
+    slackID: "pending slack ID",
+    teamsID: "pending teams ID",
+    user_ID: faker.random.number({ min: 1, max: userSeeds })
   });
+  for (let i = 0; i < memberSeeds; i++) {
+    newTeamMembers.push(fakeTeamMember());
+  }
 
-  const newTeamMember = fakeTeamMember();
-
-  return newTeamMember;
+  return newTeamMembers;
 }
 
 // Creates 50 fake posts and adds them to users and training series randomly
