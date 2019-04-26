@@ -17,9 +17,9 @@ const { authenticate } = require("./auth/authenticate");
 //Routes
 const usersRouter = require("./routes/userRouter");
 const teamsRouter = require("./routes/teamMemberRouter");
-const authRouter = require("./routes/authRoutes");
+const authRouter = require("./routes/authRouter");
 const trainingsRouter = require("./routes/trainingSeriesRouter");
-const postsRouter = require("./routes/postRouter");
+const messageRouter = require("./routes/messageRouter");
 const stripeRouter = require("./routes/stripeRouter");
 
 //API Endpoints
@@ -27,7 +27,7 @@ server.use("/api/auth", authRouter);
 server.use("/api/users", authenticate, usersRouter);
 server.use("/api/team-members", authenticate, teamsRouter);
 server.use("/api/training-series", authenticate, trainingsRouter);
-server.use("/api/posts", authenticate, postsRouter);
+server.use("/api/messages", authenticate, messageRouter);
 server.use("/api/stripe", stripeRouter);
 
 //Default Endpoints

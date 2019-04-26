@@ -3,7 +3,6 @@ const router = require("express").Router();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // const stripe = require('stripe')('sk_test_I3A5cCkzbD6C7HqqHSt7uRHH00ht9noOJw');
 
-
 const Users = require("../database/Helpers/user-model.js");
 
 // pass in stripeID
@@ -40,49 +39,48 @@ async function unsubscribe(userID, stripeID, plan) {
   }
 }
 
-async function register(userID, name, email, token) {
+async function register(id, name, email, token) {
   try {
     let customer = await stripe.customers.create({
       description: name,
       email: email,
       source: token // obtained with Stripe.js
     });
-    Users.updateUser(userID, { stripe: customer.id });
+    Users.updateUser(id, { stripe: customer.id });
     return customer;
   } catch (error) {
     console.log(error);
   }
 }
 
-function updateUserAccountType(userID, plan) {
+function updateUserAccountType(id, plan) {
+  // LIVE
+  let accountTypeID;
+  if (plan === "plan_EtJQBX3qzlXOiS") {
+    // LIVE - PREMIUM PLAN
+    accountTypeID = 2;
+  } else if (plan === "plan_EtJQifGGbeQWq2") {
+    // LIVE - PRO PLAN
+    accountTypeID = 3;
+  } else {
+    accountTypeID = 1;
+  }
+  console.log("AccountTypeID", accountTypeID);
+  Users.updateUser(id, { account_type_id: accountTypeID });
 
-// LIVE
-    let accountTypeID;
-    if (plan === "plan_EtJQBX3qzlXOiS") {
-      // LIVE - PREMIUM PLAN
-      accountTypeID = 2;
-    } else if (plan === "plan_EtJQifGGbeQWq2") {
-      // LIVE - PRO PLAN
-      accountTypeID = 3;
-    } else {
-      accountTypeID = 1;
-    }
-    console.log("AccountTypeID", accountTypeID);
-    Users.updateUser(userID, { accountTypeID: accountTypeID });
-
-// TEST
-    // let accountTypeID;
-    // if (plan === "plan_EmJallrSdkqpPS") {
-	// 	// TEST - PREMIUM PLAN
-	// 	accountTypeID = 2;
-    // } else if (plan === "plan_EmJaXZor4Ef3co") {
-	// 	// TEST - PRO PLAN
-    //   accountTypeID = 3;
-    // } else {
-    //   accountTypeID = 1;
-    // }
-    // console.log("AccountTypeID", accountTypeID);
-    // Users.updateUser(userID, { accountTypeID: accountTypeID });
+  // TEST
+  // let accountTypeID;
+  // if (plan === "plan_EmJallrSdkqpPS") {
+  // 	// TEST - PREMIUM PLAN
+  // 	accountTypeID = 2;
+  // } else if (plan === "plan_EmJaXZor4Ef3co") {
+  // 	// TEST - PRO PLAN
+  //   accountTypeID = 3;
+  // } else {
+  //   accountTypeID = 1;
+  // }
+  // console.log("AccountTypeID", accountTypeID);
+  // Users.updateUser(id, { account_type_id: accountTypeID });
 }
 
 router.post("/", async (req, res) => {
@@ -155,7 +153,7 @@ router.post("/unsubscribe", async (req, res) => {
 
 router.get("/plans", async (req, res) => {
   try {
-// LIVE
+    // LIVE
     stripe.plans.list(
       {
         limit: 3,
@@ -165,10 +163,10 @@ router.get("/plans", async (req, res) => {
         // console.log('plans', plans.data);
         res.send(plans.data);
       }
-	)
+    );
 
-// TEST
-	// 	stripe.plans.list(
+    // TEST
+    // 	stripe.plans.list(
     //   {
     //     limit: 3,
     //     product: 'prod_EmJZbRNGEjlOY4', // TEST
@@ -177,8 +175,7 @@ router.get("/plans", async (req, res) => {
     //     console.log('plans', plans.data);
     //     res.send(plans.data);
     //   }
-	// )
-
+    // )
   } catch (error) {
     console.log(error);
   }

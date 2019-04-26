@@ -35,7 +35,7 @@ router.get("/:id", async (req, res) => {
       // Get posts by user
       const posts = await Users.getUserPosts(id);
 
-      const members = await TeamMembers.findBy({ userID: id });
+      const members = await TeamMembers.findBy({ user_id: id });
 
       const userInfo = {
         ...user,
@@ -55,8 +55,8 @@ router.get("/:id", async (req, res) => {
 // GET all members associated with user
 router.get("/:id/team-members", async (req, res) => {
   try {
-    const userId = req.params.id;
-    const members = await TeamMembers.findBy({ userID: userId });
+    const user_id = req.params.id;
+    const members = await TeamMembers.findBy({ user_id });
     res.status(200).json({ members });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
@@ -79,6 +79,8 @@ router.get("/:id/text-notifications", async (req, res) => {
   try {
     const { id } = req.params;
     const textNotifications = await Notifications.getTextNotifications(id);
+
+    //todo: investigate following expressions, filteredTexts not used anywhere
     const filteredTexts = await textNotifications.filter(
       notification => notification.phoneNumber !== ""
     );
@@ -93,6 +95,8 @@ router.get("/:id/email-notifications", async (req, res) => {
   try {
     const { id } = req.params;
     const emailNotifications = await Notifications.getEmailNotifications(id);
+
+    //todo: investigate following expression, filteredEmails not used anywhere
     const filteredEmails = await emailNotifications.filter(
       notification => notification.email !== ""
     );
