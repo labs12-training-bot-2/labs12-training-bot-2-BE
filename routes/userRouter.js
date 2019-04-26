@@ -21,7 +21,7 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     //get user by id
-    const user = await Users.findById(id);
+    const user = await Users.findBy(id);
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -108,7 +108,7 @@ router.put("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await Users.findById(id);
+    const user = await Users.findBy(id);
 
     if (!user) {
       res.status(404).json({ message: "The specified user does not exist." });
@@ -127,7 +127,7 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await Users.findById(id);
+    const user = await Users.findBy(id);
 
     if (!user) {
       res.status(404).json({ message: "The specified user does not exist." });
