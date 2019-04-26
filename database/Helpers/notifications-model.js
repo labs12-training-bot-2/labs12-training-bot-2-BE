@@ -91,7 +91,7 @@ function getDailyEmailNotifications(day) {
 function getNotificationByPostId(id) {
   return db("notifications")
     .where({ message_id: id })
-    .select("*");
+    .returning("*");
 }
 
 function getNotificationsToRecalculate(message_id, team_member_id) {

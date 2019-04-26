@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {
     const { id } = req.params;
 
     // get team member info by id
-    const teamMember = await TeamMember.findById(id);
+    const teamMember = await TeamMember.findBy(id);
 
     // get team member's training series assignments
     const assignments = await TeamMember.getTrainingSeriesAssignments(id);
@@ -46,13 +46,7 @@ router.post("/", async (req, res) => {
       userID
     } = req.body;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !jobDescription ||
-      !phoneNumber ||
-      !userID
-    ) {
+    if (!firstName || !lastName || !jobDescription || !phoneNumber || !userID) {
       res.status(400).json({ error: "Client must provide all fields." });
     } else {
       const newTeamMember = await TeamMember.add(req.body);
@@ -141,7 +135,7 @@ router.post("/assign", async (req, res) => {
         await TeamMember.addToTrainingSeries(newObject);
 
         // 2. get team member info by ID
-        const member = await TeamMember.findById(newObject.teamMember_ID);
+        const member = await TeamMember.findBy(newObject.teamMember_ID);
 
         // 3. get all the posts for the training series assigned
         const posts = await TrainingSeries.getTrainingSeriesPosts(

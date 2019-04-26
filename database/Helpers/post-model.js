@@ -4,48 +4,36 @@ module.exports = {
   add,
   find,
   findBy,
-  findById,
-  addPostSeeds,
   update,
   remove
 };
 
 function find() {
-  return db("Post");
+  return db("messages").returning("*");
 }
 
 function findBy(filter) {
-  return db("Post").where(filter);
-}
-
-async function add(post) {
-  const [id] = await db("Post").insert(post, "id");
-
-  return findById(id);
-}
-
-function findById(id) {
-  return db("Post")
-    .where({ postID: id })
+  return db("messages")
+    .where(filter)
+    .returning("*")
     .first();
 }
 
-function addPostSeeds(posts) {
-  return db("Post").insert(posts);
+function add(message) {
+  return db("messages")
+    .insert(message, "id")
+    .returning("*");
 }
 
-
-async function update(id, post) {
-  await db("Post")
-    .where({ postID: id })
-    .update(post);
-
-  return await findById(id);
+function update(id, message) {
+  return db("messages")
+    .where({ id })
+    .update(member)
+    .returning("*");
 }
 
 function remove(id) {
-  return db("Post")
-    .where({ postID: id })
+  return db("messages")
+    .where({ id })
     .del();
 }
-

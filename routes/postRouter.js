@@ -120,9 +120,12 @@ router.put("/:id", async (req, res) => {
     );
 
     // callback function to calculate new send date for notifications
-    const dateRecalculation = async (notification) => {
+    const dateRecalculation = async notification => {
       // pull in start date from relational table based on team member id and training series id
-      const member = await TeamMember.getTrainingSeriesAssignment(notification.teamMemberID, notification.trainingSeriesID);
+      const member = await TeamMember.getTrainingSeriesAssignment(
+        notification.teamMemberID,
+        notification.trainingSeriesID
+      );
 
       const newSendDate = await moment(member.startDate)
         .add(updatedPost.daysFromStart, "days")
@@ -135,8 +138,11 @@ router.put("/:id", async (req, res) => {
       };
 
       // update notifications
-      await Notifications.updateNotificationContent(notification.notificationID, updatedNotification);
-    }
+      await Notifications.updateNotificationContent(
+        notification.notificationID,
+        updatedNotification
+      );
+    };
 
     // async await for each to PUT notifications with new send date
     await Notifications.asyncForEach(notificationsToUpdate, dateRecalculation);
@@ -152,7 +158,7 @@ router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const post = await Posts.findById(id);
+    const post = await Posts.findBy(id);
     res.status(200).json({ post });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
