@@ -24,7 +24,11 @@ const stripeRouter = require("./routes/stripeRouter");
 
 //API Endpoints
 server.use("/api/auth", authRouter);
-server.use("/api/users", authenticate, usersRouter);
+server.use(
+  "/api/users",
+  // authenticate,
+  usersRouter
+);
 server.use("/api/team-members", authenticate, teamsRouter);
 server.use("/api/training-series", authenticate, trainingsRouter);
 server.use("/api/posts", authenticate, postsRouter);
