@@ -4,19 +4,23 @@ module.exports = {
   add,
   find,
   findBy,
+  findById,
   update,
   remove
 };
 
 function find() {
-  return db("messages").returning("*");
+  return db("messages");
 }
 
 function findBy(filter) {
   return db("messages")
     .where(filter)
-    .returning("*")
     .first();
+}
+
+function findById(id) {
+  return db("messages").where({ id });
 }
 
 function add(message) {
@@ -28,8 +32,7 @@ function add(message) {
 function update(id, message) {
   return db("messages")
     .where({ id })
-    .update(member)
-    .returning("*");
+    .update(member);
 }
 
 function remove(id) {

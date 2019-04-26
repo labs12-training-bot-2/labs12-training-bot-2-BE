@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 // GET all posts (not a production endpoint)
 router.get("/posts", async (req, res) => {
   try {
-    const posts = await TrainingSeries.getAllPosts();
+    const posts = await TrainingSeries.getAllMessages();
     res.status(200).json({ posts });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
@@ -30,11 +30,11 @@ router.get("/posts", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const trainingSeries = await TrainingSeries.findBy(id);
+    const trainingSeries = await TrainingSeries.findById(id);
     console.log("trainingSeries", trainingSeries);
     res.status(200).json({ trainingSeries });
   } catch (err) {
-    res.status(500).json({ message: "A network error occurred" });
+    res.status(500).json({ message: "A network error occurred: " });
   }
 });
 
@@ -50,9 +50,9 @@ router.get("/:id/assignments", async (req, res) => {
 // POST a new training series
 router.post("/", async (req, res) => {
   try {
-    const { title, userID } = req.body;
+    const { title, user_id } = req.body;
 
-    if (!title || !userID) {
+    if (!title || !user_id) {
       res.status(400).json({ error: "Client must provide all fields." });
     } else {
       const newTrainingSeries = await TrainingSeries.add(req.body);
@@ -95,7 +95,7 @@ router.get("/:id/posts", async (req, res) => {
     const { id } = req.params;
 
     //get training series by id
-    const trainingSeries = await TrainingSeries.findBy(id);
+    const trainingSeries = await TrainingSeries.findById(id);
 
     //get all posts of training series
     const posts = await TrainingSeries.getTrainingSeriesPosts(id);

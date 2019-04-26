@@ -6,6 +6,7 @@ module.exports = {
   add,
   find,
   findBy,
+  findById,
   findByEmail,
   findTrainingSeriesByUser,
   getUserAccountType,
@@ -15,27 +16,29 @@ module.exports = {
 };
 
 function find() {
-  return db("users").returning("*");
+  return db("users");
 }
 
 function findBy(filter) {
   return db("users")
     .where(filter)
-    .returning("*")
+
     .first();
+}
+
+function findById(id) {
+  return db("users").where({ id });
 }
 
 function add(user) {
   return db("users")
     .insert(user)
-    .returning("*")
-    .first();
+    .returning("*");
 }
 
 function findByEmail(email) {
   return db("users")
     .where("email", email)
-    .returning("*")
     .first();
 }
 
@@ -70,12 +73,11 @@ function getUserPosts(id) {
 function updateUser(id, changes) {
   return db("users")
     .where("id", id)
-    .update(changes)
-    .returning("*");
+    .update(changes);
 }
 
 function deleteUser(id) {
   return db("users")
-    .where("id", id)
+    .where({ id })
     .del();
 }

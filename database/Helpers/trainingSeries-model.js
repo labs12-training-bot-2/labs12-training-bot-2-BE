@@ -4,7 +4,8 @@ module.exports = {
   add,
   find,
   findBy,
-  getAllPosts,
+  findById,
+  getAllMessages,
   getTrainingSeriesPosts,
   update,
   remove,
@@ -12,14 +13,17 @@ module.exports = {
 };
 
 function find() {
-  return db("training_series").returning("*");
+  return db("training_series");
 }
 
 function findBy(filter) {
   return db("training_series")
     .where(filter)
-    .returning("*")
     .first();
+}
+
+function findById(id) {
+  return db("training_series").where({ id });
 }
 
 function add(training_series) {
@@ -29,8 +33,8 @@ function add(training_series) {
 }
 
 // not a production function
-function getAllPosts() {
-  return db("messages").returning("*");
+function getAllMessages() {
+  return db("messages");
 }
 
 function getTrainingSeriesPosts(id) {
@@ -42,8 +46,7 @@ function getTrainingSeriesPosts(id) {
 function update(id, series) {
   return db("training_series")
     .where({ id })
-    .update(series)
-    .returning("*");
+    .update(series);
 }
 
 function remove(id) {

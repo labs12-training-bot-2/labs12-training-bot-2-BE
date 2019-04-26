@@ -17,14 +17,17 @@ module.exports = {
 };
 
 function find() {
-  return db("team_members").returning("*");
+  return db("team_members");
 }
 
 function findBy(filter) {
   return db("team_members")
     .where(filter)
-    .returning("*")
     .first();
+}
+
+function findById(id) {
+  return db("team_members").where({ id });
 }
 
 function add(member) {
@@ -36,8 +39,7 @@ function add(member) {
 async function update(id, member) {
   return db("team_members")
     .where({ id })
-    .update(member)
-    .returning("*");
+    .update(member);
 }
 
 function remove(id) {
@@ -54,8 +56,7 @@ async function addToTrainingSeries(assignment) {
 
   return db("relationalTable")
     .where({ id })
-    .first()
-    .returning("*");
+    .first();
 }
 
 //get a team member's training series assignments
@@ -111,7 +112,7 @@ team_members_ID
 function findTrainingSeriesBy(filter) {
   return db("relational_table")
     .where(filter)
-    .returning("*");
+    .first();
 }
 
 async function removeFromTrainingSeries(team_members_id, training_series_id) {
@@ -134,5 +135,7 @@ async function removeFromTrainingSeries(team_members_id, training_series_id) {
 }
 
 function addToNotificationsTable(data) {
-  return db("notifications").insert(data);
+  return db("notifications")
+    .insert(data)
+    .returning("*");
 }

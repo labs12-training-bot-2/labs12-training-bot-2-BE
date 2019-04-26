@@ -8,9 +8,9 @@ module.exports = {
   updateNotificationContent,
   updateNotificationMember,
   markNotificationAsSent,
-  getNotificationByPostId,
+  getNotificationByMessageId,
   getNotificationsToRecalculate,
-  getTrainingSeriesOfNewPost,
+  getTrainingSeriesOfNewMessage,
   getUserNotificationCountData,
   increaseUserNotificationCount,
   asyncForEach,
@@ -88,10 +88,10 @@ function getDailyEmailNotifications(day) {
     .where({ send_date: day });
 }
 
-function getNotificationByPostId(id) {
+function getNotificationByMessageId(id) {
   return db("notifications")
     .where({ message_id: id })
-    .returning("*");
+    .first();
 }
 
 function getNotificationsToRecalculate(message_id, team_member_id) {
@@ -104,7 +104,6 @@ function getNotificationsToRecalculate(message_id, team_member_id) {
 function updateNotificationContent(id, content) {
   return db("notifications")
     .where({ id })
-    .returning("*")
     .update(content);
 }
 
@@ -120,7 +119,7 @@ function markNotificationAsSent(id, content) {
     .update(content);
 }
 
-function getTrainingSeriesOfNewPost(id) {
+function getTrainingSeriesOfNewMessage(id) {
   return db("team_members AS t")
     .select(
       "t.id",
