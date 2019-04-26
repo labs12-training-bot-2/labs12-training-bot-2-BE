@@ -21,6 +21,7 @@ const authRouter = require("./routes/authRouter");
 const trainingsRouter = require("./routes/trainingSeriesRouter");
 const messageRouter = require("./routes/messageRouter");
 const stripeRouter = require("./routes/stripeRouter");
+const MSAuthRouter = require("./routes/MSAuthRouter");
 
 //API Endpoints
 server.use("/api/auth", authRouter);
@@ -29,6 +30,7 @@ server.use("/api/team-members", authenticate, teamsRouter);
 server.use("/api/training-series", authenticate, trainingsRouter);
 server.use("/api/messages", authenticate, messageRouter);
 server.use("/api/stripe", stripeRouter);
+server.use("/api/ms-auth", MSAuthRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
