@@ -1,9 +1,9 @@
 exports.seed = function(knex, Promise) {
-  return knex("accountType").then(function() {
-    return knex("accountType").insert([
-      { accountType: "free", maxNotificationCount: 50 },
-      { accountType: "premium", maxNotificationCount: 200 },
-      { accountType: "pro", maxNotificationCount: 1000 }
+  return knex("account_types").then(function() {
+    return knex("account_types").insert([
+      { account_type: "free", max_notification_count: 50 },
+      { account_type: "premium", max_notification_count: 200 },
+      { account_type: "pro", max_notification_count: 1000 }
     ]);
   });
 };

@@ -39,19 +39,19 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const {
-      firstName,
-      lastName,
-      jobDescription,
-      phoneNumber,
-      userID
+      first_name,
+      last_name,
+      job_description,
+      phone_number,
+      user_id
     } = req.body;
 
     if (
-      !firstName ||
-      !lastName ||
-      !jobDescription ||
-      !phoneNumber ||
-      !userID
+      !first_name ||
+      !last_name ||
+      !job_description ||
+      !phone_number ||
+      !user_id
     ) {
       res.status(400).json({ error: "Client must provide all fields." });
     } else {
@@ -65,7 +65,7 @@ router.post("/", async (req, res) => {
 
 // PUT team member information
 router.put("/:id", async (req, res) => {
-  const { emailOn, textOn } = req.body;
+  const { email_on, text_on } = req.body;
 
   try {
     const id = req.params.id;
@@ -73,12 +73,12 @@ router.put("/:id", async (req, res) => {
 
     // build new object with accurate text / email provided based on toggle boolean
     let updatedNotificationMemberInfo;
-    if (emailOn && !textOn) {
+    if (email_on && !text_on) {
       updatedNotificationMemberInfo = {
         ...req.body,
-        phoneNumber: ""
+        phone_number: ""
       };
-    } else if (textOn && !emailOn) {
+    } else if (text_on && !email_on) {
       updatedNotificationMemberInfo = {
         ...req.body,
         email: ""
@@ -87,7 +87,7 @@ router.put("/:id", async (req, res) => {
       updatedNotificationMemberInfo = req.body;
     }
 
-    // update notification table with conditional email / phone number based on textOn / emailOn
+    // update notification table with conditional email / phone number based on text_on / email_on
     await Notifications.updateNotificationMember(
       id,
       updatedNotificationMemberInfo
@@ -119,10 +119,10 @@ router.delete("/:id", async (req, res) => {
 router.post("/assign", async (req, res) => {
   try {
     // store array of objects in a new variable
-    const { startDate, trainingSeriesID } = req.body;
+    const { start_date, training_series_id } = req.body;
     const incomingAssignments = req.body.assignments;
 
-    if (!startDate || !trainingSeriesID) {
+    if (!start_date || !training_series_id) {
       return res
         .status(400)
         .json({ error: "Start date and training series ID required." });
@@ -132,87 +132,87 @@ router.post("/assign", async (req, res) => {
     incomingAssignments.forEach(async assignment => {
       try {
         const newObject = {
-          startDate: startDate,
-          trainingSeries_ID: trainingSeriesID,
-          teamMember_ID: assignment
+          start_date,
+          training_series,
+          team_member_id: assignment
         };
 
         // 1. assign member to training series, return information
         await TeamMember.addToTrainingSeries(newObject);
 
         // 2. get team member info by ID
-        const member = await TeamMember.findById(newObject.teamMember_ID);
+        const member = await TeamMember.findById(newObject.team_member_id);
 
-        // 3. get all the posts for the training series assigned
-        const posts = await TrainingSeries.getTrainingSeriesPosts(
-          newObject.trainingSeries_ID
+        // 3. get all the messages for the training series assigned
+        const messages = await TrainingSeries.getTrainingSeriesPosts(
+          newObject.training_series_id
         );
 
-        // 4. convert the integer of Post.daysFromStart into a date, assemble obj to send to Notifications table
+        // 4. convert the integer of Messages.days_from_start into a date, assemble obj to send to Notifications table
         // generate new objects for notification table based on conditional provided
-        const formattedPosts = posts.map(post => {
-          if (member.emailOn && !member.textOn) {
+        const formattedMessages = messages.map(msg => {
+          if (member.email_on && !member.text_on) {
             return {
-              postID: post.postID,
-              postName: post.postName,
-              postDetails: post.postDetails,
-              link: post.link,
-              daysFromStart: post.daysFromStart,
-              sendDate: moment(startDate)
-                .add(post.daysFromStart, "days")
+              message_id: msg.id,
+              message_name: msg.message_name,
+              message_details: msg.message_details,
+              link: msg.link,
+              days_from_start: msg.days_from_start,
+              send_date: moment(start_date)
+                .add(msg.days_from_start, "days")
                 .format(),
-              teamMemberID: member.teamMemberID,
-              phoneNumber: "",
+              team_member_id: member.id,
+              phone_number: "",
               email: member.email,
-              emailOn: member.emailOn,
-              textOn: member.textOn,
-              firstName: member.firstName,
-              lastName: member.lastName,
-              jobDescription: member.jobDescription,
-              trainingSeriesID: trainingSeriesID,
-              userID: member.userID
+              email_on: member.email_on,
+              text_on: member.text_on,
+              first_name: member.first_name,
+              last_name: member.last_name,
+              job_description: member.job_description,
+              training_series_id,
+              user_id: member.user_id
             };
-          } else if (member.textOn && !member.emailOn) {
+          } else if (member.text_on && !member.email_on) {
             return {
-              postID: post.postID,
-              postName: post.postName,
-              postDetails: post.postDetails,
-              link: post.link,
-              daysFromStart: post.daysFromStart,
-              sendDate: moment(startDate)
-                .add(post.daysFromStart, "days")
+              message_id: msg.id,
+              message_name: msg.message_name,
+              message_details: msg.message_details,
+              link: msg.link,
+              days_from_start: msg.days_from_start,
+              send_date: moment(start_date)
+                .add(msg.days_from_start, "days")
                 .format(),
-              teamMemberID: member.teamMemberID,
-              phoneNumber: member.phoneNumber,
+              team_member_id: member.id,
+              phone_number: member.phone_number,
               email: "",
-              emailOn: member.emailOn,
-              textOn: member.textOn,
-              firstName: member.firstName,
-              lastName: member.lastName,
-              jobDescription: member.jobDescription,
-              trainingSeriesID: trainingSeriesID,
-              userID: member.userID
+              email_on: member.email_on,
+              text_on: member.text_on,
+              first_name: member.first_name,
+              last_name: member.last_name,
+              job_description: member.job_description,
+              training_series_id,
+              user_id: member.user_id
             };
           } else {
             return {
-              postID: post.postID,
-              postName: post.postName,
-              postDetails: post.postDetails,
-              link: post.link,
-              daysFromStart: post.daysFromStart,
-              sendDate: moment(startDate)
-                .add(post.daysFromStart, "days")
+              message_id: msg.id,
+              message_name: msg.message_name,
+              message_details: msg.message_details,
+              link: msg.link,
+              days_from_start: msg.days_from_start,
+              send_date: moment(start_date)
+                .add(msg.days_from_start, "days")
                 .format(),
-              teamMemberID: member.teamMemberID,
-              phoneNumber: member.phoneNumber,
+              team_member_id: member.id,
+              phone_number: member.phone_number,
               email: member.email,
-              emailOn: member.emailOn,
-              textOn: member.textOn,
-              firstName: member.firstName,
-              lastName: member.lastName,
-              jobDescription: member.jobDescription,
-              trainingSeriesID: trainingSeriesID,
-              userID: member.userID
+              email_on: member.email_on,
+              text_on: member.text_on,
+              first_name: member.first_name,
+              last_name: member.last_name,
+              job_description: member.job_description,
+              training_series_id,
+              user_id: member.user_id
             };
           }
         });

@@ -4,23 +4,25 @@ const faker = require("faker");
 const userSeeds = 1;
 const seriesSeeds = 5;
 const memberSeeds = 500;
-const postSeeds = 20;
+const messageSeeds = 20;
+const notificationSeeds = 20;
 
-//since any number of many-to-many relationships can exist between series and users, arbitrarily capped it at 20 initially
-const relationalSeeds = faker.random.number({ min: 1, max: 20 });
+//since any number of many-to-many relationships can exist between series and users, arbitrarily chooses less than total amount of team members
+const relationalSeeds = faker.random.number({ min: 1, max: memberSeeds });
 
 module.exports = {
   createFakeUsers,
   createFakeTrainingSeries,
   createFakeTeamMembers,
   createFakeRelationalEntries,
-  createFakePosts
+  createFakeMessages,
+  createFakeNotifications
 };
 
 function createFakeUsers() {
   const newUsers = [];
   const fakeUser = () => ({
-    accountTypeID: faker.random.number({ min: 1, max: 3 }),
+    account_type_id: faker.random.number({ min: 1, max: 3 }),
     email: faker.internet.email(),
     name: faker.name.findName()
   });
@@ -33,8 +35,8 @@ function createFakeUsers() {
 function createFakeTrainingSeries() {
   const newSeries = [];
   const fakeSeries = () => ({
-    title: faker.lorem.words(5),
-    userID: faker.random.number({
+    title: faker.company.catchPhrase(),
+    user_id: faker.random.number({
       min: 1,
       max: userSeeds
     })
@@ -50,14 +52,14 @@ function createFakeTrainingSeries() {
 function createFakeTeamMembers() {
   const newTeamMembers = [];
   const fakeTeamMember = () => ({
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-    jobDescription: faker.commerce.department(),
+    first_name: faker.name.firstName(),
+    last_name: faker.name.lastName(),
+    job_description: faker.commerce.department(),
     email: faker.internet.email(),
-    phoneNumber: faker.phone.phoneNumber(),
-    slackID: "pending slack ID",
-    teamsID: "pending teams ID",
-    user_ID: faker.random.number({ min: 1, max: userSeeds })
+    phone_number: faker.phone.phoneNumber(),
+    slack_id: "pending slack ID",
+    teams_id: "pending teams ID",
+    user_id: faker.random.number({ min: 1, max: userSeeds })
   });
   for (let i = 0; i < memberSeeds; i++) {
     newTeamMembers.push(fakeTeamMember());
@@ -69,9 +71,9 @@ function createFakeTeamMembers() {
 function createFakeRelationalEntries() {
   const newRelationalEntries = [];
   const fakeEntry = () => ({
-    startDate: faker.date.future(1),
-    teamMember_ID: faker.random.number({ min: 1, max: memberSeeds }),
-    trainingSeries_ID: faker.random.number({ min: 1, max: seriesSeeds })
+    start_date: faker.date.future(1),
+    team_member_id: faker.random.number({ min: 1, max: memberSeeds }),
+    training_series_id: faker.random.number({ min: 1, max: seriesSeeds })
   });
   for (let i = 0; i < relationalSeeds; i++) {
     newRelationalEntries.push(fakeEntry());
@@ -79,24 +81,52 @@ function createFakeRelationalEntries() {
   return newRelationalEntries;
 }
 
-function createFakePosts() {
-  const newPosts = [];
-  const fakePost = () => ({
-    postName: faker.lorem.words(5),
-    postDetails: faker.lorem.sentences(3),
+function createFakeMessages() {
+  const newMessages = [];
+  const fakeMessage = () => ({
+    message_name: faker.lorem.words(5),
+    message_details: faker.lorem.sentences(3),
     link: faker.internet.url(),
-    daysFromStart: faker.random.number({
+    days_from_start: faker.random.number({
       min: 1,
       max: 21
     }),
-    postImage: faker.image.imageUrl(),
-    trainingSeriesID: faker.random.number({
+    training_series_id: faker.random.number({
       min: 1,
       max: seriesSeeds
     })
   });
-  for (let i = 0; i < postSeeds; i++) {
-    newPosts.push(fakePost());
+  for (let i = 0; i < messageSeeds; i++) {
+    newMessages.push(fakeMessage());
   }
-  return newPosts;
+  return newMessages;
+}
+
+function createFakeNotifications() {
+  const newNotifications = [];
+  const fakeNotification = () => ({
+    send_date: faker.date.recent(10),
+    message_name: faker.company.bs(),
+    message_details: faker.company.catchPhrase(),
+    link: faker.internet.url(),
+    phone_number: faker.phone.phoneNumber(),
+    email: faker.internet.email(),
+    first_name: faker.name.firstName(),
+    last_name: faker.name.lastName(),
+    message_id: faker.random.number({ min: 1, max: messageSeeds }),
+    team_member_id: faker.random.number({ min: 1, max: memberSeeds }),
+    days_from_start: faker.random.number({ min: 1, max: 21 }),
+    job_description: faker.commerce.department(),
+    training_series_id: faker.random.number({ min: 1, max: seriesSeeds }),
+    user_id: faker.random.number({ min: 1, max: userSeeds }),
+    text_sent: faker.random.boolean(),
+    email_sent: faker.random.boolean(),
+    text_on: faker.random.boolean(),
+    email_on: faker.random.boolean()
+  });
+
+  for (let i = 0; i < notificationSeeds; i++) {
+    newNotifications.push(fakeNotification());
+  }
+  return newNotifications;
 }

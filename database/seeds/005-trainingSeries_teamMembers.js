@@ -1,6 +1,6 @@
 const { createFakeRelationalEntries } = require("../Helpers/fakeData");
 exports.seed = function(knex, Promise) {
-  return knex("RelationalTable").then(function() {
-    return knex("RelationalTable").insert(createFakeRelationalEntries());
+  return knex("relational_table").then(function() {
+    return knex("relational_table").insert(createFakeRelationalEntries());
   });
 };
