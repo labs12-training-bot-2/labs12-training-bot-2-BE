@@ -22,14 +22,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log("Id: ", id);
     // get team member info by id
     const teamMember = await TeamMember.findById(id);
-    console.log("teamMember: ", teamMember);
     // get team member's training series assignments
     const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-    console.log("assignments: ", assignments);
     res.status(200).json({ teamMember, assignments });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
