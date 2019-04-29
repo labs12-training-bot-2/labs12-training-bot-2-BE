@@ -193,6 +193,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+//todo delete
 // GET all messages for notification system - for server use only
 router.get("/notification-system", async (req, res) => {
   try {

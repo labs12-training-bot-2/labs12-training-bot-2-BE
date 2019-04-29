@@ -32,7 +32,7 @@ function getTextNotifications(id) {
       "n.last_name",
       "n.text_sent",
       "t.title",
-      "t.id"
+      "t.id AS training_series_id"
     )
     .where("n.user_id", id);
 }
@@ -51,7 +51,7 @@ function getEmailNotifications(id) {
       "n.send_date",
       "n.email_sent",
       "t.title",
-      "t.id"
+      "t.id AS training_series_id"
     )
     .where("n.user_id", id);
 }

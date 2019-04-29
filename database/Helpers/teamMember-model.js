@@ -27,7 +27,9 @@ function findBy(filter) {
 }
 
 function findById(id) {
-  return db("team_members").where({ id });
+  return db("team_members")
+    .where({ id })
+    .first();
 }
 
 function add(member) {
@@ -62,9 +64,13 @@ async function addToTrainingSeries(assignment) {
 //get a team member's training series assignments
 function getTrainingSeriesAssignments(id) {
   return db("team_members")
-    .join("relational_table AS r", "team_members.t", "r.team_members_id")
-    .join("training_series", "training_series.id", "r.training_series_id")
-    .select("r.training_series_id", "training_series.title", "r.start_date")
+    .join(
+      "relational_table AS r",
+      "team_members.id AS tID",
+      "r.team_members_id"
+    )
+    .join("training_series AS t", "t.id", "r.training_series_id")
+    .select("r.training_series_id", "t.title", "r.start_date")
     .where("r.team_members_id", id);
 }
 
