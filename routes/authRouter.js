@@ -97,5 +97,23 @@ router.route('/:service/:id')
       return res.status(500).json({ message: "There was a network error" })
     }
   })
+  .delete(authenticate, async (req, res) => {
+    const { id, service } = req.params;
+    try {
+      const deletedToken = await OAuth.deleteToken(id, service);
+      if (
+        deletedToken[`${service}_auth_token`]
+        || deletedToken[`${service}_refresh_token`]
+        || deletedToken[`${service}_token_expiration`]
+      ) {
+        return res.status(404).json({ message: "it doesn't appear that there's a user at that ID "})
+      }
+      return res.status(204).end();
+    }
+    catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'There was a network error '});
+    }
+  })
 
 module.exports = router;
