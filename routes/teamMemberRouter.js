@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
 // GET a team member by teamMemberId
 router.get("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; 
 
     // get team member info by id
     const teamMember = await TeamMember.findById(id);
