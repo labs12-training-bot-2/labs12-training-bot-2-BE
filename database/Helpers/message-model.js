@@ -25,14 +25,15 @@ function findById(id) {
 
 function add(message) {
   return db("messages")
-    .insert(message, "id")
+    .insert(message)
     .returning("*");
 }
 
 function update(id, message) {
   return db("messages")
     .where({ id })
-    .update(member);
+    .update(message)
+    .returning("*");
 }
 
 function remove(id) {
