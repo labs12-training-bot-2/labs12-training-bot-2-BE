@@ -156,13 +156,6 @@ async function removeFromTrainingSeries(team_member_id, training_series_id) {
 }
 
 function addToNotificationsTable(data) {
-  <<
-  << << < HEAD
   return db("notifications")
     .insert(data)
-    .returning("*");
-} ===
-=== =
-return db("notifications").insert(data);
-} >>>
->>> > master
+}
