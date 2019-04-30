@@ -16,7 +16,8 @@ router.post("/", async (req, res) => {
       message_name,
       message_details,
       days_from_start,
-      training_series_id
+      training_series_id,
+      link //optional
     } = req.body;
 
     if (
@@ -43,16 +44,14 @@ router.post("/", async (req, res) => {
         message_details,
         days_from_start,
         training_series_id,
-        link: ""
+        link: link ? link : "" //if non-null link was not supplied, adds as empty string
       };
       const [newMessage] = await Messages.add(msg);
-      console.log(newMessage);
       //see if new message's training series already has assignments for team members
       const rows = await Notifications.getTrainingSeriesAssignmentsOfNewMessage(
         training_series_id
       );
 
-      console.log(rows[0]);
       // if it does, for each assignment per team member id, assemble a new object to be inserted to the notifications table with the new message information
       // generate new object to update the notification table based on updated conditional
 
@@ -112,8 +111,28 @@ router.post("/", async (req, res) => {
 // PUT message information
 router.put("/:id", async (req, res) => {
   try {
-    const id = req.params.id;
-    const incomingMessageUpdate = req.body;
+    const { id } = req.params;
+
+    const {
+      message_name,
+      message_details,
+      days_from_start,
+      training_series_id,
+      link
+    } = req.body;
+
+    if (
+      !message_name &&
+      !message_details &&
+      !days_from_start &&
+      !training_series_id &&
+      !link
+    ) {
+      res
+        .status(400)
+        .json({ error: "Client must provide at least one field to change." });
+    }
+
     const updatedMessage = await Messages.update(id, incomingMessageUpdate);
 
     // get notification to update by message id
