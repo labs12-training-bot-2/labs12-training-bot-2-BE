@@ -84,7 +84,7 @@ exports.up = function(knex, Promise) {
       tbl.date("send_date").notNullable();
       tbl.text("message_name").notNullable();
       tbl.text("message_details").notNullable();
-      tbl.text("link").notNullable();
+      tbl.text("link");
       tbl.text("phone_number").notNullable();
       tbl.text("email");
       tbl.text("first_name");
@@ -105,8 +105,14 @@ exports.up = function(knex, Promise) {
       tbl.text("job_description");
       tbl.integer("training_series_id").notNullable();
       tbl.integer("user_id").notNullable();
-      tbl.boolean("text_sent").notNullable();
-      tbl.boolean("email_sent").notNullable();
+      tbl
+        .boolean("text_sent")
+        .notNullable()
+        .defaultTo(false);
+      tbl
+        .boolean("email_sent")
+        .notNullable()
+        .defaultTo(false);
       tbl.boolean("text_on").notNullable();
       tbl.boolean("email_on").notNullable();
     });
