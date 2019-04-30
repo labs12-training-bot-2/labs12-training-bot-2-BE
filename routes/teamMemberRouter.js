@@ -7,9 +7,9 @@ const TeamMember = require("../database/Helpers/teamMember-model");
 const TrainingSeries = require("../database/Helpers/trainingSeries-model");
 const Notifications = require("../database/Helpers/notifications-model");
 //Routes
-
+ 
 // GET all team members in system (not a production endpoint)
-router.get("/", async (req, res) => {
+router.get("/", async (req, res) => {//--- complete per trello spec ---
   try {
     const teamMembers = await TeamMember.find();
     res.status(200).json({ teamMembers });
@@ -19,24 +19,28 @@ router.get("/", async (req, res) => {
 });
 
 // GET a team member by teamMemberId
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {//--- complete per trello spec ---
   try {
     const { id } = req.params; 
 
     // get team member info by id
-    const teamMember = await TeamMember.findById(id);
+    const teamMember = await TeamMember.findById(id); 
 
     // get team member's training series assignments
     const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-
-    res.status(200).json({ teamMember, assignments });
+    
+    if(!teamMember.length){
+      res.status(404).json({ message: "Sorry, but we couldnt find that team member!" });
+    }else{
+      res.status(200).json({ teamMember, assignments });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
 });
 
 // POST a new team member
-router.post("/", async (req, res) => {
+router.post("/", async (req, res) => {//--- complete per trello spec ---
   try {
     const {
       first_name,
@@ -64,10 +68,16 @@ router.post("/", async (req, res) => {
 });
 
 // PUT team member information
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {//--- complete per trello spec ---
   const { email_on, text_on } = req.body;
 
   try {
+    //check to make sure we have all the info we need
+    const { first_name, last_name, job_description, email, phone_number, slack_id, teams_id, manager, mentor } = req.body;
+    if(!first_name && !last_name && !job_description && !email && !phone_number && !slack_id && !teams_id && !email_on && !text_on && !manager && !mentor){
+      res.status(400).json({ message: "Please supply information to be updated" });
+    }
+
     const id = req.params.id;
     const updatedTeamMember = await TeamMember.update(id, req.body);
 
@@ -101,7 +111,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE a team member
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {//--- complete per trello spec ---
   try {
     const id = req.params.id;
     const deleted = await TeamMember.remove(id);
@@ -116,7 +126,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Assigns one or multiple team members to training series with the same start date
-router.post("/assign", async (req, res) => {
+router.post("/assign", async (req, res) => {//--- complete per trello spec ---
   try {
     // store array of objects in a new variable
     const { start_date, training_series_id } = req.body;
@@ -133,7 +143,7 @@ router.post("/assign", async (req, res) => {
       try {
         const newObject = {
           start_date,
-          training_series,
+          training_series_id,
           team_member_id: assignment
         };
 
