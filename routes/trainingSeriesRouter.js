@@ -66,7 +66,7 @@ router.post("/", async (req, res) => {//--- complete per trello spec ---
 });
 
 // PUT training series information
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {//--- complete per trello spec --- 
     const { title } = req.body;
   try {
     if(title || title !== ""){
@@ -84,7 +84,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE a training series
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {//--- completed per trello spec --- 
   try {
     const { id } = req.params;
     const deleted = await TrainingSeries.remove(id);
@@ -99,7 +99,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // GET all posts in a training series by training series ID
-router.get("/:id/posts", async (req, res) => {
+router.get("/:id/posts", async (req, res) => {//--- under construction per trello spec --- 
   try {
     const { id } = req.params;
 
@@ -109,7 +109,15 @@ router.get("/:id/posts", async (req, res) => {
     //get all posts of training series
     const posts = await TrainingSeries.getTrainingSeriesPosts(id);
 
-    res.status(200).json({ trainingSeries, posts });
+    if(!trainingSeries.length){
+        res.status(404).json({ message: "Sorry, we couldnt find that training series!"});
+    }
+    // else if(!posts.length){ //not sure if this is useful or not, will probably handel this on the front end, but i wrote so yea, here ya go :)
+    //     res.status(200).json({ trainingSeries, message: "This training series dosnt currently include any messages."});
+    // }
+    else{
+        res.status(200).json({ trainingSeries, posts });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
