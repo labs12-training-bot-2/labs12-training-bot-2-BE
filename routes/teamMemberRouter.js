@@ -7,7 +7,7 @@ const TeamMember = require("../database/Helpers/teamMember-model");
 const TrainingSeries = require("../database/Helpers/trainingSeries-model");
 const Notifications = require("../database/Helpers/notifications-model");
 //Routes
-
+ 
 // GET all team members in system (not a production endpoint)
 router.get("/", async (req, res) => {
   try {
