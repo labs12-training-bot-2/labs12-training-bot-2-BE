@@ -6,6 +6,7 @@ const { authenticate } = require('../auth/authenticate');
 
 // Models
 const Users = require("../database/Helpers/user-model.js");
+const OAuth = require('../database/Helpers/oauth-model');
 
 // Routes
 router.post("/", async (req, res) => {
