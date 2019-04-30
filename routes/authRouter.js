@@ -71,5 +71,31 @@ router.route('/:service/:id')
       })
     }
   })
+  .post(authenticate, async (req, res) => {
+    const { id, service } = req.params;
+    const { authToken, refreshToken, timeDiff } = req.body
+    try {
+      let expiration = new Date;
+      expiration.setSeconds(expiration.getSeconds() + parseInt(timeDiff));
+
+      const [ user ] = await OAuth.addToken({
+        id, service, authToken, refreshToken, expiration
+      })
+
+      if (!user.id) {
+        return res.status(404).json({
+          message: "We can't find a user at that ID"
+        })
+      }
+
+      return res.status(200).json({
+        message: `Token successfully created for ${user.name}`
+      })
+    }
+    catch (err) {
+      console.log(err)
+      return res.status(500).json({ message: "There was a network error" })
+    }
+  })
 
 module.exports = router;
