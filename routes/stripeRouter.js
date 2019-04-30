@@ -1,7 +1,7 @@
 //Dependencies
 const router = require('express').Router();
-// const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const stripe = require('stripe')('process.env.STRIPE_TEST_SECRET_KEY');
+//const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(process.env.STRIPE_TEST_SECRET_KEY);
 
 const Users = require('../database/Helpers/user-model.js');
 
@@ -39,48 +39,48 @@ async function unsubscribe(userID, stripeID, plan) {
 	}
 }
 
-async function register(userID, name, email, token) {
+async function register(id, name, email, token) {
 	try {
 		let customer = await stripe.customers.create({
 			description: name,
 			email: email,
 			source: token // obtained with Stripe.js
 		});
-		Users.updateUser(userID, { stripe: customer.id });
+		Users.updateUser(id, { stripe: customer.id });
 		return customer;
 	} catch (error) {
 		console.log(error);
 	}
 }
 
-function updateUserAccountType(userID, plan) {
-	// LIVE
-	// let accountTypeID;
-	// if (plan === 'plan_Ex95NK1FuaNiWb') {
-	// 	// LIVE - PREMIUM PLAN
-	// 	accountTypeID = 2;
-	// } else if (plan === 'plan_Ex955Zz8JE0ZuW') {
-	// 	// LIVE - PRO PLAN
-	// 	accountTypeID = 3;
-	// } else {
-	// 	accountTypeID = 1;
-	// }
-	// console.log('AccountTypeID', accountTypeID);
-	// Users.updateUser(userID, { accountTypeID: accountTypeID });
+function updateUserAccountType(id, plan) {
+	// 	// LIVE
+	// 	let accountTypeID;
+	// 	if (plan === 'plan_Ex95NK1FuaNiWb') {
+	// 		// LIVE - PREMIUM PLAN
+	// 		accountTypeID = 2;
+	// 	} else if (plan === 'plan_Ex955Zz8JE0ZuW') {
+	// 		// LIVE - PRO PLAN
+	// 		accountTypeID = 3;
+	// 	} else {
+	// 		accountTypeID = 1;
+	// 	}
+	// 	console.log('AccountTypeID', accountTypeID);
+	// 	Users.updateUser(id, { account_type_id: accountTypeID });
 
-	// TEST
+	// TEST;
 	let accountTypeID;
-	if (plan === 'plan_Ex95NK1FuaNiWb') {
+	if (plan === 'plan_EyjXqiSYXoKEXf') {
 		// TEST - PREMIUM PLAN
 		accountTypeID = 2;
-	} else if (plan === 'plan_Ex955Zz8JE0ZuW') {
+	} else if (plan === 'plan_EyjXEzjQkZf78d') {
 		// TEST - PRO PLAN
 		accountTypeID = 3;
 	} else {
 		accountTypeID = 1;
 	}
 	console.log('AccountTypeID', accountTypeID);
-	Users.updateUser(userID, { accountTypeID: accountTypeID });
+	Users.updateUser(id, { account_type_id: accountTypeID });
 }
 
 router.post('/', async (req, res) => {
@@ -119,7 +119,6 @@ router.post('/', async (req, res) => {
 	}
 });
 router.post('/register', async (req, res) => {
-	console.log('register');
 	const { token, name, email, userID, plan } = req.body;
 
 	try {
@@ -132,13 +131,13 @@ router.post('/register', async (req, res) => {
 		console.log('customer', customer);
 		res.send(customer);
 	} catch (err) {
+		console.log(err);
 		res.status(500).end();
 	}
 });
 
 router.post('/unsubscribe', async (req, res) => {
 	const { userID, stripe } = req.body;
-	// console.log('req body', req.body);
 	if (stripe) {
 		try {
 			let res = unsubscribe(userID, stripe);
@@ -153,26 +152,25 @@ router.post('/unsubscribe', async (req, res) => {
 
 router.get('/plans', async (req, res) => {
 	try {
-		// LIVE
+		// // LIVE
 		// stripe.plans.list(
 		// 	{
 		// 		limit: 3,
 		// 		product: 'prod_Ex92rwszM77RQA' // LIVE
 		// 	},
 		// 	function(err, plans) {
-		// 		// console.log('plans', plans.data);
 		// 		res.send(plans.data);
 		// 	}
 		// );
 
-		// TEST
+		//TEST
 		stripe.plans.list(
 			{
 				limit: 3,
-				product: 'prod_Ex92rwszM77RQA' // TEST
+				product: 'prod_EyjWGnhGwmQIsE' // TEST
+				// product: 'prod_Ex92rwszM77RQA' //Live
 			},
 			function(err, plans) {
-				console.log('plans', plans.data);
 				res.send(plans.data);
 			}
 		);
@@ -219,49 +217,3 @@ router.post('/paymentintent', async (req, res) => {
 		console.log(error);
 	}
 });
-
-module.exports = router;
-
-// {
-//     "paymentIntent": {
-//         "id": "pi_1EIOHVChlDwQi04I8wjlU0WJ",
-//         "object": "payment_intent",
-//         "amount": 1099,
-//         "amount_capturable": 0,
-//         "amount_received": 0,
-//         "application": null,
-//         "application_fee_amount": null,
-//         "canceled_at": null,
-//         "cancellation_reason": null,
-//         "capture_method": "automatic",
-//         "charges": {
-//             "object": "list",
-//             "data": [],
-//             "has_more": false,
-//             "total_count": 0,
-//             "url": "/v1/charges?payment_intent=pi_1EIOHVChlDwQi04I8wjlU0WJ"
-//         },
-//         "client_secret": "pi_1EIOHVChlDwQi04I8wjlU0WJ_secret_whxC5w22vn5KAyLK6ANM3z7n9",
-//         "confirmation_method": "publishable",
-//         "created": 1553641329,
-//         "currency": "usd",
-//         "customer": null,
-//         "description": null,
-//         "last_payment_error": null,
-//         "livemode": false,
-//         "metadata": {},
-//         "next_action": null,
-//         "on_behalf_of": null,
-//         "payment_method_types": [
-//             "card"
-//         ],
-//         "receipt_email": null,
-//         "review": null,
-//         "shipping": null,
-//         "source": null,
-//         "statement_descriptor": null,
-//         "status": "requires_payment_method",
-//         "transfer_data": null,
-//         "transfer_group": null
-//     }
-// }
