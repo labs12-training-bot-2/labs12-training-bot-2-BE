@@ -17,104 +17,86 @@ module.exports = {
 };
 
 function find() {
-  return db("TeamMember");
+  return db("team_members");
 }
 
 function findBy(filter) {
-  return db("TeamMember").where(filter);
-}
-
-async function add(member) {
-  const [id] = await db("TeamMember").insert(member);
-
-  return findById(id);
-}
-
-function findById(id) {
-  return db("TeamMember")
-    .where({ teamMemberID: id })
+  return db("team_members")
+    .where(filter)
     .first();
 }
 
-async function update(id, member) {
-  await db("TeamMember")
-    .where({ teamMemberID: id })
-    .update(member);
+function findById(id) {
+  return db("team_members").where({ id });
+}
 
-  return await findById(id);
+function add(member) {
+  return db("team_members")
+    .insert(member)
+    .returning("*");
+}
+
+async function update(id, member) {
+  return db("team_members")
+    .where({ id })
+    .update(member);
 }
 
 function remove(id) {
-  return db("TeamMember")
-    .where({ teamMemberID: id })
+  return db("team_members")
+    .where({ id })
     .del();
 }
 
 //assign team member to a training series
 async function addToTrainingSeries(assignment) {
-  const [id] = await db("RelationalTable").insert(assignment);
+  const [id] = await db("relational_table")
+    .insert(assignment)
+    .returning("id");
 
-  return db("RelationalTable")
-    .where({ relationalTableID: id })
+  return db("relationalTable")
+    .where({ id })
     .first();
 }
 
 //get a team member's training series assignments
-function getTrainingSeriesAssignments(teamMemberId) {
-  return db("TeamMember")
-    .join(
-      "RelationalTable",
-      "TeamMember.teamMemberID",
-      "RelationalTable.teamMember_ID"
-    )
-    .join(
-      "TrainingSeries",
-      "TrainingSeries.trainingSeriesID",
-      "RelationalTable.trainingSeries_ID"
-    )
-    .select(
-      "RelationalTable.trainingSeries_ID",
-      "TrainingSeries.title",
-      "RelationalTable.startDate"
-    )
-    .where("RelationalTable.teamMember_ID", teamMemberId);
+function getTrainingSeriesAssignments(id) {
+  return db('relational_table')
+    .join("team_members", "team_members.id", "relational_table.team_member_id")
+    .join("training_series", "training_series.id", "relational_table.training_series_id")
+    .select("relational_table.training_series_id","relational_table.team_member_id", "training_series.title", "relational_table.start_date")
+    .where({"relational_table.team_member_id": id});
 }
 
 // get member information for updating notification send date
-function getTrainingSeriesAssignment(teamMemberId, trainingSeriesId) {
-  return db("TeamMember")
-    .join(
-      "RelationalTable",
-      "TeamMember.teamMemberID",
-      "RelationalTable.teamMember_ID"
-    )
-    .join(
-      "TrainingSeries",
-      "TrainingSeries.trainingSeriesID",
-      "RelationalTable.trainingSeries_ID"
-    )
-    .select(
-      "RelationalTable.trainingSeries_ID",
-      "TrainingSeries.title",
-      "RelationalTable.startDate"
-    )
-    .where({ "RelationalTable.teamMember_ID": teamMemberId, "RelationalTable.trainingSeries_ID": trainingSeriesId })
+function getTrainingSeriesAssignment(team_membersId, trainingSeriesId) {
+  return db("team_members")
+    .join("relational_table AS r", "team_members.id", "r.team_members_id")
+    .join("training_series AS t", "t.id", "r.training_series_id")
+    .select("r.training_series_id", "t.title", "r.start_date")
+    .where({
+      "r.team_members_id": team_membersId,
+      "r.training_series_id": trainingSeriesId
+    })
     .first();
 }
 
 //update the start date ONLY of a team member's training series start date
 async function updateTrainingSeriesStartDate(
-  teamMemberId,
-  trainingSeriesId,
+  team_members_id,
+  training_series_id,
   updatedStartDate
 ) {
-  await db("RelationalTable")
-    .where({ teamMember_ID: teamMemberId, trainingSeries_ID: trainingSeriesId })
-    .update({ startDate: updatedStartDate });
+  await db("relational_table")
+    .where({
+      team_members_id,
+      training_series_id
+    })
+    .update({ start_date: updatedStartDate });
 
   return findTrainingSeriesBy({
-    teamMember_ID: teamMemberId,
-    trainingSeries_ID: trainingSeriesId
+    team_members_id,
+    training_series_id
   });
 }
 
@@ -122,30 +104,36 @@ async function updateTrainingSeriesStartDate(
 find training series using a filter
 
 if you want to find a single training series assigned to the user, you should use two keys:
-trainingSeries_ID and teamMember_ID.
+trainingSeries_ID and team_members_ID.
 
 if you want to find all of the team member's assigned training series, only one key is needed:
-teamMember_ID
+team_members_ID
 */
 function findTrainingSeriesBy(filter) {
-  return db("RelationalTable").where(filter);
+  return db("relational_table")
+    .where(filter)
+    .first();
 }
 
-async function removeFromTrainingSeries(teamMemberId, trainingSeriesId) {
-  const deleted = await db("RelationalTable")
-    .where({ teamMember_ID: teamMemberId, trainingSeries_ID: trainingSeriesId })
-    .del();
-
-  await db("Notifications")
+async function removeFromTrainingSeries(team_member_id, training_series_id) {
+  const deleted = await db("relational_table")
     .where({
-      teamMemberID: teamMemberId,
-      trainingSeriesID: trainingSeriesId
+      team_member_id,
+      training_series_id
     })
     .del();
-
+  await db("notifications")
+    .where({
+      team_member_id,
+      training_series_id
+    })
+    .del();
+    
   return deleted;
 }
 
 function addToNotificationsTable(data) {
-  return db("Notifications").insert(data);
+  return db("notifications")
+    .insert(data)
+    .returning("*");
 }

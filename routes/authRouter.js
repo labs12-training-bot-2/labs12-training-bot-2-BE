@@ -19,9 +19,7 @@ router.post("/", async (req, res) => {
       if (user) {
         try {
           // retrieves the training series belonging to the user
-          const trainingSeries = await Users.findTrainingSeriesByUser(
-            user.userID
-          );
+          const trainingSeries = await Users.findTrainingSeriesByUser(user.id);
 
           res
             .status(200)

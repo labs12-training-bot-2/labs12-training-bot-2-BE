@@ -5,8 +5,7 @@ module.exports = {
   find,
   findBy,
   findById,
-  addTrainingSeriesSeeds,
-  getAllPosts,
+  getAllMessages,
   getTrainingSeriesPosts,
   update,
   remove,
@@ -14,55 +13,51 @@ module.exports = {
 };
 
 function find() {
-  return db("TrainingSeries");
+  return db("training_series");
 }
 
 function findBy(filter) {
-  return db("TrainingSeries").where(filter);
-}
-
-async function add(trainingSeries) {
-  const [id] = await db("TrainingSeries").insert(trainingSeries);
-
-  return findById(id);
-}
-
-function findById(id) {
-  return db("TrainingSeries")
-    .where({ trainingSeriesID: id })
+  return db("training_series")
+    .where(filter)
     .first();
 }
 
-function addTrainingSeriesSeeds(seeds) {
-  return db("TrainingSeries").insert(seeds);
+function findById(id) {
+  return db("training_series").where({ id });
+}
+
+function add(training_series) {
+  return db("training_series")
+    .insert(training_series)
+    .returning("*");
 }
 
 // not a production function
-function getAllPosts() {
-  return db("Post");
+function getAllMessages() {
+  return db("messages");
 }
 
 function getTrainingSeriesPosts(id) {
-  return db("Post").where({ trainingSeriesID: id })
+  return db("messages")
+    .where({ training_series_id: id })
+    .returning("*");
 }
 
-async function update(id, series) {
-  await db("TrainingSeries")
-    .where({ trainingSeriesID: id })
-    .update(series);
-
-  return await findById(id);
+function update(id, series) {
+  return db("training_series")
+    .where({ id })
+    .update(series, ["*"]);
 }
 
 function remove(id) {
-  return db("TrainingSeries")
-    .where({ trainingSeriesID: id })
+  return db("training_series")
+    .where({ id })
     .del();
 }
 
 function getMembersAssigned(id) {
-  return db("RelationalTable as r")
-  .join("TeamMember as t","t.teamMemberID","r.teamMember_ID")
-  .select("r.teamMember_ID", "r.startDate", "t.firstName", "t.lastName")
-  .where("r.trainingSeries_ID", id)
+  return db("relational_table as r")
+    .join("team_members as t", "t.id", "r.team_member_id")
+    .select("r.team_member_id", "r.start_date", "t.first_name", "t.last_name")
+    .where("r.training_series_id", id);
 }

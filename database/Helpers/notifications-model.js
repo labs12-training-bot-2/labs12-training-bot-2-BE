@@ -8,155 +8,154 @@ module.exports = {
   updateNotificationContent,
   updateNotificationMember,
   markNotificationAsSent,
-  getNotificationByPostId,
+  getNotificationByMessageId,
   getNotificationsToRecalculate,
-  getTrainingSeriesOfNewPost,
+  getTrainingSeriesOfNewMessage,
   getUserNotificationCountData,
   increaseUserNotificationCount,
   asyncForEach,
   resetNotificationCount,
-  deleteOldNotifications,
+  deleteOldNotifications
 };
 
 function getTextNotifications(id) {
-  return db("Notifications as n")
-    .join("TrainingSeries as t", "n.trainingSeriesID", "t.trainingSeriesID")
+  return db("notifications AS n")
+    .join("training_series AS t", "n.training_series_id", "t.id")
     .select(
-      "n.phoneNumber",
-      "n.postName",
-      "n.postDetails",
+      "n.phone_number",
+      "n.message_name",
+      "n.message_details",
       "n.link",
-      "n.userID",
-      "n.sendDate",
-      "n.firstName",
-      "n.lastName",
-      "n.textSent",
+      "n.user_id",
+      "n.send_date",
+      "n.first_name",
+      "n.last_name",
+      "n.text_sent",
       "t.title",
-      "t.trainingSeriesID"
+      "t.id"
     )
-    .where("n.userID", id);
+    .where("n.user_id", id);
 }
 
 function getEmailNotifications(id) {
-  return db("Notifications as n")
-    .join("TrainingSeries as t", "n.trainingSeriesID", "t.trainingSeriesID")
+  return db("notifications AS n")
+    .join("training_series AS t", "n.training_series_id", "t.id")
     .select(
       "n.email",
-      "n.postName",
-      "n.postDetails",
+      "n.message_name",
+      "n.message_details",
       "n.link",
-      "n.firstName",
-      "n.lastName",
-      "n.userID",
-      "n.sendDate",
-      "n.emailSent",
+      "n.first_name",
+      "n.last_name",
+      "n.user_id",
+      "n.send_date",
+      "n.email_sent",
       "t.title",
-      "t.trainingSeriesID"
+      "t.id"
     )
-    .where("n.userID", id);
+    .where("n.user_id", id);
 }
 
 function getDailyTextNotifications(day) {
-  return db("Notifications")
+  return db("notifications")
     .select(
-      "phoneNumber",
-      "postName",
-      "postDetails",
+      "phone_number",
+      "message_name",
+      "message_details",
       "link",
-      "userID",
-      "textSent",
-      "textOn",
-      "notificationID"
+      "user_id",
+      "text_sent",
+      "text_on",
+      "id"
     )
-    .where({ sendDate: day });
+    .where({ send_date: day });
 }
 
 function getDailyEmailNotifications(day) {
-  return db("Notifications")
+  return db("notifications")
     .select(
       "email",
-      "postName",
-      "postDetails",
+      "message_name",
+      "message_details",
       "link",
-      "firstName",
-      "lastName",
-      "userID",
-      "emailSent",
-      "emailOn",
-      "notificationID",
+      "first_name",
+      "last_name",
+      "user_id",
+      "email_sent",
+      "email_on",
+      "id"
     )
-    .where({ sendDate: day });
+    .where({ send_date: day });
 }
 
-function getNotificationByPostId(id) {
-  return db("Notifications").where({ postID: id });
+function getNotificationByMessageId(id) {
+  return db("notifications")
+    .where({ message_id: id })
+    .first();
 }
 
-function getNotificationsToRecalculate(postID, teamMemberID) {
-  return db("Notifications")
-    .join("RelationalTable", "RelationalTable.teamMember_ID", teamMemberID)
-    .select(
-      "Notifications.*",
-      "RelationalTable.startDate",
-    )
-    .where({ postID: postID })
+function getNotificationsToRecalculate(message_id, team_member_id) {
+  return db("notifications")
+    .join("relational_table AS r", "r.team_member_id", team_member_id)
+    .select("notifications.*", "r.start_date")
+    .where({ message_id });
 }
 
 function updateNotificationContent(id, content) {
-  return db("Notifications")
-    .where({ notificationID: id })
+  return db("notifications")
+    .where({ id })
     .update(content);
 }
 
 function updateNotificationMember(id, memberInformation) {
-  return db("Notifications")
-    .where({ teamMemberID: id })
+  return db("notifications")
+    .where({ team_member_id: id })
     .update(memberInformation);
 }
 
 function markNotificationAsSent(id, content) {
-  return db("Notifications")
-    .where({ notificationID: id })
+  return db("notifications")
+    .where({ id })
     .update(content);
 }
 
-function getTrainingSeriesOfNewPost(id) {
-  return db("TeamMember")
+function getTrainingSeriesOfNewMessage(id) {
+  return db("team_members AS t")
     .select(
-      "TeamMember.teamMemberID",
-      "TeamMember.firstName",
-      "TeamMember.lastName",
-      "TeamMember.jobDescription",
-      "TeamMember.phoneNumber",
-      "TeamMember.email",
-      "RelationalTable.startDate",
-      "TeamMember.userID",
-      "TeamMember.emailOn",
-      "TeamMember.textOn"
+      "t.id",
+      "t.first_name",
+      "t.last_name",
+      "t.job_description",
+      "t.phone_number",
+      "t.email",
+      "relational_table.start_date",
+      "t.user_id",
+      "t.email_on",
+      "t.text_on"
     )
-    .join("RelationalTable", function () {
-      this.on("TeamMember.teamMemberID", "RelationalTable.teamMember_ID");
+    .join("relational_table", function() {
+      this.on("t.id", "relational_table.team_member_id");
     })
-    .where("RelationalTable.trainingSeries_ID", "=", id)
-    .groupBy("teamMemberID");
+    .where("relational_table.training_series_id", "=", id)
+    .groupBy("team_member_id");
 }
 
 function getUserNotificationCountData(id) {
-  return db("User")
+  return db("users")
     .select(
-      "User.notificationCount",
-      "accountType.maxNotificationCount",
-      "User.userID"
+      "users.notification_count",
+      "account_types.max_notification_count",
+      "users.id"
     )
-    .join("accountType", "User.accountTypeID", "accountType.accountTypeID")
-    .where({ userID: id })
+    .join("account_types", "users.account_type_id", "account_type.id")
+    .where({ id })
     .first();
 }
 
 function increaseUserNotificationCount(id, count) {
-  return db("User")
-    .where({ userID: id })
-    .update({ notificationCount: count });
+  return db("users")
+    .where({ id })
+    .update({ notification_count: count });
 }
 
 // async function mimicking a forEach
@@ -166,19 +165,19 @@ async function asyncForEach(notifications, callback) {
       await callback(notifications[i]);
     }
   } catch (error) {
-    console.log('async for each function error', error)
+    console.log("async for each function error", error);
   }
 }
 
 // reset notification count at first of month for all users.
 function resetNotificationCount() {
-  return db("User")
-    .where("notificationCount", ">", 0)
-    .update({ notificationCount: 0 });
+  return db("users")
+    .where("notification_count", ">", 0)
+    .update({ notification_count: 0 });
 }
 
 function deleteOldNotifications(today) {
-  return db("Notifications")
-    .where("sendDate", "<", today)
+  return db("notifications")
+    .where("send_date", "<", today)
     .del();
 }
