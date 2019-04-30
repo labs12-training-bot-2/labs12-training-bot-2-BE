@@ -9,7 +9,7 @@ const Notifications = require("../database/Helpers/notifications-model");
 //Routes
  
 // GET all team members in system (not a production endpoint)
-router.get("/", async (req, res) => {
+router.get("/", async (req, res) => {//--- complete per trello spec ---
   try {
     const teamMembers = await TeamMember.find();
     res.status(200).json({ teamMembers });
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET a team member by teamMemberId
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {//--- under construction per trello spec ---
   try {
     const { id } = req.params;
 
@@ -28,8 +28,12 @@ router.get("/:id", async (req, res) => {
 
     // get team member's training series assignments
     const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-
-    res.status(200).json({ teamMember, assignments });
+    
+    if(!teamMember.length){
+      res.status(404).json({ message: "Sorry, but we couldnt find that team member!" });
+    }else{
+      res.status(200).json({ teamMember, assignments });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
