@@ -46,7 +46,7 @@ function getTrainingSeriesPosts(id) {
 function update(id, series) {
   return db("training_series")
     .where({ id })
-    .update(series);
+    .update(series, ["*"]);
 }
 
 function remove(id) {
