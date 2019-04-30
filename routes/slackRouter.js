@@ -1,3 +1,7 @@
+// We inherited a poor file structure so we're following it for now.
+// Sections I intend to eventually abstract out, I will write with /* */ comments
+
+// This file handles all the Slack API endpoints
 const router = require('express').Router();
 const axios = require('axios');
 
@@ -7,6 +11,7 @@ const token = process.env.SLACK_TOKEN;
 const api = 'https://slack.com/api';
 
 router.get('/', async (req, res) => {
+	// Test route, not needed longterm
 	try {
 		const userlist = await getAllUsers();
 		res.status(200).json(userlist);
@@ -16,6 +21,16 @@ router.get('/', async (req, res) => {
 	}
 });
 
+// 
+router.post('/add', async ({body:{user_id, slack_id, username}}, res) => {
+	// App sends Slack ID or username & user_id in req.body
+    // Compare id or username to users in Slack workspace.
+    // If approved, save ID in database under the team_members table - slack_id
+      // Respond 200
+    // If invalid, respond with 400
+    if()
+});
+
 module.exports = router;
 
 async function getAllUsers() {
@@ -23,13 +38,14 @@ async function getAllUsers() {
 	const url = `${api}${endpoint}?token=${token}`;
 
 	const list = await axios.get(url);
-	console.log(list.data.members);
-	return list.data.members.map(({ id, name, profile: { real_name, display_name, first_name, last_name } }) => ({
+	return list.data.members.map(({ id, name, profile: { real_name, display_name } }) => ({
 		id,
 		real_name,
 		username: name,
-		first_name,
-		last_name,
 		display_name
 	}));
 }
+
+// MIDDLEWARE
+
+function 
