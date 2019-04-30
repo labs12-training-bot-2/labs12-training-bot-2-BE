@@ -28,7 +28,9 @@ function findBy(filter) {
 
 function findById(id) {
   return db("team_members")
-    .where({ id })
+    .where({
+      id
+    })
     .first();
 }
 
@@ -40,13 +42,17 @@ function add(member) {
 
 async function update(id, member) {
   return db("team_members")
-    .where({ id })
+    .where({
+      id
+    })
     .update(member);
 }
 
 function remove(id) {
   return db("team_members")
-    .where({ id })
+    .where({
+      id
+    })
     .del();
 }
 
@@ -57,7 +63,9 @@ async function addToTrainingSeries(assignment) {
     .returning("id");
 
   return db("relationalTable")
-    .where({ id })
+    .where({
+      id
+    })
     .first();
 }
 
@@ -76,7 +84,9 @@ function getTrainingSeriesAssignments(id) {
       "training_series.title",
       "relational_table.start_date"
     )
-    .where({ "relational_table.team_member_id": id });
+    .where({
+      "relational_table.team_member_id": id
+    });
 }
 
 // get member information for updating notification send date
@@ -103,7 +113,9 @@ async function updateTrainingSeriesStartDate(
       team_members_id,
       training_series_id
     })
-    .update({ start_date: updatedStartDate });
+    .update({
+      start_date: updatedStartDate
+    });
 
   return findTrainingSeriesBy({
     team_members_id,
@@ -144,5 +156,6 @@ async function removeFromTrainingSeries(team_member_id, training_series_id) {
 }
 
 function addToNotificationsTable(data) {
-  return db("notifications").insert(data);
+  return db("notifications")
+    .insert(data)
 }
