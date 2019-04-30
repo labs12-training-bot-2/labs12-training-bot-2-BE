@@ -51,4 +51,6 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.route('/:service/:id')
+
 module.exports = router;
