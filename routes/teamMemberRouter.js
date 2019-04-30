@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {//--- complete per trello spec ---
     const { id } = req.params;
 
     // get team member info by id
-    const teamMember = await TeamMember.findById(id);
+    const teamMember = await TeamMember.findById(id); 
 
     // get team member's training series assignments
     const assignments = await TeamMember.getTrainingSeriesAssignments(id);
