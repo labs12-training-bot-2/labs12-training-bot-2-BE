@@ -3,9 +3,10 @@ const router = require("express").Router();
 const moment = require("moment");
 
 // Models
-const Messages = require("../database/Helpers/post-model");
+const Messages = require("../database/Helpers/message-model");
 const Notifications = require("../database/Helpers/notifications-model");
 const TeamMember = require("../database/Helpers/teamMember-model");
+const TrainingSeries = require("../database/Helpers/trainingSeries-model");
 
 // Routes
 // POST a new message
@@ -26,89 +27,78 @@ router.post("/", async (req, res) => {
     ) {
       res.status(400).json({ error: "Client must provide all fields." });
     } else {
+      // see if the training series the new message belongs to exists
+      const [trainingSeriesExists] = await TrainingSeries.findById(
+        training_series_id
+      );
+      if (!trainingSeriesExists) {
+        return res.status(404).json({
+          message: "The training series with that id does not exist."
+        });
+      }
       // add new message to database
-      const newMessage = await Messages.add(req.body);
-
-      // see if the training series the new message belongs to exists in Notifications table
-      const rows = await Notifications.getTrainingSeriesOfNewMessage(
+      //but only the fields we want added (no injections)
+      const msg = {
+        message_name,
+        message_details,
+        days_from_start,
+        training_series_id,
+        link: ""
+      };
+      const [newMessage] = await Messages.add(msg);
+      console.log(newMessage);
+      //see if new message's training series already has assignments for team members
+      const rows = await Notifications.getTrainingSeriesAssignmentsOfNewMessage(
         training_series_id
       );
 
+      console.log(rows[0]);
       // if it does, for each assignment per team member id, assemble a new object to be inserted to the notifications table with the new message information
       // generate new object to update the notification table based on updated conditional
-      //todo: rewrite the next three return statements into a single return object that only has the relevant props being altered
 
       if (rows.length > 0) {
         const entriesToInsert = rows.map(row => {
+          // locally-scoped object allows for MUCH shorter code in this .map
+          // previously was entirely repeated for each conditional case, even though only phone# and email would be different on the returned object
+          const newNotification = {
+            send_date: moment(row.start_date)
+              .add(newMessage.days_from_start, "days")
+              .format(),
+            message_name: newMessage.message_name,
+            message_details: newMessage.message_details,
+            link: newMessage.link,
+            phone_number: "",
+            email: "",
+            first_name: row.first_name,
+            last_name: row.last_name,
+            message_id: newMessage.message_id,
+            team_member_id: row.id,
+            days_from_start: newMessage.days_from_start,
+            job_description: row.job_description,
+            training_series_id: newMessage.training_series_id,
+            user_id: row.user_id,
+            text_sent: false,
+            email_sent: false,
+            email_on: row.email_on,
+            text_on: row.text_on
+          };
+
           if (row.email_on && !row.text_on) {
-            return {
-              message_id: newMessage.message_id,
-              message_name: newMessage.message_name,
-              message_details: newMessage.message_details,
-              link: newMessage.link,
-              days_from_start: newMessage.days_from_start,
-              send_date: moment(row.start_date)
-                .add(newMessage.days_from_start, "days")
-                .format(),
-              first_name: row.first_name,
-              last_name: row.last_name,
-              team_member_id: row.team_member_id,
-              job_description: row.job_description,
-              phone_number: "",
-              email: row.email,
-              email_on: row.email_on,
-              text_on: row.text_on,
-              training_series_id: newMessage.training_series_id,
-              user_id: row.user_id
-            };
+            newNotification.email = row.email;
+            return newNotification;
           } else if (row.text_on && !row.email_on) {
-            return {
-              message_id: newMessage.message_id,
-              message_name: newMessage.message_name,
-              message_details: newMessage.message_details,
-              link: newMessage.link,
-              days_from_start: newMessage.days_from_start,
-              send_date: moment(row.start_date)
-                .add(newMessage.days_from_start, "days")
-                .format(),
-              first_name: row.first_name,
-              last_name: row.last_name,
-              team_member_id: row.team_member_id,
-              job_description: row.job_description,
-              phone_number: row.phone_number,
-              email: "",
-              email_on: row.email_on,
-              text_on: row.text_on,
-              training_series_id: newMessage.training_series_id,
-              user_id: row.user_id
-            };
+            newNotification.phone_number = row.phone_number;
+            return newNotification;
           } else {
-            return {
-              message_id: newMessage.message_id,
-              message_name: newMessage.message_name,
-              message_details: newMessage.message_details,
-              link: newMessage.link,
-              days_from_start: newMessage.days_from_start,
-              send_date: moment(row.start_date)
-                .add(newMessage.days_from_start, "days")
-                .format(),
-              first_name: row.first_name,
-              last_name: row.last_name,
-              team_member_id: row.team_member_id,
-              job_description: row.job_description,
-              phone_number: row.phone_number,
-              email: row.email,
-              email_on: row.email_on,
-              text_on: row.text_on,
-              training_series_id: newMessage.training_series_id,
-              user_id: row.user_id
-            };
+            newNotification.email = row.email;
+            newNotification.phone_number = row.phone_number;
+            return newNotification;
           }
         });
 
         // for each new object, insert it into the notifications table
-        entriesToInsert.forEach(
-          async entry => await TeamMember.addToNotificationsTable(entry)
+        Notifications.asyncForEach(entriesToInsert, entry =>
+          TeamMember.addToNotificationsTable(entry)
         );
       }
 
@@ -168,10 +158,11 @@ router.put("/:id", async (req, res) => {
 // GET message by id
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-
   try {
     const message = await Messages.findById(id);
-    res.status(200).json({ message });
+    message && message.length
+      ? res.status(200).json({ message })
+      : res.status(404).json({ message: "Message does not exist" });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
@@ -183,16 +174,15 @@ router.delete("/:id", async (req, res) => {
 
   try {
     const deleted = await Messages.remove(id);
-    if (deleted > 0) {
-      res.status(200).json({ message: "The resource has been deleted." });
-    } else {
-      res.status(404).json({ error: "The resource could not be found." });
-    }
+    deleted
+      ? res.status(200).json({ message: "The resource has been deleted." })
+      : res.status(404).json({ error: "The resource could not be found." });
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
 });
 
+//todo: marked for deletion, pending verification that we don't need this anywhere
 // GET all messages for notification system - for server use only
 router.get("/notification-system", async (req, res) => {
   try {
