@@ -21,14 +21,6 @@ router.get("/", async (req, res) => {//--- complete per trello spec ---
 // GET a team member by teamMemberId
 router.get("/:id", async (req, res) => {//--- complete per trello spec ---
   try {
-<<<<<<< HEAD
-    const { id } = req.params;
-    // get team member info by id
-    const teamMember = await TeamMember.findById(id);
-    // get team member's training series assignments
-    const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-    res.status(200).json({ teamMember, assignments });
-=======
     const { id } = req.params; 
 
     // get team member info by id
@@ -42,7 +34,6 @@ router.get("/:id", async (req, res) => {//--- complete per trello spec ---
     }else{
       res.status(200).json({ teamMember, assignments });
     }
->>>>>>> master
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
