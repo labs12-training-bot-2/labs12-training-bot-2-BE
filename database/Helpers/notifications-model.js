@@ -89,9 +89,7 @@ function getDailyEmailNotifications(day) {
 }
 
 function getNotificationByMessageId(id) {
-  return db("notifications")
-    .where({ message_id: id })
-    .first();
+  return db("notifications").where({ message_id: id });
 }
 
 function getNotificationsToRecalculate(message_id, team_member_id) {

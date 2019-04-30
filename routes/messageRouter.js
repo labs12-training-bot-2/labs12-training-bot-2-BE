@@ -128,18 +128,19 @@ router.put("/:id", async (req, res) => {
       !training_series_id &&
       !link
     ) {
-      res
+      return res
         .status(400)
         .json({ error: "Client must provide at least one field to change." });
     }
 
-    const updatedMessage = await Messages.update(id, incomingMessageUpdate);
-
-    // get notification to update by message id
+    const [updatedMessage] = await Messages.update(id, req.body);
+    if (!updatedMessage || !updatedMessage.length) {
+      return res.status(404).json({ message: "That message does not exist." });
+    }
+    // get list of notifications to update by message id
     const notificationsToUpdate = await Notifications.getNotificationByMessageId(
       id
     );
-
     // callback function to calculate new send date for notifications
     const dateRecalculation = async notification => {
       // pull in start date from relational table based on team member id and training series id
@@ -148,26 +149,35 @@ router.put("/:id", async (req, res) => {
         notification.training_series_id
       );
 
-      const newSendDate = await moment(member.start_date)
-        .add(updated_message.days_from_start, "days")
-        .format("YYYY-MM-D");
+      if (member) {
+        //only perform the following operations if the notification relates to a valid team member assigned to a valid series, with the relationship defined in relational_table
+        //essentially will only fail at this point if data was seeded and not completely linked properly
+        const newSendDate = await moment(member.start_date)
+          .add(updated_message.days_from_start, "days")
+          .format("YYYY-MM-D");
 
-      // create updated notification, including new send date if daysFromStart changed
-      const updatedNotification = {
-        ...incomingMessageUpdate,
-        send_date: newSendDate
-      };
+        // create updated notification, including new send date if daysFromStart changed
+        const updatedNotification = {
+          ...incomingMessageUpdate,
+          send_date: newSendDate
+        };
 
-      // update notifications
-      await Notifications.updateNotificationContent(
-        notification.id,
-        updatedNotification
-      );
+        // update notifications
+        await Notifications.updateNotificationContent(
+          notification.id,
+          updatedNotification
+        );
+      }
     };
 
     // async await for each to PUT notifications with new send date
-    await Notifications.asyncForEach(notificationsToUpdate, dateRecalculation);
-
+    // but fires ONLY if there are actually any notifications to update
+    if (notificationsToUpdate.length) {
+      await Notifications.asyncForEach(
+        notificationsToUpdate,
+        dateRecalculation
+      );
+    }
     res.status(200).json({ updatedMessage });
   } catch (err) {
     res.status(500).json(err);

@@ -32,7 +32,8 @@ function add(message) {
 function update(id, message) {
   return db("messages")
     .where({ id })
-    .update(message);
+    .update(message)
+    .returning("*");
 }
 
 function remove(id) {
