@@ -31,7 +31,7 @@ server.use('/api/training-series', authenticate, trainingsRouter);
 server.use('/api/messages', authenticate, messageRouter);
 server.use('/api/stripe', stripeRouter);
 server.use('/api/stripe', stripeRouter);
-server.use('/api/slack', slackRouter);
+//server.use('/api/slack', slackRouter);
 
 //Default Endpoints
 server.get('/', (req, res) => {
