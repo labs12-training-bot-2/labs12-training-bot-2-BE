@@ -1,6 +1,9 @@
 // Dependencies
 const router = require("express").Router();
 
+// Middleware
+const { authenticate } = require('../auth/authenticate');
+
 // Models
 const Users = require("../database/Helpers/user-model.js");
 
