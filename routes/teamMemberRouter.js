@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {//--- complete per trello spec ---
 });
 
 // GET a team member by teamMemberId
-router.get("/:id", async (req, res) => {//--- under construction per trello spec ---
+router.get("/:id", async (req, res) => {//--- complete per trello spec ---
   try {
     const { id } = req.params;
 
@@ -40,7 +40,7 @@ router.get("/:id", async (req, res) => {//--- under construction per trello spec
 });
 
 // POST a new team member
-router.post("/", async (req, res) => {
+router.post("/", async (req, res) => {//--- complete per trello spec ---
   try {
     const {
       first_name,
@@ -68,10 +68,16 @@ router.post("/", async (req, res) => {
 });
 
 // PUT team member information
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {//--- complete per trello spec ---
   const { email_on, text_on } = req.body;
 
   try {
+    //check to make sure we have all the info we need
+    const { first_name, last_name, job_description, email, phone_number, slack_id, teams_id, manager, mentor } = req.body;
+    if(!first_name && !last_name && !job_description && !email && !phone_number && !slack_id && !teams_id && !email_on && !text_on && !manager && !mentor){
+      res.status(400).json({ message: "Please supply information to be updated" });
+    }
+
     const id = req.params.id;
     const updatedTeamMember = await TeamMember.update(id, req.body);
 
@@ -105,7 +111,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE a team member
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {//--- complete per trello spec ---
   try {
     const id = req.params.id;
     const deleted = await TeamMember.remove(id);
@@ -120,7 +126,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Assigns one or multiple team members to training series with the same start date
-router.post("/assign", async (req, res) => {
+router.post("/assign", async (req, res) => {//--- complete per trello spec ---
   try {
     // store array of objects in a new variable
     const { start_date, training_series_id } = req.body;
@@ -137,7 +143,7 @@ router.post("/assign", async (req, res) => {
       try {
         const newObject = {
           start_date,
-          training_series,
+          training_series_id,
           team_member_id: assignment
         };
 
