@@ -52,5 +52,24 @@ router.post("/", async (req, res) => {
 });
 
 router.route('/:service/:id')
+  .get(authenticate, async (req, res) => {
+    const { id, service } = req.params;
+    try {
+      const token = await OAuth.getToken(id, service);
+      if (!token) {
+        return res.status(404).json({
+          message: 'Theres no token associated with that user'
+        })
+      }
+
+      return res.status(200).json(token);
+    }
+    catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        message: "There was a network error"
+      })
+    }
+  })
 
 module.exports = router;
