@@ -28,7 +28,9 @@ function findBy(filter) {
 
 function findById(id) {
   return db("team_members")
-    .where({ id })
+    .where({
+      id
+    })
     .first();
 }
 
@@ -40,13 +42,17 @@ function add(member) {
 
 async function update(id, member) {
   return db("team_members")
-    .where({ id })
+    .where({
+      id
+    })
     .update(member);
 }
 
 function remove(id) {
   return db("team_members")
-    .where({ id })
+    .where({
+      id
+    })
     .del();
 }
 
@@ -57,29 +63,21 @@ async function addToTrainingSeries(assignment) {
     .returning("id");
 
   return db("relationalTable")
-    .where({ id })
+    .where({
+      id
+    })
     .first();
 }
 
 //get a team member's training series assignments
 function getTrainingSeriesAssignments(id) {
-<<<<<<< HEAD
-  return db("team_members")
-    .join(
-      "relational_table AS r",
-      "team_members.id AS tID",
-      "r.team_members_id"
-    )
-    .join("training_series AS t", "t.id", "r.training_series_id")
-    .select("r.training_series_id", "t.title", "r.start_date")
-    .where("r.team_members_id", id);
-=======
   return db('relational_table')
     .join("team_members", "team_members.id", "relational_table.team_member_id")
     .join("training_series", "training_series.id", "relational_table.training_series_id")
-    .select("relational_table.training_series_id","relational_table.team_member_id", "training_series.title", "relational_table.start_date")
-    .where({"relational_table.team_member_id": id});
->>>>>>> master
+    .select("relational_table.training_series_id", "relational_table.team_member_id", "training_series.title", "relational_table.start_date")
+    .where({
+      "relational_table.team_member_id": id
+    });
 }
 
 // get member information for updating notification send date
@@ -106,7 +104,9 @@ async function updateTrainingSeriesStartDate(
       team_members_id,
       training_series_id
     })
-    .update({ start_date: updatedStartDate });
+    .update({
+      start_date: updatedStartDate
+    });
 
   return findTrainingSeriesBy({
     team_members_id,
@@ -142,7 +142,7 @@ async function removeFromTrainingSeries(team_member_id, training_series_id) {
       training_series_id
     })
     .del();
-    
+
   return deleted;
 }
 
