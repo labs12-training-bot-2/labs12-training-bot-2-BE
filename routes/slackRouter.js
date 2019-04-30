@@ -21,14 +21,13 @@ router.get('/', async (req, res) => {
 	}
 });
 
-// 
-router.post('/add', async ({body:{user_id, slack_id, username}}, res) => {
+//
+router.post('/add', async ({ body: { user_id, slack_id, username } }, res) => {
 	// App sends Slack ID or username & user_id in req.body
-    // Compare id or username to users in Slack workspace.
-    // If approved, save ID in database under the team_members table - slack_id
-      // Respond 200
-    // If invalid, respond with 400
-    if()
+	// Compare id or username to users in Slack workspace.
+	// If approved, save ID in database under the team_members table - slack_id
+	// Respond 200
+	// If invalid, respond with 400
 });
 
 module.exports = router;
@@ -47,5 +46,3 @@ async function getAllUsers() {
 }
 
 // MIDDLEWARE
-
-function 
