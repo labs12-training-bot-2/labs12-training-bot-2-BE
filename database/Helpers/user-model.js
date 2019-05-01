@@ -10,7 +10,7 @@ module.exports = {
   findByEmail,
   findTrainingSeriesByUser,
   getUserAccountType,
-  getUserPosts,
+  getUserMessages,
   updateUser,
   deleteUser
 };
@@ -22,12 +22,13 @@ function find() {
 function findBy(filter) {
   return db("users")
     .where(filter)
-
     .first();
 }
 
 function findById(id) {
-  return db("users").where({ id });
+  return db("users")
+    .where({ id })
+    .first();
 }
 
 function add(user) {
@@ -61,19 +62,20 @@ function getUserAccountType(id) {
     .first();
 }
 
-function getUserPosts(id) {
+function getUserMessages(id) {
   return db("users AS u")
-    .select("messages.*")
-    .join("training_series AS t", "u.id", "t.user_id")
-    .join("messages AS m", "t.id", "m.training_series_id")
+    .select("m.*")
+    .leftJoin("training_series AS t", "u.id", "t.user_id")
+    .leftJoin("messages AS m", "t.id", "m.training_series_id")
     .where("u.id", id)
-    .groupBy("m.training_series_id");
+    .orderBy("m.training_series_id");
 }
 
 function updateUser(id, changes) {
   return db("users")
     .where("id", id)
-    .update(changes);
+    .update(changes)
+    .returning("*");
 }
 
 function deleteUser(id) {

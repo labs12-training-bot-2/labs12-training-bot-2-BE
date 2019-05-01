@@ -26,38 +26,49 @@ router.get("/:id", async (req, res) => {
     if (!user) {
       res.status(404).json({ message: "User not found" });
     } else {
-      // Get Training Series by user id
-      const userTrainingSeries = await Users.findTrainingSeriesByUser(id);
+      try {
+        // Get Training Series by user id
+        const userTrainingSeries = await Users.findTrainingSeriesByUser(id);
+        // Get user account type
+        const account = await Users.getUserAccountType(id);
+        // Get messages by user
+        const messages = await Users.getUserMessages(id);
+        const members = await TeamMembers.findBy({ user_id: id });
 
-      // Get user account type
-      const account = await Users.getUserAccountType(id);
+        const userInfo = {
+          ...user,
+          ...account,
+          members,
+          userTrainingSeries,
+          messages
+        };
 
-      // Get posts by user
-      const posts = await Users.getUserPosts(id);
-
-      const members = await TeamMembers.findBy({ user_id: id });
-
-      const userInfo = {
-        ...user,
-        ...account,
-        members,
-        userTrainingSeries,
-        posts
-      };
-
-      res.status(200).json(userInfo);
+        res.status(200).json(userInfo);
+      } catch (error) {
+        res.status(500).json({
+          message:
+            "A network error occurred while attempting to retrieve that user's info"
+        });
+      }
     }
   } catch (error) {
-    res.status(500).json({ message: "A network error occurred" });
+    res.status(500).json({
+      message: "A network error occurred while attempting to retrieve that user"
+    });
   }
 });
 
 // GET all members associated with user
 router.get("/:id/team-members", async (req, res) => {
   try {
-    const user_id = req.params.id;
-    const members = await TeamMembers.findBy({ user_id });
-    res.status(200).json({ members });
+    const { id } = req.params;
+    const user = await Users.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      const members = await TeamMembers.findBy({ id });
+      res.status(200).json({ members });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
@@ -67,8 +78,13 @@ router.get("/:id/team-members", async (req, res) => {
 router.get("/:id/training-series", async (req, res) => {
   try {
     const { id } = req.params;
-    const userTrainingSeries = await Users.findTrainingSeriesByUser(id);
-    res.status(200).json({ userTrainingSeries });
+    const user = await Users.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      const userTrainingSeries = await Users.findTrainingSeriesByUser(id);
+      res.status(200).json({ userTrainingSeries });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
@@ -78,13 +94,13 @@ router.get("/:id/training-series", async (req, res) => {
 router.get("/:id/text-notifications", async (req, res) => {
   try {
     const { id } = req.params;
-    const textNotifications = await Notifications.getTextNotifications(id);
-
-    //todo: investigate following expressions, filteredTexts not used anywhere
-    const filteredTexts = await textNotifications.filter(
-      notification => notification.phoneNumber !== ""
-    );
-    res.status(200).json({ textNotifications });
+    const user = await Users.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      const textNotifications = await Notifications.getTextNotifications(id);
+      res.status(200).json({ textNotifications });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
@@ -94,13 +110,13 @@ router.get("/:id/text-notifications", async (req, res) => {
 router.get("/:id/email-notifications", async (req, res) => {
   try {
     const { id } = req.params;
-    const emailNotifications = await Notifications.getEmailNotifications(id);
-
-    //todo: investigate following expression, filteredEmails not used anywhere
-    const filteredEmails = await emailNotifications.filter(
-      notification => notification.email !== ""
-    );
-    res.status(200).json({ emailNotifications });
+    const user = await Users.findById(id);
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      const emailNotifications = await Notifications.getEmailNotifications(id);
+      res.status(200).json({ emailNotifications });
+    }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });
   }
@@ -108,17 +124,22 @@ router.get("/:id/email-notifications", async (req, res) => {
 
 // PUT update user information
 router.put("/:id", async (req, res) => {
-  const changes = req.body;
+  const { name, email, stripe, notification_count, account_type_id } = req.body;
+  // at least one user field must be submitted for PUT request
+  if (!name && !email && !stripe && !notification_count && !account_type_id) {
+    return res
+      .status(400)
+      .json({ message: "Supply at least one user field to be updated." });
+  }
+  // only supported user fields will be inserted as changes--no SQL injections
+  const changes = { name, email, stripe, notification_count, account_type_id };
   const { id } = req.params;
-
   try {
     const user = await Users.findById(id);
-
     if (!user) {
       res.status(404).json({ message: "The specified user does not exist." });
     } else {
-      const updatedUser = await Users.updateUser(id, changes);
-
+      const [updatedUser] = await Users.updateUser(id, changes);
       res.status(200).json({ message: "Update successful.", updatedUser });
     }
   } catch (error) {
@@ -129,16 +150,11 @@ router.put("/:id", async (req, res) => {
 // DELETE a user account
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-
   try {
-    const user = await Users.findById(id);
-
-    if (!user) {
-      res.status(404).json({ message: "The specified user does not exist." });
-    } else {
-      await Users.deleteUser(id);
-      res.status(200).json({ message: "User account removed successfully." });
-    }
+    const deleted = await Users.deleteUser(id);
+    !deleted
+      ? res.status(404).json({ message: "The specified user does not exist." })
+      : res.status(200).json({ message: "User account removed successfully." });
   } catch (error) {
     res.status(500).json({ message: "A network error occurred." });
   }

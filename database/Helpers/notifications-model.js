@@ -100,7 +100,7 @@ function getDailyEmailNotifications(day) {
 }
 
 function getNotificationByMessageId(id) {
-	return db('notifications').where({ message_id: id }).first();
+	return db('notifications').where({ message_id: id });
 }
 
 function getNotificationsToRecalculate(message_id, team_member_id) {
@@ -122,8 +122,10 @@ function markNotificationAsSent(id, content) {
 	return db('notifications').where({ id }).update(content);
 }
 
-function getTrainingSeriesOfNewMessage(id) {
-	return db('team_members AS t')
+function getTrainingSeriesAssignmentsOfNewMessage(id) {
+	return db('training_series AS ts')
+		.join('relational_table AS r', 'ts.id', 'r.training_series_id')
+		.join('team_members AS t', 't.id', 'r.team_member_id')
 		.select(
 			't.id',
 			't.first_name',
@@ -131,16 +133,12 @@ function getTrainingSeriesOfNewMessage(id) {
 			't.job_description',
 			't.phone_number',
 			't.email',
-			'relational_table.start_date',
+			'r.start_date',
 			't.user_id',
 			't.email_on',
 			't.text_on'
 		)
-		.join('relational_table', function() {
-			this.on('t.id', 'relational_table.team_member_id');
-		})
-		.where('relational_table.training_series_id', '=', id)
-		.groupBy('team_member_id');
+		.where('r.training_series_id', id);
 }
 
 function getUserNotificationCountData(id) {
