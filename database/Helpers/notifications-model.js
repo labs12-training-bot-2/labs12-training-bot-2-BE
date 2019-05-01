@@ -11,7 +11,7 @@ module.exports = {
 	markNotificationAsSent,
 	getNotificationByMessageId,
 	getNotificationsToRecalculate,
-	getTrainingSeriesOfNewMessage,
+	getTrainingSeriesAssignmentsOfNewMessage,
 	getUserNotificationCountData,
 	increaseUserNotificationCount,
 	asyncForEach,
@@ -20,17 +20,17 @@ module.exports = {
 };
 
 function getTextNotifications(id) {
-  return db("notifications AS n")
-    .join("training_series AS t", "n.training_series_id", "t.id")
-    .select("n.*", "t.title", "t.id AS training_series_id")
-    .where("n.user_id", id);
+	return db('notifications AS n')
+		.join('training_series AS t', 'n.training_series_id', 't.id')
+		.select('n.*', 't.title', 't.id AS training_series_id')
+		.where('n.user_id', id);
 }
 
 function getEmailNotifications(id) {
-  return db("notifications AS n")
-    .join("training_series AS t", "n.training_series_id", "t.id")
-    .select("n.*", "t.title", "t.id AS training_series_id")
-    .where("n.user_id", id);
+	return db('notifications AS n')
+		.join('training_series AS t', 'n.training_series_id', 't.id')
+		.select('n.*', 't.title', 't.id AS training_series_id')
+		.where('n.user_id', id);
 }
 function getSlackNotifications(id) {
 	return db('notifications AS n')
@@ -49,6 +49,7 @@ function getSlackNotifications(id) {
 			't.id'
 		)
 		.where('n.user_id', id);
+}
 
 function getDailyTextNotifications(day) {
 	return db('notifications')
