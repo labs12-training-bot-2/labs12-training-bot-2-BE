@@ -12,9 +12,7 @@ server.use(helmet(), express.json(), cors());
 // twilio notification system import
 const notificationSystem = require('./notificationSystem/startSystem');
 
-const {
-	authenticate
-} = require('./auth/authenticate');
+const { authenticate } = require('./auth/authenticate');
 
 //Routes
 const usersRouter = require('./routes/userRouter');
