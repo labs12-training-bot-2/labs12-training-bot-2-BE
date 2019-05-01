@@ -11,7 +11,7 @@ module.exports = {
 	markNotificationAsSent,
 	getNotificationByMessageId,
 	getNotificationsToRecalculate,
-	getTrainingSeriesOfNewMessage,
+	getTrainingSeriesAssignmentsOfNewMessage,
 	getUserNotificationCountData,
 	increaseUserNotificationCount,
 	asyncForEach,
