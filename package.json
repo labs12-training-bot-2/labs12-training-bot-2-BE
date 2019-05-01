@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node index.js",
+		"start": "pm2-runtime start ecosystem.config.js --env production",
 		"server": "nodemon index.js"
 	},
 	"repository": {
@@ -39,6 +39,7 @@
 		"knex": "^0.16.5",
 		"moment": "^2.24.0",
 		"pg": "^7.10.0",
+		"pm2": "^3.5.0",
 		"sqlite3": "^4.0.6",
 		"stripe": "^6.31.0",
 		"twilio": "^3.30.2"
