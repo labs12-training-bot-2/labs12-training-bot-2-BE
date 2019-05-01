@@ -7,7 +7,7 @@ const api = 'https://slack.com/api';
 
 async function sendSlackNotifications(notification) {
 	const channelID = await _openChannelWithUser(notification.slack_id);
-	const _sendSlackMessage(channelID, notification.message_details)
+	const msg = _sendSlackMessage(channelID, notification.message_details);
 }
 
 async function _openChannelWithUser(userID) {
@@ -18,10 +18,9 @@ async function _openChannelWithUser(userID) {
 	return dm.data.channel.id;
 }
 
-async function _sendSlackMessage({ channelID, message }) {
+async function _sendSlackMessage(channelID, message) {
 	const endpoint = '/chat.postMessage';
 	const url = `${api}${endpoint}?token=${token}&channel=${channelID}&text=${message}`;
 
 	await axios.get(url);
 }
-

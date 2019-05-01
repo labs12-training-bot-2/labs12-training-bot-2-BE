@@ -36,6 +36,10 @@ router.put('/add/:user_id', verifyAddInput, async ({ body: { user_id, slack_id }
 	}
 });
 
+router.post('/sendMsgMeow', (req, res) => {
+	// Test Route Please Ignore
+});
+
 module.exports = router;
 
 /* 
