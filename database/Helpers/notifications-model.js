@@ -20,43 +20,18 @@ module.exports = {
 };
 
 function getTextNotifications(id) {
-	return db('notifications AS n')
-		.join('training_series AS t', 'n.training_series_id', 't.id')
-		.select(
-			'n.phone_number',
-			'n.message_name',
-			'n.message_details',
-			'n.link',
-			'n.user_id',
-			'n.send_date',
-			'n.first_name',
-			'n.last_name',
-			'n.text_sent',
-			't.title',
-			't.id'
-		)
-		.where('n.user_id', id);
+  return db("notifications AS n")
+    .join("training_series AS t", "n.training_series_id", "t.id")
+    .select("n.*", "t.title", "t.id AS training_series_id")
+    .where("n.user_id", id);
 }
 
 function getEmailNotifications(id) {
-	return db('notifications AS n')
-		.join('training_series AS t', 'n.training_series_id', 't.id')
-		.select(
-			'n.email',
-			'n.message_name',
-			'n.message_details',
-			'n.link',
-			'n.first_name',
-			'n.last_name',
-			'n.user_id',
-			'n.send_date',
-			'n.email_sent',
-			't.title',
-			't.id'
-		)
-		.where('n.user_id', id);
+  return db("notifications AS n")
+    .join("training_series AS t", "n.training_series_id", "t.id")
+    .select("n.*", "t.title", "t.id AS training_series_id")
+    .where("n.user_id", id);
 }
-
 function getSlackNotifications(id) {
 	return db('notifications AS n')
 		.join('training_series AS t', 'n.training_series_id', 't.id')
@@ -74,7 +49,6 @@ function getSlackNotifications(id) {
 			't.id'
 		)
 		.where('n.user_id', id);
-}
 
 function getDailyTextNotifications(day) {
 	return db('notifications')
