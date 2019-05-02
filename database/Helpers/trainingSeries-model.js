@@ -6,7 +6,7 @@ module.exports = {
   findBy,
   findById,
   getAllMessages,
-  getTrainingSeriesPosts,
+  getTrainingSeriesMessages,
   update,
   remove,
   getMembersAssigned
@@ -37,7 +37,7 @@ function getAllMessages() {
   return db("messages");
 }
 
-function getTrainingSeriesPosts(id) {
+function getTrainingSeriesMessages(id) {
   return db("messages")
     .where({ training_series_id: id })
     .returning("*");
