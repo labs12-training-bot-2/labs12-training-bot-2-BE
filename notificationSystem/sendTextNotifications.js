@@ -84,7 +84,7 @@ async function sendTextNotifications(notification) {
           );
 
           await Notifications.markNotificationAsSent(notification.id, {
-            textSent: true
+            text_sent: true
           });
         } else {
           console.log(
@@ -93,8 +93,8 @@ async function sendTextNotifications(notification) {
           );
           // if phone number is not valid, deactivate and mark as sent (temporary logic to ensure it doesn't keep trying to send this)
           await Notifications.markNotificationAsSent(notification.id, {
-            textOn: false,
-            textSent: true
+            text_on: false,
+            text_sent: true
           });
         }
       } else {
