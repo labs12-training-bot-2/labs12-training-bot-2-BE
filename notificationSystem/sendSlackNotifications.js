@@ -5,9 +5,12 @@ const token = process.env.SLACK_TOKEN;
 
 const api = 'https://slack.com/api';
 
+module.exports = sendSlackNotifications;
+
 async function sendSlackNotifications(notification) {
 	const channelID = await _openChannelWithUser(notification.slack_id);
-	const msg = _sendSlackMessage(channelID, notification.message_details);
+	return await _sendSlackMessage(channelID, notification);
+	// Needs to update the database value of slack_sent to true if it sent successfully
 }
 
 async function _openChannelWithUser(userID) {
@@ -18,9 +21,16 @@ async function _openChannelWithUser(userID) {
 	return dm.data.channel.id;
 }
 
-async function _sendSlackMessage(channelID, message) {
+async function _sendSlackMessage(channelID, notification) {
 	const endpoint = '/chat.postMessage';
+	const message = _formatSlackMessage(notification);
 	const url = `${api}${endpoint}?token=${token}&channel=${channelID}&text=${message}`;
 
 	await axios.get(url);
+}
+
+function _formatSlackMessage({ first_name, message_name, message_details, link }) {
+	return `Hi ${first_name},\nI have the following message for you:\n\n*${message_name}*\n${'```'}\n${message_details}\n${'```'}\n${link
+		? `>${link}`
+		: ''}\n`;
 }
