@@ -29,7 +29,7 @@ server.use('/api/users', authenticate, usersRouter);
 server.use('/api/team-members', authenticate, teamsRouter);
 server.use('/api/training-series', authenticate, trainingsRouter);
 server.use('/api/messages', authenticate, messageRouter);
-//server.use('/api/stripe', stripeRouter);
+server.use('/api/stripe', stripeRouter);
 //server.use('/api/slack', slackRouter);
 
 //Default Endpoints
