@@ -10,7 +10,12 @@ const Team = require('../database/Helpers/teamMember-model.js');
 // ****** proces.env.SLACK_TOKEN works locally.  Should be in DB eventually
 const token = process.env.SLACK_TOKEN;
 // ******
+
 const api = 'https://slack.com/api';
+
+// **** Temporary import to test a test endpoint
+const sendSlackNotifications = require('../notificationSystem/sendSlackNotifications');
+// ****
 
 router.get('/', async (req, res) => {
 	// Useful route for frontend to autocomplete values
@@ -36,8 +41,21 @@ router.put('/add/:user_id', verifyAddInput, async ({ body: { user_id, slack_id }
 	}
 });
 
-router.post('/sendMsgMeow', (req, res) => {
+router.post('/sendMsgMeow', ({ body: { notification } }, res) => {
 	// Test Route Please Ignore
+	try {
+		const { first_name, message_name, message_details, slack_id } = notification;
+		if ((first_name && message_name && message_details, slack_id)) {
+			const msg = sendSlackNotifications(notification);
+			msg
+				? res.status(200).json({ message: 'Message sent' })
+				: res.status(500).json({ message: 'Message did not sent' });
+		} else {
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: 'Internal error sending msg' });
+	}
 });
 
 module.exports = router;
