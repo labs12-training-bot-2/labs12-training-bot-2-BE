@@ -30,19 +30,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/users", async (req, res) => {
-  // Test route
-  try {
-    const users = await Team.find();
-    res.status(200).json(users);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Couldn't get team members" });
-  }
-});
-
 router.put(
-  "/add/:id",
+  "/:id/add",
   verifyAddInput,
   async ({ body: { id, slack_id, slack_on } }, res) => {
     try {
@@ -61,7 +50,29 @@ router.put(
   }
 );
 
-router.put("/toggle/:id", async (req, res) => {
+router.get(
+  "/:id/history",
+  verifyHistoryID,
+  verifySlackID,
+  async ({ body: { teamMember } }, res) => {
+    const { slack_id, id } = teamMember;
+    try {
+      const endpoint = "/conversations.history";
+      const channelID = await _openChannelWithUser(slack_id);
+      const url = `${api + endpoint}?token=${token}&channel=${channelID}`;
+
+      const history = await axios.get(url);
+      res.status(200).json(history.data.messages);
+    } catch (err) {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: "Internal error getting Slack message history" });
+    }
+  }
+);
+
+router.put("/:id/toggle", async (req, res) => {
   const { id } = req.params;
   try {
     const teamMember = await Team.findBy({ id }).first();
@@ -107,6 +118,16 @@ router.post("/sendMsgMeow", ({ body: { notification } }, res) => {
   }
 });
 
+router.get("/users", async (req, res) => {
+  // Test route
+  try {
+    const users = await Team.find();
+    res.status(200).json(users);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Couldn't get team members" });
+  }
+});
 module.exports = router;
 
 /* 
@@ -115,9 +136,11 @@ Slack API Helpers
 async function getAllUsers() {
   try {
     const endpoint = "/users.list";
-    const url = `${api}${endpoint}?token=${token}`;
+    const url = `${api + endpoint}?token=${token}`;
+    console.log(url);
 
     const list = await axios.get(url);
+    console.log(list);
     return list.data.members.map(
       ({ id, name, profile: { real_name, display_name, image_24 } }) => ({
         id,
@@ -148,3 +171,52 @@ function verifyAddInput(req, res, next) {
       .json({ message: "Please include the team member's id and slack_id" });
   }
 }
+
+async function verifyHistoryID(req, res, next) {
+  try {
+    const {
+      params: { id }
+    } = req;
+    const teamMember = await Team.findById(id);
+    if (teamMember) {
+      req.body.teamMember = teamMember;
+      next();
+    } else {
+      res.status(404).json({ message: "Cannot find user with that ID" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal error looking up team member" });
+  }
+}
+
+function verifySlackID({ body: { teamMember } }, res, next) {
+  // Could expand to add middleware that queries Slack API
+  // and verifies the ID is valid
+  if (teamMember.slack_id) {
+    next();
+  } else {
+    res.status(400).json({
+      message: "Cannot look up Slack history for a user without a Slack ID"
+    });
+  }
+}
+
+// Copy/Paste from sendSlackNotifications.js
+// Slack functions need to be exported to their own file
+async function _openChannelWithUser(userID) {
+  const endpoint = "/im.open";
+  const url = `${api}${endpoint}?token=${token}&user=${userID}`;
+
+  const dm = await axios.get(url);
+  return dm.data.channel.id;
+}
+
+/*
+	  Missing scope error:
+	  data:
+   { ok: false,
+     error: 'missing_scope',
+     needed: 'channels:history',
+	 provided: 'identify,bot:basic' } }
+	 */

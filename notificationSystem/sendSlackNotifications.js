@@ -16,6 +16,9 @@ async function sendSlackNotifications(notification) {
   }
 }
 
+// Slack functions should be exported to their own file
+// For universal universe
+
 async function _openChannelWithUser(userID) {
   const endpoint = "/im.open";
   const url = `${api}${endpoint}?token=${token}&user=${userID}`;
