@@ -4,7 +4,7 @@ exports.up = function(knex, Promise) {
 
 	return knex.schema
 		.table('messages', tbl => {
-			tbl.text('message_id').unique();
+			tbl.text('thread_id').unique();
 		})
 		.createTable('responses', tbl => {
 			tbl.uuid('id')
@@ -14,7 +14,7 @@ exports.up = function(knex, Promise) {
 			tbl.text('response_text').notNullable();
 			tbl.text('response_method').notNullable();
 			tbl.text('responding_to')
-				.references('message_id')
+				.references('thread_id')
 				.inTable('messages')
 				.onDelete('CASCADE')
 				.onUpdate('CASCADE')
@@ -29,6 +29,6 @@ exports.down = function(knex, Promise) {
 	return knex.schema
     .dropTableIfExists('responses')
     .table('messages', tbl => {
-			tbl.dropColumn('twilio_id');
+			tbl.dropColumn('thread_id');
 		})
 };
