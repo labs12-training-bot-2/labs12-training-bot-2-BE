@@ -3,8 +3,7 @@ const router = require('express').Router();
 //const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const stripe = require('stripe')(process.env.STRIPE_TEST_SECRET_KEY);
 
-
-const Users = require("../database/Helpers/user-model.js");
+const Users = require('../database/Helpers/user-model.js');
 
 // pass in stripeID
 async function getStripeUser(stripeID) {
@@ -41,7 +40,6 @@ async function unsubscribe(userID, stripeID, plan) {
 }
 
 async function register(id, name, email, token) {
-
 	try {
 		let customer = await stripe.customers.create({
 			description: name,
@@ -83,7 +81,6 @@ function updateUserAccountType(id, plan) {
 	}
 	console.log('AccountTypeID', accountTypeID);
 	Users.updateUser(id, { account_type_id: accountTypeID });
-
 }
 
 router.post('/', async (req, res) => {
@@ -180,7 +177,6 @@ router.get('/plans', async (req, res) => {
 	} catch (error) {
 		console.log(error);
 	}
-
 });
 router.get('/subscriptions', async (req, res) => {
 	try {
@@ -221,3 +217,5 @@ router.post('/paymentintent', async (req, res) => {
 		console.log(error);
 	}
 });
+
+module.exports = router;
