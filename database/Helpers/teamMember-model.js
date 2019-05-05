@@ -21,9 +21,7 @@ function find() {
 }
 
 function findBy(filter) {
-  return db("team_members")
-    .where(filter)
-    .first();
+  return db("team_members").where(filter);
 }
 
 function findById(id) {
@@ -156,6 +154,5 @@ async function removeFromTrainingSeries(team_member_id, training_series_id) {
 }
 
 function addToNotificationsTable(data) {
-  return db("notifications")
-    .insert(data)
+  return db("notifications").insert(data);
 }

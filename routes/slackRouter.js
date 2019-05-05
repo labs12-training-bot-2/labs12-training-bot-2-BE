@@ -5,13 +5,20 @@
 const router = require('express').Router();
 const axios = require('axios');
 
-const Users = require('../database/Helpers/user-model.js');
+const Team = require('../database/Helpers/teamMember-model.js');
 
+// ****** proces.env.SLACK_TOKEN works locally.  Should be in DB eventually
 const token = process.env.SLACK_TOKEN;
+// ******
+
 const api = 'https://slack.com/api';
 
+// **** Temporary import to test a test endpoint
+const sendSlackNotifications = require('../notificationSystem/sendSlackNotifications');
+// ****
+
 router.get('/', async (req, res) => {
-	// Test route, not needed longterm
+	// Useful route for frontend to autocomplete values
 	try {
 		const userlist = await getAllUsers();
 		res.status(200).json(userlist);
@@ -21,28 +28,68 @@ router.get('/', async (req, res) => {
 	}
 });
 
-//
-router.post('/add', async ({ body: { user_id, slack_id, username } }, res) => {
-	// App sends Slack ID or username & user_id in req.body
-	// Compare id or username to users in Slack workspace.
-	// If approved, save ID in database under the team_members table - slack_id
-	// Respond 200
-	// If invalid, respond with 400
+router.put('/add/:user_id', verifyAddInput, async ({ body: { user_id, slack_id } }, res) => {
+	try {
+		const teamMember = await Team.findBy({ user_id });
+		teamMember.slack_id = slack_id;
+
+		const updated = await Team.update(id, teamMember);
+		updated ? res.status(200).json(updated) : res.status(500).json({ message: 'The user was not updated' });
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: 'Internal error adding Slack ID' });
+	}
+});
+
+router.post('/sendMsgMeow', ({ body: { notification } }, res) => {
+	// Test Route Please Ignore
+	try {
+		const { first_name, message_name, message_details, slack_id } = notification;
+		if ((first_name && message_name && message_details, slack_id)) {
+			const msg = sendSlackNotifications(notification);
+			msg
+				? res.status(200).json({ message: 'Message sent' })
+				: res.status(500).json({ message: 'Message did not sent' });
+		} else {
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: 'Internal error sending msg' });
+	}
 });
 
 module.exports = router;
 
+/* 
+Slack API Helpers
+*/
 async function getAllUsers() {
-	const endpoint = '/users.list';
-	const url = `${api}${endpoint}?token=${token}`;
+	try {
+		const endpoint = '/users.list';
+		const url = `${api}${endpoint}?token=${token}`;
 
-	const list = await axios.get(url);
-	return list.data.members.map(({ id, name, profile: { real_name, display_name } }) => ({
-		id,
-		real_name,
-		username: name,
-		display_name
-	}));
+		const list = await axios.get(url);
+		return list.data.members.map(({ id, name, profile: { real_name, display_name, image_24 } }) => ({
+			id,
+			real_name,
+			username: name,
+			display_name,
+			image_24
+		}));
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ message: 'Internal error getting all users' });
+	}
 }
 
-// MIDDLEWARE
+/*
+MIDDLEWARE
+*/
+function verifyAddInput({ body: { slack_id }, params }, res, next) {
+	if (slack_id) {
+		body.user_id = params.user_id;
+		next();
+	} else {
+		res.status(400).json({ message: 'Please include the user_id and slack_id' });
+	}
+}
