@@ -2,9 +2,9 @@
 const router = require("express").Router();
 
 //Models
-const Users = require("../database/Helpers/user-model.js");
-const TeamMembers = require("../database/Helpers/teamMember-model");
-const Notifications = require("../database/Helpers/notifications-model");
+const Users = require("../models/db/users");
+const TeamMembers = require("../models/db/teamMembers");
+const Notifications = require("../models/db/notifications");
 
 //Routes
 router.get("/", async (req, res) => {

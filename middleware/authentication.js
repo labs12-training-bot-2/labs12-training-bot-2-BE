@@ -4,10 +4,10 @@ const jwtKey =
   process.env.JWT_SECRET ||
   "add a .env file to root of project with the JWT_SECRET variable";
 
-const Users = require("../database/Helpers/user-model.js");
+const Users = require("../models/db/users");
 
 module.exports = {
-  authenticate,
+  authenticate
 };
 
 // implementation details
@@ -22,11 +22,11 @@ function authenticate(req, res, next) {
     if (Users.findByEmail(decoded.email)) {
       next();
     } else {
-      return res.status(401).json({error: "Invalid token"});
+      return res.status(401).json({ error: "Invalid token" });
     }
   } else {
     return res.status(401).json({
-      error: "No token provided, token must be set on the Authorization Header",
+      error: "No token provided, token must be set on the Authorization Header"
     });
   }
 }

@@ -1,6 +1,6 @@
 //Sample user-model
 
-const db = require("../dbConfig.js");
+const db = require("../index");
 
 module.exports = {
   add,

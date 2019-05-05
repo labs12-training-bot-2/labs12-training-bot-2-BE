@@ -2,11 +2,11 @@
 const router = require("express").Router();
 
 // Middleware
-const { authenticate } = require('../auth/authenticate');
+const { authenticate } = require("../middleware/authentication");
 
 // Models
-const Users = require("../database/Helpers/user-model.js");
-const OAuth = require('../database/Helpers/oauth-model');
+const Users = require("../models/db/users");
+const OAuth = require("../models/db/tokens");
 
 // Routes
 router.post("/", async (req, res) => {
@@ -51,50 +51,53 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.route('/:service/:id')
+router
+  .route("/:service/:id")
   .get(authenticate, async (req, res) => {
     const { id, service } = req.params;
     try {
       const token = await OAuth.getToken(id, service);
       if (!token) {
         return res.status(404).json({
-          message: 'Theres no token associated with that user'
-        })
+          message: "Theres no token associated with that user"
+        });
       }
 
       return res.status(200).json(token);
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
       return res.status(500).json({
         message: "There was a network error"
-      })
+      });
     }
   })
   .post(authenticate, async (req, res) => {
     const { id, service } = req.params;
-    const { authToken, refreshToken, timeDiff } = req.body
+    const { authToken, refreshToken, timeDiff } = req.body;
     try {
-      let expiration = new Date;
+      let expiration = new Date();
       expiration.setSeconds(expiration.getSeconds() + parseInt(timeDiff));
 
-      const [ user ] = await OAuth.addToken({
-        id, service, authToken, refreshToken, expiration
-      })
+      const [user] = await OAuth.addToken({
+        id,
+        service,
+        authToken,
+        refreshToken,
+        expiration
+      });
 
       if (!user.id) {
         return res.status(404).json({
           message: "We can't find a user at that ID"
-        })
+        });
       }
 
       return res.status(200).json({
         message: `Token successfully created for ${user.name}`
-      })
-    }
-    catch (err) {
-      console.log(err)
-      return res.status(500).json({ message: "There was a network error" })
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ message: "There was a network error" });
     }
   })
   .delete(authenticate, async (req, res) => {
@@ -102,18 +105,21 @@ router.route('/:service/:id')
     try {
       const deletedToken = await OAuth.deleteToken(id, service);
       if (
-        deletedToken[`${service}_auth_token`]
-        || deletedToken[`${service}_refresh_token`]
-        || deletedToken[`${service}_token_expiration`]
+        deletedToken[`${service}_auth_token`] ||
+        deletedToken[`${service}_refresh_token`] ||
+        deletedToken[`${service}_token_expiration`]
       ) {
-        return res.status(404).json({ message: "it doesn't appear that there's a user at that ID "})
+        return res
+          .status(404)
+          .json({
+            message: "it doesn't appear that there's a user at that ID "
+          });
       }
       return res.status(204).end();
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
-      return res.status(500).json({ message: 'There was a network error '});
+      return res.status(500).json({ message: "There was a network error " });
     }
-  })
+  });
 
 module.exports = router;
