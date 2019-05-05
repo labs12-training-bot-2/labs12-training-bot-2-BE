@@ -72,6 +72,16 @@ router.get(
   }
 );
 
+router.post("/oauth", async ({ body: { code } }, res) => {
+  const query = `client_id=604670969987.618830021958&secret=3f5c8ca69b156e93b72e4039494324a6&code=${code}&redirect_uri=${
+    process.env.APP_BASE_URL
+  }/slack-callback}`;
+  const url = `https://slack.com/api/oauth.access?${query}`;
+
+  const token = await axios.get(url);
+  console.log(token);
+});
+
 router.put("/:id/toggle", async (req, res) => {
   const { id } = req.params;
   try {
@@ -199,6 +209,16 @@ function verifySlackID({ body: { teamMember } }, res, next) {
     res.status(400).json({
       message: "Cannot look up Slack history for a user without a Slack ID"
     });
+  }
+}
+
+function verifyAuthInput({ body: { client_id, secret } }, res, next) {
+  if (client_id && secret) {
+    next();
+  } else {
+    res
+      .status(400)
+      .json({ message: "client_id & secret are required to authorize Slack" });
   }
 }
 
