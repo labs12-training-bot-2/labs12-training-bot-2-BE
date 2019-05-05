@@ -2,11 +2,12 @@
 const router = require("express").Router();
 
 // Middleware
-const { authenticate } = require('../auth/authenticate');
+const { authentication } = require('../middleware/authentication');
 
 // Models
-const Users = require("../database/Helpers/user-model.js");
-const OAuth = require('../database/Helpers/oauth-model');
+const Users = require("../models/db/users");
+const TrainingSeries = require('../models/db/trainingSeries')
+const OAuth = require('../models/db/tokens');
 
 // Routes
 router.post("/", async (req, res) => {
@@ -18,12 +19,12 @@ router.post("/", async (req, res) => {
     res.status(400).json({ message: "Please include an email to login" });
   } else {
     try {
-      const user = await Users.findByEmail(email);
+      const user = await Users.find({ 'u.email': email }).first();
 
       if (user) {
         try {
           // retrieves the training series belonging to the user
-          const trainingSeries = await Users.findTrainingSeriesByUser(user.id);
+          const trainingSeries = await TrainingSeries.find({'u.id': user.id});
 
           res
             .status(200)
@@ -52,7 +53,7 @@ router.post("/", async (req, res) => {
 });
 
 router.route('/:service/:id')
-  .get(authenticate, async (req, res) => {
+  .get(authentication, async (req, res) => {
     const { id, service } = req.params;
     try {
       const token = await OAuth.getToken(id, service);
@@ -71,7 +72,7 @@ router.route('/:service/:id')
       })
     }
   })
-  .post(authenticate, async (req, res) => {
+  .post(authentication, async (req, res) => {
     const { id, service } = req.params;
     const { authToken, refreshToken, timeDiff } = req.body
     try {
@@ -97,7 +98,7 @@ router.route('/:service/:id')
       return res.status(500).json({ message: "There was a network error" })
     }
   })
-  .delete(authenticate, async (req, res) => {
+  .delete(authentication, async (req, res) => {
     const { id, service } = req.params;
     try {
       const deletedToken = await OAuth.deleteToken(id, service);
