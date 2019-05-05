@@ -1,4 +1,4 @@
-const { createFakeUsers } = require("../db/fakeData");
+const { createFakeUsers } = require("../../helpers/fakeData");
 
 exports.seed = function(knex, Promise) {
   return knex("users").then(function() {
