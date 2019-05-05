@@ -18,8 +18,8 @@ router.route("/")
     }
   })
 
+// Actions for specific Users (specified by ID)
 router.route('/:id')
-  // GET a specific user
   .get(async (req, res) => {
     try {
       const { id } = req.params;
@@ -56,8 +56,6 @@ router.route('/:id')
       });
     }
   })
-
-  // UPDATE a specific user
   .put(async (req, res) => {
     const { 
       name, 
@@ -96,8 +94,6 @@ router.route('/:id')
       res.status(500).json({ message: "A network error occurred." });
     }
   })
-
-  // DELETE a specific user
   .delete(async (req, res) => {
     const { id } = req.params;
     try {
