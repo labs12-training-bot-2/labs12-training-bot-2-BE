@@ -3,9 +3,9 @@ const router = require("express").Router();
 const moment = require("moment");
 
 //Models
-const TeamMember = require("../database/Helpers/teamMember-model");
-const TrainingSeries = require("../database/Helpers/trainingSeries-model");
-const Notifications = require("../database/Helpers/notifications-model");
+const TeamMember = require("../models/db/teamMembers");
+const TrainingSeries = require("../models/db/trainingSeries");
+const Notifications = require("../models/db/notifications");
 //Routes
 
 // GET all team members in system (not a production endpoint)
