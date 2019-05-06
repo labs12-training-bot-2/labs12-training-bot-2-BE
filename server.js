@@ -23,14 +23,13 @@ const messageRouter = require("./routes/messageRouter");
 const stripeRouter = require("./routes/stripeRouter");
 const slackRouter = require("./routes/slackRouter");
 
-//API Endpoints
-server.use("/api/auth", authRouter);
-server.use("/api/users", authenticate, usersRouter);
-server.use("/api/team-members", authenticate, teamsRouter);
-server.use("/api/training-series", authenticate, trainingsRouter);
-server.use("/api/messages", authenticate, messageRouter);
-//server.use('/api/stripe', stripeRouter);
-server.use("/api/slack", slackRouter);
+server.use('/api/auth', authRouter);
+server.use('/api/users', authenticate, usersRouter);
+server.use('/api/team-members', authenticate, teamsRouter);
+server.use('/api/training-series', authenticate, trainingsRouter);
+server.use('/api/messages', authenticate, messageRouter);
+server.use('/api/stripe', stripeRouter);
+server.use('/api/slack', slackRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
