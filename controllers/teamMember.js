@@ -6,47 +6,14 @@ const moment = require("moment");
 const TeamMember = require("../models/db/teamMembers");
 const TrainingSeries = require("../models/db/trainingSeries");
 const Notifications = require("../models/db/notifications");
-//Routes
 
 // GET all team members in system (not a production endpoint)
-router.get("/", async (req, res) => {
-  //--- complete per trello spec ---
-  try {
+router.route('/')
+  .get(async (req, res) => {
     const teamMembers = await TeamMember.find();
     res.status(200).json({ teamMembers });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-// GET a team member by teamMemberId
-router.get("/:id", async (req, res) => {
-  //--- complete per trello spec ---
-  try {
-    const { id } = req.params;
-
-    // get team member info by id
-    const teamMember = await TeamMember.findById(id);
-    console.log(teamMember);
-    // get team member's training series assignments
-    const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-
-    if (!teamMember) {
-      res
-        .status(404)
-        .json({ message: "Sorry, but we couldnt find that team member!" });
-    } else {
-      res.status(200).json({ teamMember, assignments });
-    }
-  } catch (err) {
-    res.status(500).json({ message: "A network error occurred" });
-  }
-});
-
-// POST a new team member
-router.post("/", async (req, res) => {
-  //--- complete per trello spec ---
-  try {
+  })
+  .post(async (req, res) => {
     const {
       first_name,
       last_name,
@@ -56,29 +23,47 @@ router.post("/", async (req, res) => {
     } = req.body;
 
     if (
-      !first_name ||
-      !last_name ||
-      !job_description ||
-      !phone_number ||
+      !first_name &&
+      !last_name &&
+      !job_description &&
+      !phone_number &&
       !user_id
     ) {
-      res.status(400).json({ error: "Client must provide all fields." });
-    } else {
-      const newTeamMember = await TeamMember.add(req.body);
-      res.status(201).json({ newTeamMember });
+      return res.status(400).json({ error: "Client must provide all fields." });
     }
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
 
-// PUT team member information
-router.put("/:id", async (req, res) => {
-  //--- complete per trello spec ---
-  const { email_on, text_on } = req.body;
+    const newTeamMember = await TeamMember.add({
+      first_name,
+      last_name,
+      job_description,
+      phone_number,
+      user_id
+    });
+    
+    return res.status(201).json({ newTeamMember });
+  });
 
-  try {
-    //check to make sure we have all the info we need
+router.route('/:id')
+  .get(async (req, res) => {
+      const { id } = req.params;
+
+      // get team member info by id
+      const teamMember = await TeamMember.find({ 'tm.id': id });
+
+      // get team member's training series assignments
+      const assignments = await TeamMember.getTrainingSeriesAssignments(id);
+
+      if (!teamMember) {
+        return res.status(404).json({ 
+          message: "Sorry, but we couldnt find that team member!" 
+        });
+      }
+      
+      return res.status(200).json({ teamMember, assignments });
+  })
+  .put(async (req, res) => {
+    const { id } = req.params;
+    const { email_on, text_on } = req.body;
     const {
       first_name,
       last_name,
@@ -86,10 +71,10 @@ router.put("/:id", async (req, res) => {
       email,
       phone_number,
       slack_id,
-      teams_id,
       manager,
       mentor
     } = req.body;
+
     if (
       !first_name &&
       !last_name &&
@@ -97,64 +82,42 @@ router.put("/:id", async (req, res) => {
       !email &&
       !phone_number &&
       !slack_id &&
-      !teams_id &&
       !email_on &&
       !text_on &&
       !manager &&
       !mentor
     ) {
-      res
-        .status(400)
-        .json({ message: "Please supply information to be updated" });
+      return res.status(400).json({ 
+        message: "Please supply information to be updated" 
+      });
     }
 
-    const id = req.params.id;
     const updatedTeamMember = await TeamMember.update(id, req.body);
 
-    // build new object with accurate text / email provided based on toggle boolean
-    let updatedNotificationMemberInfo;
-    if (email_on && !text_on) {
-      updatedNotificationMemberInfo = {
-        ...req.body,
-        phone_number: ""
-      };
-    } else if (text_on && !email_on) {
-      updatedNotificationMemberInfo = {
-        ...req.body,
-        email: ""
-      };
-    } else {
-      updatedNotificationMemberInfo = req.body;
+    // Set the notifications for the user based on email_on and text_on
+    const notificationSettings = {
+      ...req.body,
+      ...text_on ? { phone_number } : { phone_number: "" },
+      ...email_on ? { email } : { email: "" }
     }
 
-    // update notification table with conditional email / phone number based on text_on / email_on
+    // Pass notification settings to Notifications model
     await Notifications.updateNotificationMember(
       id,
-      updatedNotificationMemberInfo
+      notificationSettings
     );
 
     // send back updated team member information
-    res.status(200).json({ updatedTeamMember });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
-// DELETE a team member
-router.delete("/:id", async (req, res) => {
-  //--- complete per trello spec ---
-  try {
-    const id = req.params.id;
+    return res.status(200).json({ updatedTeamMember });
+  })
+  .delete(async (req, res) => {
+    const { id } = req.params;
     const deleted = await TeamMember.remove(id);
-    if (deleted > 0) {
-      res.status(200).json({ message: "The resource has been deleted." });
-    } else {
-      res.status(404).json({ error: "The resource could not be found." });
-    }
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+    
+    return deleted > 0 
+      ? res.status(200).json({ message: "The resource has been deleted." })
+      : res.status(404).json({ message: "The resource could not be found." })
+  })
 
 // Assigns one or multiple team members to training series with the same start date
 router.post("/assign", async (req, res) => {
@@ -281,17 +244,12 @@ router.post("/assign", async (req, res) => {
 
 // Remove team member from a training series
 router.delete("/:id/assign/:ts_id", async (req, res) => {
-  try {
     const { id, ts_id } = req.params;
     const deleted = await TeamMember.removeFromTrainingSeries(id, ts_id);
-    if (deleted > 0) {
-      res.status(200).json({ message: "The resource has been deleted." });
-    } else {
-      res.status(404).json({ error: "The resource could not be found." });
+    
+    if (deleted) {
+      return res.status(200).json({ message: "The resource has been deleted." })
     }
-  } catch (err) {
-    res.status(500).json({ message: "A network error occurred" });
-  }
 });
 
 module.exports = router;
