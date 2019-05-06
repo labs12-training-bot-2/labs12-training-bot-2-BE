@@ -2,7 +2,7 @@
 
 require("dotenv").config();
 
-const Notifications = require("../database/Helpers/notifications-model");
+const Notifications = require("../../../models/db/notifications");
 const twilio = require("twilio");
 
 // Get an instance of `PhoneNumberUtil`.
