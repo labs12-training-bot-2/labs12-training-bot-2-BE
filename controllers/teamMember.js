@@ -31,45 +31,6 @@ router.route('/')
     ) {
       return res.status(400).json({ error: "Client must provide all fields." });
     }
-<<<<<<< Updated upstream
-=======
-
-    const newTeamMember = await TeamMember.add({
-      first_name,
-      last_name,
-      job_description,
-      phone_number,
-      user_id
-    });
-    
-    return res.status(201).json({ newTeamMember });
-  });
-
-// GET a team member by teamMemberId
-router.route('/:id')
-  .get(async (req, res) => {
-    //--- complete per trello spec ---
-    try {
-      const { id } = req.params;
-
-      // get team member info by id
-      const teamMember = await TeamMember.findById(id);
-      console.log(teamMember);
-      // get team member's training series assignments
-      const assignments = await TeamMember.getTrainingSeriesAssignments(id);
-
-      if (!teamMember) {
-        res
-          .status(404)
-          .json({ message: "Sorry, but we couldnt find that team member!" });
-      } else {
-        res.status(200).json({ teamMember, assignments });
-      }
-    } catch (err) {
-      res.status(500).json({ message: "A network error occurred" });
-    }
-  });
->>>>>>> Stashed changes
 
     const newTeamMember = await TeamMember.add({
       first_name,
