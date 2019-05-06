@@ -1,0 +1,22 @@
+{
+  "source": {
+    "include": [
+      "./middleware",
+      "./models",
+      "./controllers",
+      "./helpers/"
+    ],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "opts": {
+    "encoding": "utf8",
+    "readme": "./.github/README.md",
+    "destination": "./docs",
+    "recurse": true,
+    "verbose": true
+  }
+}
