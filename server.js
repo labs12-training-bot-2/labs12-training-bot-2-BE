@@ -13,7 +13,7 @@ server.use(helmet(), express.json(), cors());
 const notificationSystem = require("./jobs/notifications/index");
 
 // authentication and error middleware
-const { authenticate } = require("./middleware/authentication");
+const { authentication } = require("./middleware/authentication");
 const errorHandler = require("./middleware/errorHandling");
 
 //Routes
@@ -27,12 +27,12 @@ const slackRouter = require("./controllers/slack");
 
 //API Endpoints
 server.use("/api/auth", authRouter);
-server.use("/api/users", authenticate, usersRouter);
-server.use("/api/team-members", authenticate, teamsRouter);
-server.use("/api/training-series", authenticate, trainingsRouter);
-server.use("/api/messages", authenticate, messageRouter);
+server.use("/api/users", authentication, usersRouter);
+server.use("/api/team-members", authentication, teamsRouter);
+server.use("/api/training-series", authentication, trainingsRouter);
+server.use("/api/messages", authentication, messageRouter);
 server.use("/api/stripe", stripeRouter);
-//server.use('/api/slack', slackRouter);
+server.use('/api/slack', slackRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {

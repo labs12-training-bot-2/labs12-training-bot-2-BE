@@ -52,8 +52,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router
-  .route("/:service/:id")
+router.route("/:service/:id")
   .get(authentication, async (req, res) => {
     const { id, service } = req.params;
     try {
