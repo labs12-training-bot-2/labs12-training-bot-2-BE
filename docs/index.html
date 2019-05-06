@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>💬 Training Bot API 💬</h1>
+<h2>Introduction</h2>
+<p>Training bot allows managers of teams to send notifications to their teammates on a predefined schedule.</p>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#%F0%9F%92%AC-training-bot-api-%F0%9F%92%AC">💬 Training Bot API 💬</a>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+</ul>
+</li>
+<li><a href="#overview">Overview</a>
+<ul>
+<li><a href="#what-is-training-bot-%F0%9F%A4%96">What is Training Bot? 🤖</a></li>
+<li><a href="#mission-statement-%F0%9F%93%9C">Mission Statement 📜</a></li>
+</ul>
+</li>
+<li><a href="#usage">Usage</a>
+<ul>
+<li><a href="#getting-started">Getting Started</a></li>
+</ul>
+</li>
+<li><a href="#database-tables">Database Tables</a>
+<ul>
+<li><a href="#schema">Schema</a></li>
+<li><a href="#user">User</a></li>
+<li><a href="#trainingseries">TrainingSeries</a></li>
+<li><a href="#teammember">TeamMember</a></li>
+<li><a href="#post">Post</a></li>
+<li><a href="#accounttype">accountType</a></li>
+<li><a href="#relationaltable">RelationalTable</a></li>
+</ul>
+</li>
+<li><a href="#endpoints">Endpoints</a>
+<ul>
+<li><a href="#all-endpoints">All endpoints</a></li>
+</ul>
+</li>
+<li><a href="#%F0%9F%96%A5-data-requests-and-responses-%F0%9F%96%A5">🖥 Data requests and responses 🖥</a>
+<ul>
+<li><a href="#apiauth"><code>/api/auth</code></a></li>
+<li><a href="#apiusersid"><code>/api/users/:id</code></a></li>
+<li><a href="#apiusersidtraining-series"><code>/api/users/:id/training-series</code></a></li>
+<li><a href="#apiusersidteam-members"><code>/api/users/:id/team-members</code></a></li>
+<li><a href="#apitraining-series"><code>/api/training-series</code></a></li>
+<li><a href="#apitraining-seriesid"><code>/api/training-series/:id</code></a></li>
+<li><a href="#apitraining-seriesidposts"><code>/api/training-series/:id/posts</code></a></li>
+<li><a href="#apiposts"><code>/api/posts</code></a></li>
+<li><a href="#apipostsid"><code>/api/posts/:id</code></a></li>
+<li><a href="#apiteam-members"><code>/api/team-members</code></a></li>
+<li><a href="#apiteam-membersid"><code>/api/team-members/:id</code></a></li>
+<li><a href="#apiteam-membersidtraining-series"><code>/api/team-members/assign</code></a></li>
+<li><a href="#apiteam-membersidtraining-seriestsid"><code>/api/team-members/assign/:id</code></a></li>
+<li><a href="#apistripe"><code>/api/stripe</code></a></li>
+<li><a href="#apistripeunsubscribe"><code>/api/stripe/unsubscribe</code></a></li>
+</ul>
+</li>
+</ul>
+<h1>Overview</h1>
+<h2>What is Training Bot? 🤖</h2>
+<p>Training Bot is a learning application that lets a team leader create a series of trainings and deliver them at a scheduled time via text or email to assigned learners. The user will be able to add members and assign them to a scheduled set of trainings with a start date. Each training will have a title, text body, and link. They should be small snippets that fit well in a text message sized post.</p>
+<h2>Mission Statement 📜</h2>
+<p>Training Bot empowers team leaders with tools to assist with their team’s continual learning.</p>
+<h1>Usage</h1>
+<h2>Getting Started</h2>
+<p><strong>The Package Manager used for this project is <code>yarn</code></strong></p>
+<ol>
+<li>Clone the repository and change into the directory.</li>
+<li>Install dependencies</li>
+</ol>
+<pre class="prettyprint source"><code>yarn install
+</code></pre>
+<ol start="3">
+<li>Start the server</li>
+</ol>
+<pre class="prettyprint source"><code>yarn server
+</code></pre>
+<ol start="4">
+<li>Test server is functioning on postman
+<ul>
+<li>In postman make a get request to: <code>localhost:4000/</code></li>
+<li>You should receive a message stating: 'It works'!</li>
+</ul>
+</li>
+</ol>
+<h1>Database Tables</h1>
+<h2>Schema</h2>
+<p><img src="https://i.imgur.com/oPQ8FuF.png" alt="Schema Table"></p>
+<h2>User</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>userID</td>
+<td>int</td>
+<td>PK</td>
+</tr>
+<tr>
+<td>accountTypeID</td>
+<td>int</td>
+<td>FK - refs accountType.accountTypeID</td>
+</tr>
+<tr>
+<td>email</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>name</td>
+<td>varchar</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>TrainingSeries</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>trainingSeriesID</td>
+<td>int</td>
+<td>PK</td>
+</tr>
+<tr>
+<td>title</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>userID</td>
+<td>int</td>
+<td>FK - refs User.userID</td>
+</tr>
+</tbody>
+</table>
+<h2>TeamMember</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>teamMemberID</td>
+<td>int</td>
+<td>PK</td>
+</tr>
+<tr>
+<td>firstName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>lastName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>jobDescription</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>userID</td>
+<td>int</td>
+<td>FK - refs User.userID</td>
+</tr>
+</tbody>
+</table>
+<h2>Post</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>postID</td>
+<td>int</td>
+<td>PK</td>
+</tr>
+<tr>
+<td>postName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>postDetails</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>link</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>daysFromStart</td>
+<td>int</td>
+<td></td>
+</tr>
+<tr>
+<td>postImage</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>trainingSeriesID</td>
+<td>int</td>
+<td>FK - refs TrainingSeries.trainingSeriesID</td>
+</tr>
+</tbody>
+</table>
+<h2>accountType</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>accountTypeID</td>
+<td>int</td>
+<td>PK</td>
+</tr>
+<tr>
+<td>accountType</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>maxNotificationCount</td>
+<td>int</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>RelationalTable</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>relationalTableID</td>
+<td>int</td>
+<td>PK, auto-incremements</td>
+</tr>
+<tr>
+<td>startDate</td>
+<td>datetime</td>
+<td></td>
+</tr>
+<tr>
+<td>trainingSeries_ID</td>
+<td>int</td>
+<td>FK - refs TrainingSeries.trainingSeriesID</td>
+</tr>
+<tr>
+<td>teamMember_ID</td>
+<td>int</td>
+<td>FK - refs TeamMember.teamMemberID</td>
+</tr>
+</tbody>
+</table>
+<h2>Notifications</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>notificationID</td>
+<td>int</td>
+<td>PK</td>
+</tr>
+<tr>
+<td>sendDate</td>
+<td>date</td>
+<td></td>
+</tr>
+<tr>
+<td>postName</td>
+<td>tinytext</td>
+<td></td>
+</tr>
+<tr>
+<td>post Details</td>
+<td>tinytext</td>
+<td></td>
+</tr>
+<tr>
+<td>link</td>
+<td>tinytext</td>
+<td></td>
+</tr>
+<tr>
+<td>phoneNumber</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>email</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>firstName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+<tr>
+<td>lastName</td>
+<td>varchar</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><a href="#table-of-contents">Back to table of Contents</a></p>
+<h1>Endpoints</h1>
+<h2>All endpoints</h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>METHOD</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/auth</code></td>
+<td>POST</td>
+<td>Adds user to db (if they don't exist), returns user info</td>
+</tr>
+<tr>
+<td><code>/api/users/:id</code></td>
+<td>GET</td>
+<td>Gets all information about the current user by ID</td>
+</tr>
+<tr>
+<td><code>/api/users/:id</code></td>
+<td>PUT</td>
+<td>Updates a user's information (in local db)</td>
+</tr>
+<tr>
+<td><code>/api/users/:id</code></td>
+<td>DELETE</td>
+<td>Deletes a user's information (in local db)</td>
+</tr>
+<tr>
+<td><code>/api/users/:id/training-series</code></td>
+<td>GET</td>
+<td>Gets all training series created by logged in user</td>
+</tr>
+<tr>
+<td><code>/api/users/:id/team-members</code></td>
+<td>GET</td>
+<td>Gets all team members added by logged in user</td>
+</tr>
+<tr>
+<td><code>/api/training-series</code></td>
+<td>POST</td>
+<td>Creates a new training series for logged in user</td>
+</tr>
+<tr>
+<td><code>/api/training-series/:id</code></td>
+<td>GET</td>
+<td>Gets a specific training series by ID</td>
+</tr>
+<tr>
+<td><code>/api/training-series/:id</code></td>
+<td>PUT</td>
+<td>Edits a specific training series</td>
+</tr>
+<tr>
+<td><code>/api/training-series/:id</code></td>
+<td>DELETE</td>
+<td>Deletes a specified training series</td>
+</tr>
+<tr>
+<td><code>/api/training-series/:id/posts</code></td>
+<td>GET</td>
+<td>Gets all posts related to a training series</td>
+</tr>
+<tr>
+<td><code>/api/posts</code></td>
+<td>POST</td>
+<td>Adds a post to a training series</td>
+</tr>
+<tr>
+<td><code>/api/posts/:id</code></td>
+<td>GET</td>
+<td>Gets a specific post by ID</td>
+</tr>
+<tr>
+<td><code>/api/posts/:id</code></td>
+<td>PUT</td>
+<td>Updates a post</td>
+</tr>
+<tr>
+<td><code>/api/posts/:id</code></td>
+<td>DELETE</td>
+<td>Deletes a post</td>
+</tr>
+<tr>
+<td><code>/api/team-members</code></td>
+<td>POST</td>
+<td>Creates a new team member</td>
+</tr>
+<tr>
+<td><code>/api/team-members/:id</code></td>
+<td>GET</td>
+<td>Gets a specific team member</td>
+</tr>
+<tr>
+<td><code>/api/team-members/:id</code></td>
+<td>PUT</td>
+<td>Edits a specified team member</td>
+</tr>
+<tr>
+<td><code>/api/team-members/:id</code></td>
+<td>DELETE</td>
+<td>Deletes a specified team member</td>
+</tr>
+<tr>
+<td><code>/api/team-members/:id/training-series</code></td>
+<td>POST</td>
+<td>Assigns a member's training series start date</td>
+</tr>
+<tr>
+<td><code>/api/team-members/:id/training-series/:ts_id</code></td>
+<td>PUT</td>
+<td>Updates a member's training series start date</td>
+</tr>
+<tr>
+<td><code>/api/team-members/:id/training-series/:ts_id</code></td>
+<td>DELETE</td>
+<td>Deletes a member's training series start date</td>
+</tr>
+<tr>
+<td><code>/api/stripe</code></td>
+<td>POST</td>
+<td>Registers user with stripe &amp; Submit payment</td>
+</tr>
+<tr>
+<td><code>/api/stripe/unsubscribe</code></td>
+<td>POST</td>
+<td>Unsubscribes a user from their subscription</td>
+</tr>
+</tbody>
+</table>
+<h1>Data requests and responses</h1>
+<h1>🖥 Data requests and responses 🖥</h1>
+<p>Below are all expected request body shapes and data responses</p>
+<h2><code>/api/auth</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object (if registering for first time):</p>
+<pre class="prettyprint source"><code>{
+    email: &quot;example@email.com&quot; // required
+    name: &quot;John Doe&quot; // required
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 201 Created</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;Account created successfully&quot;,
+    newUser
+}
+</code></pre>
+<p>Structure of request object (if already registered):</p>
+<pre class="prettyprint source"><code>{
+    email: &quot;example@email.com&quot; // required
+    name: &quot;John Doe&quot;
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;Login successful&quot;,
+    user,
+    trainingSeries
+}
+</code></pre>
+<p><a href="#table-of-contents">Back to table of Contents</a></p>
+<h2><code>/api/users/:id</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    user,
+    account,
+    members,
+    userTrainingSeries,
+    posts
+}
+</code></pre>
+<p><strong>Method:</strong> PUT</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    name: &quot;John Doe&quot;,
+    email: &quot;example@email.com&quot;
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;Update successful&quot;,
+    updatedUser
+}
+</code></pre>
+<p><strong>Method:</strong> DELETE</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;User account removed successfully&quot;
+}
+</code></pre>
+<h2><code>/api/users/:id/training-series</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    userTrainingSeries
+}
+</code></pre>
+<h2><code>/api/users/:id/team-members</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    members
+}
+</code></pre>
+<h2><code>/api/training-series</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    title: &quot;Lorem ipsum&quot;, // required
+    userID: 1 // required
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 201 Created</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    newTrainingSeries
+}
+</code></pre>
+<p><a href="#table-of-contents">Back to table of Contents</a></p>
+<h2><code>/api/training-series/:id</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    trainingSeries
+}
+</code></pre>
+<p><strong>Method:</strong> PUT</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    title: &quot;Lorem ipsum&quot;
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    updatedTrainingSeries
+}
+</code></pre>
+<p><strong>Method:</strong> DELETE</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;The resource has been deleted&quot;
+}
+</code></pre>
+<h2><code>/api/training-series/:id/posts</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    trainingSeries,
+    posts
+}
+</code></pre>
+<h2><code>/api/posts</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    postName: &quot;Lorem ipsum&quot;, // required
+    postDetails: &quot;Lorem ipsum dolor&quot;, // required
+    link: &lt;url>, // required
+    daysFromStart: 2, // required
+    trainingSeriesID: 1, // required
+    postImage: &lt;url>
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 201 Created</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    newPost
+}
+</code></pre>
+<h2><code>/api/posts/:id</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    post
+}
+</code></pre>
+<p><strong>Method:</strong> PUT</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    postName: &quot;Lorem ipsum&quot;,
+    postDetails: &quot;Lorem ipsum dolor&quot;,
+    link: &lt;url>,
+    daysFromStart: 2,
+    trainingSeriesID: 1,
+    postImage: &lt;url>
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    updatedPost
+}
+</code></pre>
+<p><strong>Method:</strong> DELETE</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;The resource has been deleted.&quot;
+}
+</code></pre>
+<p><a href="#table-of-contents">Back to table of Contents</a></p>
+<h2><code>/api/team-members</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    firstName: &quot;John&quot;, // required
+    lastName: &quot;Doe&quot;, // required
+    jobDescription: &quot;Produce&quot;, // required
+    email: &quot;example@email.com&quot;, // required
+    phoneNumber: &quot;424-242-4242&quot;, // required
+    user_ID: 1 // required
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 201 Created</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    newTeamMember
+}
+</code></pre>
+<h2><code>/api/team-members/:id</code></h2>
+<p><strong>Method:</strong> GET</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    teamMember,
+    assignments
+}
+</code></pre>
+<p><strong>Method:</strong> PUT</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    firstName: &quot;John&quot;,
+    lastName: &quot;Doe&quot;,
+    jobDescription: &quot;Produce&quot;,
+    email: &quot;example@email.com&quot;,
+    phoneNumber: &quot;424-242-4242&quot;,
+    user_ID: 1
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    updatedTeamMember
+}
+</code></pre>
+<p><strong>Method:</strong> DELETE</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;The resource has been deleted.&quot;
+}
+</code></pre>
+<h2><code>/api/team-members/assign</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    trainingSeriesID: 2, // required
+    startDate: &quot;2019-12-20&quot;, // required, date in ISO format (use .toISOString())
+    assignments: [51, 72, 123] // required, each index is a teamMemberID
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 201 Created</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;The team member has been assigned to the training series.&quot;
+}
+</code></pre>
+<p><a href="#table-of-contents">Back to table of Contents</a></p>
+<h2><code>/api/team-members/assign/:id</code></h2>
+<p><strong>Method:</strong> DELETE</p>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<p>Structure of response:</p>
+<pre class="prettyprint source"><code>{
+    message: &quot;The resource has been deleted.&quot;
+}
+</code></pre>
+<h2><code>/api/stripe</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    token: '' // required - token created on front end by stripe
+    name: 'Michael Landers' // required
+    email: 'landers.mike@gmail.com' // required
+    userID: 64 // required
+    stripe: 'cus_Em0HrDDkcniQIi' // required
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<!-- Structure of response:
+
+```
+{
+    message: "Successfully updated team member's start date",
+    updates
+}
+``` -->
+<h2><code>/api/stripe/unsubscribe</code></h2>
+<p><strong>Method:</strong> POST</p>
+<p>Structure of request object:</p>
+<pre class="prettyprint source"><code>{
+    userID: 64 // required
+    stripe: 'cus_Em0HrDDkcniQIi' // required
+}
+</code></pre>
+<p><strong>HTTP Status:</strong> 200 OK</p>
+<!-- Structure of response:
+
+```
+{
+    message: "Successfully updated team member's start date",
+    updates
+}
+``` -->
+<p><a href="#table-of-contents">Back to table of Contents</a></p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#authentication">authentication</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#remove">remove</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.1</a> on Sun May 05 2019 20:01:52 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
