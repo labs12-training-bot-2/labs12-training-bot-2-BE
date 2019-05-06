@@ -46,7 +46,7 @@ async function register(id, name, email, token) {
       email: email,
       source: token // obtained with Stripe.js
     });
-    Users.updateUser(id, { stripe: customer.id });
+    Users.update(id, { stripe: customer.id });
     return customer;
   } catch (error) {
     console.log(error);
@@ -66,7 +66,7 @@ function updateUserAccountType(id, plan) {
   // 		accountTypeID = 1;
   // 	}
   // 	console.log('AccountTypeID', accountTypeID);
-  // 	Users.updateUser(id, { account_type_id: accountTypeID });
+  // 	Users.update(id, { account_type_id: accountTypeID });
 
   // TEST;
   let accountTypeID;
@@ -80,7 +80,7 @@ function updateUserAccountType(id, plan) {
     accountTypeID = 1;
   }
   console.log("AccountTypeID", accountTypeID);
-  Users.updateUser(id, { account_type_id: accountTypeID });
+  Users.update(id, { account_type_id: accountTypeID });
 }
 
 router.post("/", async (req, res) => {
