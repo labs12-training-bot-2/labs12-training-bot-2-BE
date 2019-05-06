@@ -12,7 +12,9 @@ server.use(helmet(), express.json(), cors());
 // twilio notification system import
 const notificationSystem = require("./jobs/notifications/index");
 
+// authentication and error middleware
 const { authenticate } = require("./middleware/authentication");
+const errorHandler = require("./middleware/errorHandling");
 
 //Routes
 const usersRouter = require("./controllers/user");
@@ -36,6 +38,9 @@ server.use("/api/stripe", stripeRouter);
 server.get("/", (req, res) => {
   res.send("It works!");
 });
+
+//async error handling middleware MUST come after routes or else will just throw Type error
+server.use(errorHandler);
 
 // turn on notification interval system
 // notificationSystem.clearOldNotifications();
