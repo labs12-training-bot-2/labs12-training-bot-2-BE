@@ -2,7 +2,7 @@
 const router = require("express").Router();
 
 //Models
-const TrainingSeries = require("../database/Helpers/trainingSeries-model");
+const TrainingSeries = require("../models/db/trainingSeries");
 
 //Routes
 
@@ -60,13 +60,11 @@ router.post("/", async (req, res) => {
     const { title, user_id } = req.body;
 
     if (!title || !user_id) {
-      res
-        .status(400)
-        .json({
-          error: `Client must provide: ${!title ? "-a title" : ""} ${
-            !user_id ? "-a user ID" : ""
-          }`
-        });
+      res.status(400).json({
+        error: `Client must provide: ${!title ? "-a title" : ""} ${
+          !user_id ? "-a user ID" : ""
+        }`
+      });
     } else {
       const newTrainingSeries = await TrainingSeries.add(req.body);
       res.status(201).json({ newTrainingSeries });
@@ -86,17 +84,13 @@ router.put("/:id", async (req, res) => {
       const updatedTrainingSeries = await TrainingSeries.update(id, req.body);
       updatedTrainingSeries.length
         ? res.status(200).json({ updatedTrainingSeries })
-        : res
-            .status(404)
-            .json({
-              message: "sorry, but we couldnt find that training series!"
-            });
+        : res.status(404).json({
+            message: "sorry, but we couldnt find that training series!"
+          });
     } else {
-      res
-        .status(400)
-        .json({
-          message: "Please provide a new title for this training series."
-        });
+      res.status(400).json({
+        message: "Please provide a new title for this training series."
+      });
     }
   } catch (err) {
     res.status(500).json({ message: "A network error occurred" });

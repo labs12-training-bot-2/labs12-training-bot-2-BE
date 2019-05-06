@@ -3,10 +3,10 @@ const router = require("express").Router();
 const moment = require("moment");
 
 // Models
-const Messages = require("../database/Helpers/message-model");
-const Notifications = require("../database/Helpers/notifications-model");
-const TeamMember = require("../database/Helpers/teamMember-model");
-const TrainingSeries = require("../database/Helpers/trainingSeries-model");
+const Messages = require("../models/db/messages");
+const Notifications = require("../models/db/notifications");
+const TeamMember = require("../models/db/notifications");
+const TrainingSeries = require("../models/db/trainingSeries");
 
 // Routes
 // POST a new message
