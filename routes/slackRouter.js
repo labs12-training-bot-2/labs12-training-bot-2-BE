@@ -73,6 +73,7 @@ router.get(
 );
 
 router.post("/oauth", async ({ body: { code } }, res) => {
+  //Incomplete endpoint
   const query = `client_id=604670969987.618830021958&secret=3f5c8ca69b156e93b72e4039494324a6&code=${code}&redirect_uri=${
     process.env.APP_BASE_URL
   }/slack-callback}`;
@@ -106,7 +107,7 @@ router.put("/:id/toggle", async (req, res) => {
   }
 });
 
-router.post("/sendMsgMeow", ({ body: { notification } }, res) => {
+router.post("/sendMessageNow", ({ body: { notification } }, res) => {
   // Test Route Please Ignore
   try {
     const {
