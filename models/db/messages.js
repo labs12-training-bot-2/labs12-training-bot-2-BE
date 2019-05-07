@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const db = require("../index.js");
-=======
 const db = require("../index");
->>>>>>> weekend-warriors
 
 module.exports = {
   add,
@@ -13,31 +9,31 @@ module.exports = {
 
 function add(message) {
   return db("messages")
-    .insert(message, ['*'])
-    .then(m => find({ 'm.id': m[0].id }).first())
+    .insert(message, ["*"])
+    .then(m => find({ "m.id": m[0].id }).first());
 }
 
 function find(filters) {
-  return db('messages AS m')
+  return db("messages AS m")
     .select(
-      'm.id',
-      'm.message_name',
-      'm.message_details',
-      'm.link',
-      'm.days_from_start',
-      'ts.title AS series'
+      "m.id",
+      "m.message_name",
+      "m.message_details",
+      "m.link",
+      "m.days_from_start",
+      "ts.title AS series"
     )
-    .leftJoin('training_series AS ts', { 'ts.id': 'm.training_series_id' })
-    .leftJoin('users AS u', { 'u.id': 'ts.user_id' })
+    .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
+    .leftJoin("users AS u", { "u.id": "ts.user_id" })
     .where(filters)
-    .orderBy('series')
+    .orderBy("series");
 }
 
 function update(id, message) {
   return db("messages")
-    .update(message, ['*'])
+    .update(message, ["*"])
     .where({ id })
-    .then(m => find({ 'm.id': m[0].id }).first())
+    .then(m => find({ "m.id": m[0].id }).first());
 }
 
 function remove(id) {
