@@ -28,7 +28,7 @@ function find(filters) {
 }
 
 function update(filters, changes) {
-  return db('tokens')
+  return db('tokens AS t')
     .insert(changes, ['*'])
     .join('users AS u', { 't.user_id': 'u.id' })
     .join('services', { 't.service_id': 's.id' })
