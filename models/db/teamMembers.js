@@ -5,7 +5,6 @@ module.exports = {
   find,
   update,
   remove,
-  addToNotificationsTable
 };
 
 function find(filters) {

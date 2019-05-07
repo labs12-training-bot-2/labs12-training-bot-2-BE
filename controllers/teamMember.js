@@ -5,6 +5,10 @@ const moment = require("moment");
 //Models
 const TeamMember = require("../models/db/teamMembers");
 
+// Data validation
+const { teamMemberSchema } = require("../models/schemas");
+const validation = require("../middleware/dataValidation");
+
 // GET all team members in system (not a production endpoint)
 router.route('/')
   .get(async (req, res) => {
@@ -14,7 +18,7 @@ router.route('/')
     });
     res.status(200).json({ teamMembers });
   })
-  .post( validator(teamMemberSchema), async (req, res) => {
+  .post(validation(teamMemberSchema), async (req, res) => {
     const newTeamMember = await TeamMember.add(req.body);
     return res.status(201).json({ newTeamMember });
   });
@@ -37,7 +41,7 @@ router.route('/:id')
       
       return res.status(200).json({ teamMember, assignments });
   })
-  .put(validator(teamMemberSchema), async (req, res) => {
+  .put(validation(teamMemberSchema), async (req, res) => {
     const { id } = req.params;
 
     const updatedTeamMember = await TeamMember.update(id, req.body);
