@@ -1,8 +1,8 @@
 const faker = require("faker");
 const uuidv4 = require("uuid/v4");
 
-//alter these values to generate different amounts of faked, seeded data for all tables minus accountTypes
-const userSeeds = 5; //1 for each training_bot team member to log in and have random data assigned to them
+//alter these values to generate different amounts of faked, seeded data
+const userSeeds = 5; //1 for each training_bot team mate to log in and have random data assigned to them
 const seriesSeeds = 20;
 const memberSeeds = 500;
 const messageSeeds = 20;
@@ -42,7 +42,6 @@ function createFakeTeamMembers() {
     user_id: faker.random.number({ min: 1, max: userSeeds }),
     manager_id: faker.random.number({ min: 1, max: memberSeeds }),
     mentor_id: faker.random.number({ min: 1, max: memberSeeds })
-    //!both above id's point within their own table, so the smaller the seed count, the higher the chance they will pick their own id
   });
   for (let i = 0; i < memberSeeds; i++) {
     newTeamMembers.push(fakeTeamMember());
