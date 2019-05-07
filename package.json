@@ -19,13 +19,14 @@
 	},
 	"homepage": "https://github.com/Blent1050/auth-ii#readme",
 	"dependencies": {
-		"@sendgrid/mail": "^6.3.1",
+		"@hapi/joi": "^15.0.1",
+		"@sendgrid/mail": "^6.4.0",
 		"axios": "^0.18.0",
 		"bcrypt": "^3.0.6",
 		"connect-session-knex": "^1.4.0",
 		"cors": "^2.8.5",
-		"cron": "^1.7.0",
-		"dotenv": "^7.0.0",
+		"cron": "^1.7.1",
+		"dotenv": "^8.0.0",
 		"express": "^4.16.4",
 		"express-async-errors": "^3.1.1",
 		"express-jwt": "^5.3.1",
@@ -33,7 +34,7 @@
 		"express-session": "^1.16.1",
 		"faker": "^4.1.0",
 		"google-libphonenumber": "^3.2.2",
-		"helmet": "^3.16.0",
+		"helmet": "^3.18.0",
 		"jsonwebtoken": "^8.5.1",
 		"jwks-rsa": "^1.4.0",
 		"jwt-decode": "^2.2.0",
@@ -42,13 +43,13 @@
 		"pg": "^7.10.0",
 		"pm2": "^3.5.0",
 		"sqlite3": "^4.0.6",
-		"stripe": "^6.31.0",
-		"twilio": "^3.30.2",
+		"stripe": "^6.31.2",
+		"twilio": "^3.30.3",
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {
 		"jest": "^24.8.0",
-		"nodemon": "^1.18.11",
+		"nodemon": "^1.19.0",
 		"supertest": "^4.0.2"
 	}
 }
