@@ -44,7 +44,8 @@
 		"pm2": "^3.5.0",
 		"sqlite3": "^4.0.6",
 		"stripe": "^6.31.0",
-		"twilio": "^3.30.2"
+		"twilio": "^3.30.2",
+		"uuid": "^3.3.2"
 	},
 	"devDependencies": {
 		"jsdoc": "^3.6.1",
