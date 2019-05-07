@@ -2,16 +2,31 @@ const faker = require("faker");
 const uuidv4 = require("uuid/v4");
 
 //alter these values to generate different amounts of faked, seeded data
-const userSeeds = 5; //1 for each training_bot team mate to log in and have random data assigned to them
+const userSeeds = 5;
 const seriesSeeds = 20;
 const memberSeeds = 500;
 const messageSeeds = 20;
 
 module.exports = {
+  createFakeUsers,
   createFakeTrainingSeries,
   createFakeTeamMembers,
   createFakeMessages
 };
+
+function createFakeUsers() {
+  const newUsers = [];
+  const fakeUser = () => ({
+    name: faker.name.findName(),
+    email: faker.internet.email(),
+    notifications_sent: 0,
+    account_type_id: faker.random.number({ min: 1, max: 3 })
+  });
+  for (let i = 0; i < userSeeds; i++) {
+    newUsers.push(fakeUser());
+  }
+  return newUsers;
+}
 
 function createFakeTrainingSeries() {
   const newSeries = [];
