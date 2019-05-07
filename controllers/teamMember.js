@@ -31,7 +31,7 @@ router.route('/:id')
       const teamMember = await TeamMember.find({ 'tm.id': id });
 
       // get team member's training series assignments
-      const assignments = await TeamMember.getTrainingSeriesAssignments(id);
+      //const assignments = await TeamMember.getTrainingSeriesAssignments(id);
 
       if (!teamMember) {
         return res.status(404).json({ 
@@ -39,7 +39,7 @@ router.route('/:id')
         });
       }
       
-      return res.status(200).json({ teamMember, assignments });
+      return res.status(200).json({ teamMember});  //assignments
   })
   .put(validation(teamMemberSchema), async (req, res) => {
     const { id } = req.params;

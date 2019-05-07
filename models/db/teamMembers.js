@@ -23,8 +23,8 @@ function find(filters) {
       'men.first_name AS mentor_name'
     )
     .join('users AS u', { 'tm.user_id': 'u.id' })
-    .leftOuterJoin('team_members AS man', {'tm.manager': 'man.id' })
-    .leftOuterJoin('team_members AS men', { 'tm.mentor': 'men.id' })
+    .leftOuterJoin('team_members AS man', {'tm.manager_id': 'man.id' })
+    .leftOuterJoin('team_members AS men', { 'tm.mentor_id': 'men.id' })
     .where(filters)
 }
 
