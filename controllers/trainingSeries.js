@@ -8,7 +8,10 @@ const Messages = require('../models/db/messages');
 // GET all training series (not a production endpoint)
 router.route('/')
   .get(async (req, res) => {
-      const trainingSeries = await TrainingSeries.find();
+      const { user } = res.locals
+      const trainingSeries = await TrainingSeries.find({ 
+        'u.email': user.email 
+      });
       res.status(200).json({ trainingSeries });
   })
   .post(async (req, res) => {
@@ -22,7 +25,7 @@ router.route('/')
       });
     }
     
-    const newTrainingSeries = await TrainingSeries.add(req.body);
+    const newTrainingSeries = await TrainingSeries.add({ title, user_id });
     
     return res.status(201).json({ newTrainingSeries });
   })
@@ -42,17 +45,15 @@ router.route("/:id")
   })
   .put(async (req, res) => {
     const { id } = req.params;
-    const { title, user_id } = req.body;
+    const changes = req.body;
 
-    if (!title.length) {
+    if (!changes.title.length) {
       return res.status(400).json({
         message: "New title cannot be an empty string"
       })
     }
 
-    const updatedTrainingSeries = await TrainingSeries.update(id, {
-      title, user_id
-    });
+    const updatedTrainingSeries = await TrainingSeries.update(id, changes);
     
     if (!updatedTrainingSeries) {
       return res.status(404).json({
@@ -67,22 +68,15 @@ router.route("/:id")
     const deleted = await TrainingSeries.remove(id);
 
     if (!deleted) {
-      return res.status(200).json({ 
-        message: "The resource has been deleted." 
+      return res.status(404).json({ 
+        error: "The resource could not be found." 
       });
     }
-    return res.status(404).json({ error: "The resource could not be found." });
+    
+    return res.status(200).json({
+      message: "The resource has been deleted."
+    });
   });
-
-// TODO: Normalize notifications/relational_table table/db handlers
-// See note in models/db/seriesMembers.js
-
-// router.get("/:id/assignments", async (req, res) => {
-//   const { id } = req.params;
-//   const assignments = await Messages.find({ 'ts.id': id });
-  
-//   return res.status(200).json({ assignments });
-// });
 
 
 // GET all messages in a training series by training series ID
@@ -95,7 +89,7 @@ router.get("/:id/messages", async (req, res) => {
 
     if (!trainingSeries.length) {
       return res.status(404).json({ 
-        message: "Sorry, we couldnt find that training series!" 
+        message: "Sorry! That training series doesn't exist." 
       });
     }
     
