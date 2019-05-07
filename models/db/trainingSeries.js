@@ -8,23 +8,14 @@ module.exports = {
 };
 
 function find(filters) {
-  if (filters) {
-    return db('training_series AS ts')
-      .select(
-        'ts.id',
-        'ts.title',
-        'u.email AS user'
-      )
-      .join('users AS u', { 'ts.user_id': 'u.id' })
-      .where(filters)
-  }
-  return db("training_series AS ts")
+  return db('training_series AS ts')
     .select(
       'ts.id',
       'ts.title',
       'u.email AS user'
     )
     .join('users AS u', { 'ts.user_id': 'u.id' })
+    .where(filters)
 }
 
 function add(series) {
