@@ -52,9 +52,6 @@ server.get("/", (req, res) => {
 //async error handling middleware MUST come after routes or else will just throw Type error
 server.use(errorHandler);
 
-// turn on notification interval system
-// notificationSystem.clearOldNotifications();
-notificationSystem.resetCountOnFirstOfMonth();
 notificationSystem.start();
 
 module.exports = server;
