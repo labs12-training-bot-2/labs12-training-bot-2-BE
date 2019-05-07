@@ -2,7 +2,7 @@
 require("dotenv").config();
 
 const sgMail = require("@sendgrid/mail");
-const Notifications = require("../database/Helpers/notifications-model");
+const Notifications = require("../../../models/db/notifications");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 

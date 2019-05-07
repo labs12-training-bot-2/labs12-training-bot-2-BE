@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const db = require("../index.js");
+=======
+const db = require("../index");
+>>>>>>> weekend-warriors
 
 module.exports = {
   add,
