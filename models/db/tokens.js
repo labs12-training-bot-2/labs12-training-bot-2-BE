@@ -29,13 +29,17 @@ function find(filters) {
 
 function update(filters, changes) {
   return db('tokens')
-    .insert(token, ['*'])
+    .insert(changes, ['*'])
+    .join('users AS u', { 't.user_id': 'u.id' })
+    .join('services', { 't.service_id': 's.id' })
     .where(filters)
     .then(t => find({ 't.id': t[0].id} ))
 }
 
 function remove(filters) {
-  return db('tokens')
+  return db('tokens AS t')
+    .join('users AS u', { 't.user_id': 'u.id' })
+    .join('services', { 't.service_id': 's.id' })
     .where(filters)
     .del()
 }
