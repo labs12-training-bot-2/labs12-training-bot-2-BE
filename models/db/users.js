@@ -9,43 +9,43 @@ module.exports = {
 
 function find(filters) {
   if (filters) {
-    return db('users AS u')
+    return db("users AS u")
       .select(
-        'u.id AS id',
-        'u.name AS name',
-        'u.email AS email',
-        'u.stripe AS stripe',
-        'u.notification_count AS sent_notifications', 
-        'a.account_type AS subscription', 
-        'a.max_notification_count'
+        "u.id AS id",
+        "u.name AS name",
+        "u.email AS email",
+        "u.stripe AS stripe",
+        "u.notifications_sent",
+        "a.title AS subscription",
+        "a.max_notification_count"
       )
-      .join('account_types AS a', {'u.account_type_id': 'a.id'})
-      .where(filters)
+      .join("account_types AS a", { "u.account_type_id": "a.id" })
+      .where(filters);
   }
-  return db('users AS u')
+  return db("users AS u")
     .select(
-      'u.id AS id',
-      'u.name AS name',
-      'u.email AS email',
-      'u.stripe AS stripe',
-      'u.notification_count AS sent_notifications', 
-      'a.account_type AS subscription', 
-      'a.max_notification_count'
+      "u.id AS id",
+      "u.name AS name",
+      "u.email AS email",
+      "u.stripe AS stripe",
+      "u.notifications_sent",
+      "a.account_type AS subscription",
+      "a.max_notification_count"
     )
-    .join('account_types AS a', {'u.account_type_id': 'a.id'})
+    .join("account_types AS a", { "u.account_type_id": "a.id" });
 }
 
 function add(user) {
   return db("users")
-    .insert(user, ['*'])
-    .then(u => find({ 'u.id': u[0].id }).first());
+    .insert(user, ["*"])
+    .then(u => find({ "u.id": u[0].id }).first());
 }
 
 function update(filter, changes) {
   return db("users")
-    .update(changes, ['*'])
+    .update(changes, ["*"])
     .where(filter)
-    .then(u => find({ 'u.id': u[0].id }).first());
+    .then(u => find({ "u.id": u[0].id }).first());
 }
 
 function remove(filter) {
