@@ -2,7 +2,6 @@ const Joi = require("@hapi/joi");
 
 const userSchema = {
   name: Joi.string()
-    .alphanum()
     .min(3)
     .max(255)
     .required(),
@@ -23,17 +22,14 @@ const userSchema = {
 
 const teamMemberSchema = {
   first_name: Joi.string()
-    .alphanum()
     .min(3)
     .max(255)
     .required(),
   last_name: Joi.string()
-    .alphanum()
     .min(3)
     .max(255)
     .required(),
   job_description: Joi.string()
-    .alphanum()
     .min(3)
     .max(255),
   email: Joi.string().email({ minDomainSegments: 2 }),
@@ -113,9 +109,13 @@ const notificationSchema = {
     .integer()
     .min(1)
     .required(),
-  send_date: Joi.date.iso().required(),
+  send_date: Joi.date()
+    .iso()
+    .required(),
   is_sent: Joi.boolean(),
-  num_attempts: Joi.number.integer().min(0),
+  num_attempts: Joi.number()
+    .integer()
+    .min(0),
   thread: Joi.string().min(3)
 };
 
@@ -126,4 +126,14 @@ const responseSchema = {
     .min(1)
     .required(),
   created_at: Joi.date().timestamp() //defaults to "javascript", might need to pass in "unix" option
+};
+
+module.exports = {
+  userSchema,
+  teamMemberSchema,
+  trainingSeriesSchema,
+  messageSchema,
+  tokenSchema,
+  notificationSchema,
+  responseSchema
 };
