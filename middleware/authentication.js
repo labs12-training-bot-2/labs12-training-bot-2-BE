@@ -12,9 +12,12 @@ module.exports = {
  * and validates that a user has the proper access
  * permissions
  *
- * @param  {Object} req
- * @param  {Object} res
- * @param  {function} next
+ * @module authentication
+ * @function
+ * @param  {Object} req - Express request object
+ * @param  {Object} res - Express response object
+ * @param  {function} next - Express next middleware function
+ * @return {undefined}
  */
 async function authentication(req, res, next) {
   const token = req.get("Authorization");
