@@ -15,8 +15,8 @@ function find(filters) {
         "u.name AS name",
         "u.email AS email",
         "u.stripe AS stripe",
-        "u.notification_count AS sent_notifications",
-        "a.account_type AS subscription",
+        "u.notifications_sent",
+        "a.title AS subscription",
         "a.max_notification_count"
       )
       .join("account_types AS a", { "u.account_type_id": "a.id" })
@@ -28,7 +28,7 @@ function find(filters) {
       "u.name AS name",
       "u.email AS email",
       "u.stripe AS stripe",
-      "u.notification_count AS sent_notifications",
+      "u.notifications_sent",
       "a.account_type AS subscription",
       "a.max_notification_count"
     )
