@@ -1,44 +1,41 @@
 const db = require("../index.js");
 
 module.exports = {
-  addToken,
-  getToken,
-  deleteToken
+  add,
+  find,
+  update,
+  remove,
 };
 
-function addToken({ id, service, authToken, refreshToken, expiration }) {
-  return db("users")
-    .update(
-      {
-        [`${service}_auth_token`]: authToken,
-        [`${service}_refresh_token`]: refreshToken,
-        [`${service}_token_expiration`]: expiration
-      },
-      ["*"]
-    )
-    .where({ id });
+function add(token) {
+  return db("tokens")
+    .update(token, ["*"])
+    .then(t => find({ 't.id': t[0].id }).first());
 }
 
-function getToken(id, service) {
-  return db("users")
+function find(filters) {
+  return db('tokens AS t')
     .select(
-      `${service}_auth_token`,
-      `${service}_refresh_token`,
-      `${service}_token_expiration`
+      't.auth_token',
+      't.refresh_token',
+      't.expiration',
+      's.name AS service',
+      'u.email AS user'
     )
-    .where({ id })
-    .first();
+    .join('services AS s', {'t.service_id': 's.id'})
+    .join('users AS u', {'t.user_id': 'u.id'})
+    .where(filters)
 }
 
-function deleteToken(id, service) {
-  return db("users")
-    .update(
-      {
-        [`${service}_auth_token`]: null,
-        [`${service}_refresh_token`]: null,
-        [`${service}_token_expiration`]: null
-      },
-      ["*"]
-    )
-    .where({ id });
+function update(filters, changes) {
+  return db('tokens')
+    .insert(token, ['*'])
+    .where(filters)
+    .then(t => find({ 't.id': t[0].id} ))
+}
+
+function remove(filters) {
+  return db('tokens')
+    .where(filters)
+    .del()
 }
