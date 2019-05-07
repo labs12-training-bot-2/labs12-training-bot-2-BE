@@ -23,6 +23,7 @@ async function authentication(req, res, next) {
 
   if (email) {
     if (validUser) {
+      res.locals.user = validUser;
       next();
     } else {
       return res.status(401).json({ error: "Invalid token" });
