@@ -17,10 +17,10 @@ function find(filters) {
       'tm.job_description',
       'tm.email',
       'tm.phone_number',
-      'tm.slack_id',
-      'tm.manager',
+      'tm.slack_uuid',
+      'tm.manager_id',
       'man.first_name AS manager_name',
-      'tm.mentor',
+      'tm.mentor_id',
       'men.first_name AS mentor_name'
     )
     .join('users AS u', { 'tm.user_id': 'u.id' })
