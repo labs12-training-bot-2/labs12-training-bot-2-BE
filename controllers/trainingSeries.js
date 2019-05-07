@@ -5,7 +5,6 @@ const router = require("express").Router();
 const TrainingSeries = require("../models/db/trainingSeries");
 const Messages = require('../models/db/messages');
 
-// GET all training series (not a production endpoint)
 router.route('/')
   .get(async (req, res) => {
       const { user } = res.locals
@@ -79,12 +78,9 @@ router.route("/:id")
   });
 
 
-// GET all messages in a training series by training series ID
 router.get("/:id/messages", async (req, res) => {
-  //--- under construction per trello spec ---
     const { id } = req.params;
 
-    //get training series by id
     const trainingSeries = await TrainingSeries.find({ 'ts.id': id });
 
     if (!trainingSeries.length) {
@@ -92,8 +88,7 @@ router.get("/:id/messages", async (req, res) => {
         message: "Sorry! That training series doesn't exist." 
       });
     }
-    
-    //get all messages of training series
+
     const messages = await Messages.find({ 'ts.id': id });
 
     return res.status(200).json({ trainingSeries, messages });
