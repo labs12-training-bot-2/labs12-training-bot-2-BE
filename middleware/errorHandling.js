@@ -3,6 +3,7 @@ module.exports = (err, req, res, next) => {
   const env = process.env.NODE_ENV || "development";
   let error;
   if (env === "development" && statusCode > 499) {
+    console.error(err);
     error = `Error during ${req.method} at ${req.path}: ${err.message}`;
   }
 

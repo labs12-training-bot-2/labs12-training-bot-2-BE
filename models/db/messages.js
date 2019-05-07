@@ -17,10 +17,11 @@ function find(filters) {
   return db("messages AS m")
     .select(
       "m.id",
-      "m.message_name",
-      "m.message_details",
+      "m.subject",
+      "m.body",
       "m.link",
-      "m.days_from_start",
+      "m.for_manager",
+      "m.for_mentor",
       "ts.title AS series"
     )
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
@@ -29,15 +30,15 @@ function find(filters) {
     .orderBy("series");
 }
 
-function update(id, message) {
-  return db("messages")
+function update(filter, message) {
+  return db("messages AS m")
     .update(message, ["*"])
-    .where({ id })
+    .where(filter)
     .then(m => find({ "m.id": m[0].id }).first());
 }
 
-function remove(id) {
-  return db("messages")
-    .where({ id })
+function remove(filter) {
+  return db("messages AS m")
+    .where(filter)
     .del();
 }
