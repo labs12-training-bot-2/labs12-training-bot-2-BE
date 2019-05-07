@@ -8,9 +8,13 @@ const Notifications = require("../models/db/notifications");
 const TeamMember = require("../models/db/notifications");
 const TrainingSeries = require("../models/db/trainingSeries");
 
+// Data validation
+const { messageSchema } = require("../models/schemas");
+const validation = require("../middleware/dataValidation");
+
 // Routes
 // POST a new message
-router.post("/", async (req, res) => {
+router.post("/", validation(messageSchema), async (req, res) => {
   try {
     const {
       message_name,

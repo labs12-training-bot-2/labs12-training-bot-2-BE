@@ -12,9 +12,19 @@ server.use(helmet(), express.json(), cors());
 // twilio notification system import
 const notificationSystem = require("./jobs/notifications/index");
 
-// authentication and error middleware
+// authentication, error and validation middleware
 const { authentication } = require("./middleware/authentication");
 const errorHandler = require("./middleware/errorHandling");
+const {
+  userSchema,
+  teamMemberSchema,
+  trainingSeriesSchema,
+  messageSchema,
+  tokenSchema,
+  notificationSchema,
+  responseSchema
+} = require("./models/schemas");
+const validation = require("./middleware/dataValidation");
 
 //Routes
 const usersRouter = require("./controllers/user");
@@ -32,7 +42,7 @@ server.use("/api/team-members", authentication, teamsRouter);
 server.use("/api/training-series", authentication, trainingsRouter);
 server.use("/api/messages", authentication, messageRouter);
 server.use("/api/stripe", stripeRouter);
-server.use('/api/slack', slackRouter);
+server.use("/api/slack", slackRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
