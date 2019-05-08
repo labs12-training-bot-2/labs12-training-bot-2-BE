@@ -13,9 +13,8 @@ const validation = require("../middleware/dataValidation");
 router.route('/')
   .get(async (req, res) => {
     const { user } = res.locals
-    console.log(user);
     const teamMembers = await TeamMember.find({
-      'u.id': user.id
+      'u.email': user.email
     });
     res.status(200).json({ teamMembers });
   })
