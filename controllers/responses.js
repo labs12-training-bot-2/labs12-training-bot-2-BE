@@ -18,7 +18,7 @@ router.route('/')
 router.route('/:id')
     .get(async (req, res) => {
         const { id } = req.params;
-        const response = await Response.find({ 'r.id': id });
+        const response = await Responses.find({ 'r.id': id });
 
         if (!response){
             return res.status(404).json({
@@ -29,7 +29,7 @@ router.route('/:id')
     })
     .delete(async (req, res) => {
         const { id } = req.params;
-        const deleted = await Response.remove(id);
+        const deleted = await Responses.remove(id);
         return deleted > 0
         ? res.status(200).json({ message: "The resource has been deleted." })
         : res.status(404).json({ message: "The resource could not be found." })
