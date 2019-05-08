@@ -29,13 +29,15 @@ function find(filters) {
     .leftJoin("messages AS m", { "m.id": "n.message_id" })
     .leftJoin("services AS s", { "s.id": "n.service_id" })
     .leftJoin("team_members AS tm", { "tm.id": "n.team_member_id" })
-    .leftJoin("users AS u", { "u.id": "ts.user_id" })
+    .leftJoin("users AS u", { "u.id": "tm.user_id" })
     .where(filters)
     .orderBy("n.send_date");
 }
 
 function remove(filters) {
   return db("notifications AS n")
+    .leftJoin("team_members AS tm", { "tm.id": "n.team_member_id" })
+    .leftJoin("users AS u", { "u.id": "tm.user_id" })
     .where(filters)
     .del();
 }
