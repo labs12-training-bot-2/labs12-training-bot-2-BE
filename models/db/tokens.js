@@ -1,44 +1,97 @@
 const db = require("../index.js");
 
 module.exports = {
-  addToken,
-  getToken,
-  deleteToken
+  find,
+  add,
+  update,
+  remove
 };
 
-function addToken({ id, service, authToken, refreshToken, expiration }) {
-  return db("users")
-    .update(
-      {
-        [`${service}_auth_token`]: authToken,
-        [`${service}_refresh_token`]: refreshToken,
-        [`${service}_token_expiration`]: expiration
-      },
-      ["*"]
-    )
-    .where({ id });
-}
+/**
+ * Finds a token based on the filter provided and returns
+ * an object
+ *
+ * @param {Object} filters
+ */
 
-function getToken(id, service) {
-  return db("users")
+function find(filters) {
+  return db("token AS tk")
     .select(
-      `${service}_auth_token`,
-      `${service}_refresh_token`,
-      `${service}_token_expiration`
+      "tk.id",
+      "tk.expiration",
+      "tk.auth_token",
+      "tk.refresh_token",
+      "s.name AS service",
+      "u.email AS user"
     )
-    .where({ id })
-    .first();
+    .join("users AS u", { "tk.user_id": "u.id" })
+    .join("services AS s", { "tk.service_id": "s.id" })
+    .where(filters);
 }
 
-function deleteToken(id, service) {
-  return db("users")
-    .update(
+/**
+ * Provided with user_id, service, and auth_token--with the option for
+ * refersh_token and expiration--creates a new row in the
+ * 'token' database then returns a promise which returns
+ * the newly created object with ID when resolved.
+ *
+ * @param {Integer} user_id
+ * @param {String} service
+ * @param {String} auth_token
+ * @param {String} refresh_token
+ * @param {String} expiration
+ */
+
+async function add({
+  user_id,
+  service,
+  auth_token,
+  refresh_token,
+  expiration
+}) {
+  const service_id = await db("services")
+    .select(id)
+    .where({ name: service });
+
+  return db("tokens")
+    .insert(
       {
-        [`${service}_auth_token`]: null,
-        [`${service}_refresh_token`]: null,
-        [`${service}_token_expiration`]: null
+        auth_token,
+        refresh_token,
+        expiration,
+        service_id,
+        user_id
       },
       ["*"]
     )
-    .where({ id });
+    .then(tk => find({ "tk.id": tk[0].id }).first());
+}
+
+/**
+ * Updates a token row, such as after a token expires and
+ * a new one is retrieved.  Returns a promise that when resolved
+ * will return an object with the updated properties.
+ *
+ * @param {Integer} id
+ * @param {Object} changes
+ */
+
+function update(id, changes) {
+  return db("token")
+    .update(changes, ["*"])
+    .where({ id })
+    .then(tk => find({ "tk.id": tk[0].id }).first());
+}
+
+/**
+ * When given an id for a token, the corresponding row
+ * on the table will be removed
+ *
+ * @param {Integer} id
+ */
+
+function remove(id) {
+  return db("token")
+    .where({ id })
+    .del();
 }
