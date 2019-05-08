@@ -15,16 +15,6 @@ const notificationSystem = require("./jobs/notifications/index");
 // authentication, error and validation middleware
 const { authentication } = require("./middleware/authentication");
 const errorHandler = require("./middleware/errorHandling");
-const {
-  userSchema,
-  teamMemberSchema,
-  trainingSeriesSchema,
-  messageSchema,
-  tokenSchema,
-  notificationSchema,
-  responseSchema
-} = require("./models/schemas");
-const validation = require("./middleware/dataValidation");
 
 //Routes
 const usersRouter = require("./controllers/user");
@@ -34,6 +24,7 @@ const trainingsRouter = require("./controllers/trainingSeries");
 const messageRouter = require("./controllers/message");
 const stripeRouter = require("./controllers/stripe");
 const slackRouter = require("./controllers/slack");
+const notificationsRouter = require("./controllers/notification");
 
 //API Endpoints
 server.use("/api/auth", authRouter);
@@ -43,6 +34,7 @@ server.use("/api/training-series", authentication, trainingsRouter);
 server.use("/api/messages", authentication, messageRouter);
 server.use("/api/stripe", stripeRouter);
 server.use("/api/slack", slackRouter);
+server.use("/api/notifications", authentication, notificationsRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
