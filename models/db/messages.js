@@ -39,6 +39,8 @@ function update(filter, message) {
 
 function remove(filter) {
   return db("messages AS m")
+    .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
+    .leftJoin("users AS u", { "u.id": "ts.user_id" })
     .where(filter)
     .del();
 }

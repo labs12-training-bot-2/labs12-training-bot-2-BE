@@ -53,7 +53,8 @@ router
   })
   .delete(async (req, res) => {
     const { id } = req.params;
-    const deleted = await Messages.remove({ "m.id": id });
+    const { email } = res.locals.user;
+    const deleted = await Messages.remove({ "m.id": id, "u.email": email });
 
     deleted
       ? res.status(200).json({ message: "The message has been deleted." })
