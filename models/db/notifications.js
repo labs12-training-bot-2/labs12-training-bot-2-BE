@@ -24,7 +24,10 @@ function find(filters) {
       "m.subject",
       "m.body",
       "m.link",
-      "s.name"
+      "s.name",
+      "tm.phone_number",
+      "tm.email",
+      "tm.slack_uuid"
     )
     .leftJoin("messages AS m", { "m.id": "n.message_id" })
     .leftJoin("services AS s", { "s.id": "n.service_id" })
