@@ -25,6 +25,7 @@ const messageRouter = require("./controllers/message");
 const stripeRouter = require("./controllers/stripe");
 const slackRouter = require("./controllers/slack");
 const notificationsRouter = require("./controllers/notification");
+const responsesRouter = require("./controllers/responses");
 
 //API Endpoints
 server.use("/api/auth", authRouter);
@@ -35,6 +36,7 @@ server.use("/api/messages", authentication, messageRouter);
 server.use("/api/stripe", stripeRouter);
 server.use("/api/slack", slackRouter);
 server.use("/api/notifications", authentication, notificationsRouter);
+server.use("/api/responses", authentication, responsesRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {

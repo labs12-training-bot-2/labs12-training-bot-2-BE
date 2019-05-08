@@ -72,12 +72,13 @@ router.route("/:id/responses").get(async (req, res) => {
 });
 
 //client forced to go to this route specifically to make accidental deletions a smaller risk
-router.route(":id/delete").delete(async (req, res) => {
+router.route("/:id/delete").delete(async (req, res) => {
   const { id } = req.params;
-  const { email } = res.locals.user;
+  const { user } = res.locals;
 
   //only delete the notification if it exists and belongs to current user, but throw 404 if either is false
-  const deleted = await Notifications.remove({ "n.id": id, "u.email": email });
+  //todo: unknown SQL error when attempting to also pass in user.email filter to only allow deletion of logged-in user's notifications
+  const deleted = await Notifications.remove({ "n.id": id });
   deleted
     ? res.status(200).json({ message: "The notification has been deleted." })
     : res.status(404).json({ message: "That notification does not exist." });
