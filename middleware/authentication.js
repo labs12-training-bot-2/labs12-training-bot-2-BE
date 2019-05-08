@@ -4,7 +4,7 @@ const Users = require("../models/db/users");
 
 module.exports = {
   authentication
-}
+};
 
 /**
  * When applied to a route, it pulls the JWT off of
@@ -33,4 +33,4 @@ async function authentication(req, res, next) {
       error: "No token provided, token must be set on the Authorization Header"
     });
   }
-};
+}
