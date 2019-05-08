@@ -15,7 +15,7 @@ module.exports = {
  */
 
 function find(filters) {
-  return db("token AS tk")
+  return db("tokens AS tk")
     .select(
       "tk.id",
       "tk.expiration",
@@ -49,9 +49,10 @@ async function add({
   refresh_token,
   expiration
 }) {
-  const service_id = await db("services")
-    .select(id)
-    .where({ name: service });
+  const { id } = await db("services AS s")
+    .select("s.id")
+    .where({ name: service })
+    .first();
 
   return db("tokens")
     .insert(
@@ -59,7 +60,7 @@ async function add({
         auth_token,
         refresh_token,
         expiration,
-        service_id,
+        service_id: id,
         user_id
       },
       ["*"]
