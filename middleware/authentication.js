@@ -22,11 +22,11 @@ async function authentication(req, res, next) {
   const validUser = await Users.find({ "u.email": email }).first();
 
   if (email) {
-    if (validUser) {
+    if (validUser.email) {
       res.locals.user = validUser;
       next();
     } else {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(403).json({ error: "Invalid token" });
     }
   } else {
     return res.status(401).json({
