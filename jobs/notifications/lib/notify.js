@@ -1,7 +1,15 @@
 const axios = require("axios");
-const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance()
+const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
+
+// SendGrid configuration
 const sgMail = require("@sendgrid/mail");
-const twilio = require("twilio");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Twilio Configuration
+const twilioSid = process.env.TWILIO_SID;
+const twilioToken = process.env.TWILIO_TOKEN;
+const twilioNumber = process.env.TWILIO_NUMBER;
+const twilioClient = require("twilio")(twilioSid, twilioToken);
 
 const Notifications = require("../../../models/db/notifications");
 
@@ -17,15 +25,27 @@ module.exports = async time => {
       case "slack":
         return {};
       case "twilio":
-        return {};
+        sendSms(n)
+          .then(r => {
+            console.log(r)
+          })
+          .catch(e => console.log(e))
+        
       case "sendgrid":
         return {};
     }
   });
 };
 
-function sendEmail() {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+function sendEmail() {}
+
+function sendSms({ subject, message, link }) {
+  return client.messages.create({
+    body: `${subject}: ${message}\n${link ? link : ''}`,
+    from: twilioNumber,
+    statusCallback: `https://api.trainingbot.app/notifications/${id}/twilio`,
+    to: '+16197794667'
+  });
 }
-function sendSms() {}
+
 function sendSlack() {}
