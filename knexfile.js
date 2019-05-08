@@ -14,10 +14,10 @@ module.exports = {
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./database/migrations/"
+      directory: "./models/migrations/"
     },
     seeds: {
-      directory: "./database/seeds/"
+      directory: "./models/seeds/"
     },
     useNullAsDefault: true
   },
@@ -30,10 +30,10 @@ module.exports = {
     },
     migrations: {
       tableName: "knex_migrations",
-      directory: "./database/migrations/"
+      directory: "./models/migrations/"
     },
     seeds: {
-      directory: "./database/seeds/"
+      directory: "./models/seeds/"
     },
     useNullAsDefault: true
   }
