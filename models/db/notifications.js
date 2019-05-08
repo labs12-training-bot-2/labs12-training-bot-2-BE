@@ -30,6 +30,7 @@ function find(filters) {
     .leftJoin("services AS s", { "s.id": "n.service_id" })
     .leftJoin("team_members AS tm", { "tm.id": "n.team_member_id" })
     .leftJoin("users AS u", { "u.id": "tm.user_id" })
+    .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
     .where(filters)
     .orderBy("n.send_date");
 }

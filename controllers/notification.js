@@ -42,33 +42,28 @@ router
     res.status(201).json({ newNotification });
   });
 
-router
-  .route("/:id")
-  .get(async (req, res) => {
-    const { id } = req.params;
-    const { email } = res.locals.user;
-    const notification = await Notifications.find({
-      "n.id": id,
-      "u.email": email
-    });
-    notification && notification.length
-      ? res.status(200).json({ notification })
-      : res.status(404).json({ message: "That notification does not exist." });
-  })
-  .delete(async (req, res) => {
-    const { id } = req.params;
-    const deleted = await Notifications.remove({ "n.id": id });
-    deleted
-      ? res.status(200).json({ message: "The notification has been deleted." })
-      : res.status(404).json({ message: "That notification does not exist." });
-  });
-
-//client forced to go to this route specifically to lower risks of accidentally batch deleting when in /:id
-router.route("/delete").delete(async (req, res) => {
+router.route("/:id").get(async (req, res) => {
+  const { id } = req.params;
   const { email } = res.locals.user;
-  //? what filters do users need to batch delete by?
-  //? if all of their notifications, will need to perform joins in model to gain access to u.email
-  const deleted = await Notifications.remove({});
+  const notification = await Notifications.find({
+    "n.id": id,
+    "u.email": email
+  });
+  notification && notification.length
+    ? res.status(200).json({ notification })
+    : res.status(404).json({ message: "That notification does not exist." });
+});
+
+//client forced to go to this route specifically to make accidental deletions a smaller risk
+router.route("/delete/:id").delete(async (req, res) => {
+  const { id } = req.params;
+  const { email } = res.locals.user;
+
+  //only delete the notification if it exists and belongs to current user, but throw 404 if either is false
+  const deleted = await Notifications.remove({ "n.id": id, "u.email": email });
+  deleted
+    ? res.status(200).json({ message: "The notification has been deleted." })
+    : res.status(404).json({ message: "That notification does not exist." });
 });
 
 module.exports = router;
