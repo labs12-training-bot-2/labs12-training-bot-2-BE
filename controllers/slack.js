@@ -5,7 +5,8 @@
 const router = require("express").Router();
 const axios = require("axios");
 
-const Team = require("../models/db/teamMembers.js");
+const Teams = require("../models/db/teamMembers.js");
+const Tokens = require("../models/db/tokens.js");
 
 // ****** proces.env.SLACK_TOKEN works locally.  Should be in DB eventually
 const token = process.env.SLACK_TOKEN;
@@ -35,11 +36,11 @@ router.put(
   verifyAddInput,
   async ({ body: { id, slack_id, slack_on } }, res) => {
     try {
-      const teamMember = await Team.findBy({ id }).first();
+      const teamMember = await Teams.findBy({ id }).first();
       teamMember.slack_id = slack_id;
       teamMember.slack_on = slack_on ? true : false;
 
-      const updated = await Team.update(teamMember.id, teamMember);
+      const updated = await Teams.update(teamMember.id, teamMember);
       updated
         ? res.status(200).json(teamMember)
         : res.status(500).json({ message: "The user was not updated" });
@@ -72,24 +73,30 @@ router.get(
   }
 );
 
-router.post("/oauth", async ({ body: { code } }, res) => {
-  //Incomplete endpoint
+router.post("/oauth/", async ({ body: { code } }, res) => {
   const query = `client_id=${process.env.SLACK_CLIENT_ID}&client_secret=${
     process.env.SLACK_SECRET
   }&code=${code}&redirect_uri=${process.env.APP_BASE_URL}/slack-callback`;
   const url = `https://slack.com/api/oauth.access?${query}`;
-  console.log("query", query);
-  const token = await axios.get(url);
-  console.log("TOKEN", token.data.bot);
+
+  const auth_res = await axios.get(url);
+  const { id } = res.locals.user;
+  const token = {
+    user_id: id,
+    service: "slack",
+    auth_token: auth_res.data.bot.bot_access_token
+  };
+
+  await Tokens.add(token);
 });
 
 router.put("/:id/toggle", async (req, res) => {
   const { id } = req.params;
   try {
-    const teamMember = await Team.findBy({ id }).first();
+    const teamMember = await Teams.findBy({ id }).first();
     if (teamMember.slack_id && teamMember.slack_id !== "pending slack ID") {
       teamMember.slack_on = !teamMember.slack_on;
-      const updated = await Team.update(teamMember.id, teamMember);
+      const updated = await Teams.update(teamMember.id, teamMember);
 
       updated
         ? res.status(200).json(teamMember)
@@ -132,7 +139,7 @@ router.post("/sendMessageNow", ({ body: { notification } }, res) => {
 router.get("/users", async (req, res) => {
   // Test route
   try {
-    const users = await Team.find();
+    const users = await Teams.find();
     res.status(200).json(users);
   } catch (err) {
     console.log(err);
@@ -188,7 +195,7 @@ async function verifyHistoryID(req, res, next) {
     const {
       params: { id }
     } = req;
-    const teamMember = await Team.findById(id);
+    const teamMember = await Teams.findById(id);
     if (teamMember) {
       req.body.teamMember = teamMember;
       next();
