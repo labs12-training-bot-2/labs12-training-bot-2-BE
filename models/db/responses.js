@@ -9,7 +9,7 @@ module.exports = {
 function find(filters) {
 return db("responses AS r")
 .select(
-  "r.id AS id",
+  "r.id AS id", 
   "tm.id AS team_member_id",
   "tm.first_name",
   "tm.last_name",
