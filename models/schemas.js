@@ -41,12 +41,10 @@ const teamMemberSchema = {
     .required(),
   manager_id: Joi.number()
     .integer()
-    .min(1)
-    .required(),
+    .min(1),
   mentor_id: Joi.number()
     .integer()
     .min(1)
-    .required()
 };
 
 const trainingSeriesSchema = {
