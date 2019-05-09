@@ -1,6 +1,3 @@
-const axios = require("axios");
-const phoneUtil = require("google-libphonenumber").PhoneNumberUtil.getInstance();
-
 // SendGrid configuration
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -11,13 +8,14 @@ const twilioToken = process.env.TWILIO_TOKEN;
 const twilioNumber = process.env.TWILIO_NUMBER;
 const twilioClient = require("twilio")(twilioSid, twilioToken);
 
+// Internal imports
 const Notifications = require("../../../models/db/notifications");
 const Tokens = require("../../../models/db/tokens");
 const { batchUpdate } = require("./common");
 
 module.exports = async time => {
   try {
-  console.log("Sending notifications", time);
+    console.log("Sending notifications", time);
 
     const notifs = await Notifications
       .find({ is_sent: false })
@@ -27,7 +25,7 @@ module.exports = async time => {
 
     const updates = notifs.map(n => {
       switch (n.name) {
-      case "slack":
+        case "slack":
           // Get the auth_token belonging to the user out of slackTokens
           const { auth_token } = slackTokens.filter(t => t.user === n.admin)[0];
           
@@ -37,22 +35,22 @@ module.exports = async time => {
             id: n.id,
             num_attempts: n.num_attempts + 1
           };
-      case "twilio":
+        case "twilio":
 
           // Rate limit sendSms to 500 messages/second (twilio's limit) and send
           setTimeout(() => sendSms(n), 2);
-        
+          
           return {
             id: n.id,
             num_attempts: n.num_attempts + 1
           };
-      case "sendgrid":
+        case "sendgrid":
           return {
             id: n.id,
             num_attempts: n.num_attempts + 1
           };
-    }
-  });
+      }
+    });
     // Send the array of updated notifications to batchUpdates
     batchUpdate("notifications", updates);
 
