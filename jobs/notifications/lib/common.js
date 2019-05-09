@@ -6,7 +6,6 @@ module.exports = {
 };
 
 function batchUpdate(table, arr) {
-  console.log("initial values", table, arr);
   return db.transaction(trx => {
     const queries = arr.map(i =>
       db(table)

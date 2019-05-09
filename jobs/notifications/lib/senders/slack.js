@@ -3,7 +3,7 @@ const api = "https://slack.com/api";
 const Tokens = require("../../../../models/db/tokens");
 
 module.exports = async (n) => {
-  const { auth_token } = await Tokens.find({ 'u.email': n.admin }).first();
+  const { auth_token } = await Tokens.find({ 'u.email': n.user }).first();
   const channelID = await _openChannelWithUser(n.slack_uuid, auth_token);
   const msg = await _sendSlackMessage(channelID, n, auth_token);
 
