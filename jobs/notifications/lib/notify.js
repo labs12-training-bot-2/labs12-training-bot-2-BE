@@ -26,7 +26,8 @@ module.exports = async time => {
       return {
         id: n.id,
         num_attempts: n.num_attempts,
-        thread: n.thread
+        thread: n.thread,
+        is_sent: n.is_sent
       }
     });
     batchUpdate("notifications", updates);

@@ -7,7 +7,12 @@ module.exports = async (n) => {
   const channelID = await _openChannelWithUser(n.slack_uuid, auth_token);
   const msg = await _sendSlackMessage(channelID, n, auth_token);
 
-  return { ...n, thread: channelID, num_attempts: n.num_attempts + 1 } 
+  return { 
+    ...n, 
+    thread: channelID, 
+    num_attempts: n.num_attempts + 1, 
+    is_sent: true 
+  } 
 };
 
 // Slack functions should be exported to their own file
