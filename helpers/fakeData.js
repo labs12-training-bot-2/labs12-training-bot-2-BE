@@ -76,7 +76,8 @@ function createFakeMessages() {
       max: seriesSeeds
     }),
     for_manager: false,
-    for_mentor: false
+    for_mentor: false,
+    days_from_start: faker.random.number({ min: 1, max: 100 })
   });
   for (let i = 0; i < messageSeeds; i++) {
     newMessages.push(fakeMessage());
