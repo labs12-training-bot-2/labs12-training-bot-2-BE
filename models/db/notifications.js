@@ -27,7 +27,8 @@ function find(filters) {
       "s.name",
       "tm.phone_number",
       "tm.email",
-      "tm.slack_uuid"
+      "tm.slack_uuid",
+      "u.email AS admin"
     )
     .leftJoin("messages AS m", { "m.id": "n.message_id" })
     .leftJoin("services AS s", { "s.id": "n.service_id" })
@@ -36,6 +37,12 @@ function find(filters) {
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
     .where(filters)
     .orderBy("n.send_date");
+}
+
+function update(filter, changes) {
+  return db('notifications AS n')
+    .update(changes, ['*'])
+    .where(filter)
 }
 
 function remove(filters) {
