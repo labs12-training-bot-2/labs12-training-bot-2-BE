@@ -7,7 +7,16 @@ const express = require("express"),
 const server = express();
 
 //Library Middleware
-server.use(helmet(), express.json(), cors());
+server.use(
+  helmet(),
+  express.json(),
+  express.urlencoded({
+    extended: true,
+    type: "multipart/form-data",
+    limit: "10mb"
+  }),
+  cors()
+);
 
 // twilio notification system import
 const notificationSystem = require("./jobs/notifications/index");
@@ -46,9 +55,6 @@ server.get("/", (req, res) => {
 //async error handling middleware MUST come after routes or else will just throw Type error
 server.use(errorHandler);
 
-// turn on notification interval system
-// notificationSystem.clearOldNotifications();
-notificationSystem.resetCountOnFirstOfMonth();
 notificationSystem.start();
 
 module.exports = server;

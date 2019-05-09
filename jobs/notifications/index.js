@@ -1,68 +1,40 @@
 const CronJob = require("cron").CronJob;
-
-const gatherTextNotifications = require("./gather/sms");
-const gatherEmailNotifications = require("./gather/email");
-const Notifications = require("../../models/db/notifications");
+const notify = require('./lib/notify');
+const wipeFailed = require('./lib/wipeFailed')
 
 // node-cron start function for notification system
 const notificationSystem = function() {
   return {
     start: () => {
       new CronJob(
-        "00 30 11 * * *", // 11:30am PST
-        // seconds (0-59), minutes (0-59), hours (0-23), days (0-31), month (0-12), day of week(0-7)
-        // * === first to last
-        // runs on  Coordinated Universal Time (UTC)
-        // '00 * * * * *', // 1 minute interval for testing notification system.
-        async function() {
+        "* */10 * * * *",
+        async function(onComplete) {
           try {
             const currentTime = new Date();
             console.log("Run Notifications onTick:", currentTime);
-            await gatherTextNotifications.run();
-            await gatherEmailNotifications.run();
+            await notify(currentTime);
+            await onComplete(currentTime);
           } catch (error) {
             console.log("Notification start async error", error);
           }
         },
-        null,
+        async function(time) {
+          try {
+            await wipeFailed(time)
+          }
+          catch (error) {
+            console.error(
+              "There was an error removing outdated notifications", 
+              error
+            )
+          }
+        },
         true,
-        ""
+        "UTC"
       );
       console.log("Notification System Instantiation");
       console.log(new Date());
     },
-    resetCountOnFirstOfMonth: () => {
-      new CronJob(
-        // runs at midnight on first of every month
-        "00 00 00 01 * *",
-        async function() {
-          // reset notification count to 0 for all users
-          await Notifications.resetNotificationCount();
-          console.log("reset count triggered");
-        },
-        null,
-        true,
-        ""
-      );
-    },
-    clearOldNotifications: () => {
-      new CronJob(
-        "00 00 00 * * *", // runs every night at midnight
-        // '00 * * * * *', // runs every minute for testing
-        async function() {
-          let today = new Date();
-          today.setUTCHours(00);
-          today.setUTCMinutes(00);
-          today.setUTCSeconds(00);
-
-          await Notifications.deleteOldNotifications(today);
-          console.log("delete old notifications");
-        },
-        null,
-        true,
-        ""
-      );
-    }
   };
 };
 
