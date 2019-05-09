@@ -25,8 +25,8 @@ module.exports = n => {
       templateId: "d-0aad15c066e047aa8eb1ce02e7d17611"
     })
     .then(_ => ({
-      ...n,
-      thread,
+      id: n.id,
+      thread: n.thread,
       num_attempts: n.num_attempts + 1,
       is_sent: true
     }));

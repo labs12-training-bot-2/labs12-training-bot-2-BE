@@ -8,7 +8,7 @@ module.exports = async (n) => {
   const msg = await _sendSlackMessage(channelID, n, auth_token);
 
   return { 
-    ...n, 
+    id: n.id, 
     thread: channelID, 
     num_attempts: n.num_attempts + 1, 
     is_sent: true 

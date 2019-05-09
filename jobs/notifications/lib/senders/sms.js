@@ -10,7 +10,7 @@ module.exports = (n) => {
     from: twilioNumber,
     to: n.phone_number
   }).then(r => ({
-    ...n,
+    id: n.id,
     thread: r.sid,
     num_attempts: n.num_attempts + 1,
     is_sent: true
