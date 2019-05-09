@@ -15,7 +15,7 @@ const token = process.env.SLACK_TOKEN;
 const api = "https://slack.com/api";
 
 // **** Temporary import to test a test endpoint
-const sendSlackNotifications = require("../jobs/notifications/send/slack.js");
+const sendSlackNotifications = require("../jobs/notifications/lib/senders/slack");
 // ****
 
 router.get("/", async (req, res) => {
