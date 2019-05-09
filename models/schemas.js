@@ -81,7 +81,12 @@ const messageSchema = {
     .min(1)
     .required(),
   for_manager: Joi.boolean(),
-  for_mentor: Joi.boolean()
+  for_mentor: Joi.boolean(),
+  days_from_start: Joi.number()
+    .integer()
+    .min(1)
+    .required()
+    .allow(null) //come back to this
 };
 
 const tokenSchema = {

@@ -47,12 +47,14 @@ router.post("/", async (req, res) => {
           .json({ message: "Account created Successfully", newUser });
       }
     } catch (error) {
+      console.error(error);
       res.status(500).json({ message: "A network error occurred." });
     }
   }
 });
 
-router.route("/:service/:id")
+router
+  .route("/:service/:id")
   .get(authentication, async (req, res) => {
     const { id, service } = req.params;
     try {

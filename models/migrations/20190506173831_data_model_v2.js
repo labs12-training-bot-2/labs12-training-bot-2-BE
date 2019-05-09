@@ -106,6 +106,7 @@ exports.up = function(knex, Promise) {
         .boolean("for_mentor")
         .notNullable()
         .defaultTo(false);
+      tbl.integer("days_from_start").notNullable();
     })
     .createTable("notifications", tbl => {
       tbl.increments();

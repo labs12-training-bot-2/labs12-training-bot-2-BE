@@ -64,22 +64,4 @@ router
       : res.status(404).json({ error: "That message does not exist." });
   });
 
-router.route("/training-series/:id").get(async ({ params: { id } }, res) => {
-  const { email } = res.locals.user;
-  const trainingSeries = await TrainingSeries.find({ "ts.id": id }).first();
-  console.log(trainingSeries.user, email);
-  if (trainingSeries.user === email) {
-    const messages = await Messages.find({ "m.training_series_id": id });
-    return messages
-      ? res.status(200).json(messages)
-      : res
-          .status(404)
-          .json({ error: "No messages found for that training series." });
-  } else {
-    return res
-      .status(403)
-      .json({ error: "You do not have access to this training series." });
-  }
-});
-
 module.exports = router;

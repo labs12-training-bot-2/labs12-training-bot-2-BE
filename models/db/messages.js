@@ -22,7 +22,8 @@ function find(filters) {
       "m.link",
       "m.for_manager",
       "m.for_mentor",
-      "ts.title AS series"
+      "ts.title AS series",
+      "m.days_from_start"
     )
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
     .leftJoin("users AS u", { "u.id": "ts.user_id" })
