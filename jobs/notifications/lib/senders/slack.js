@@ -1,0 +1,37 @@
+const axios = require("axios");
+const api = "https://slack.com/api";
+const Tokens = require("../../../../models/db/tokens");
+
+module.exports = async (n) => {
+  const token = await Tokens.find({ 'u.email': n.user });
+  const channelID = await _openChannelWithUser(n.slack_uuid, token);
+  const msg = await _sendSlackMessage(channelID, n, token);
+
+  return msg 
+  ? { ...n, thread: channelID, num_attempts: n.num_attempts + 1 } 
+  : new Error("Slack message could not be sent");
+};
+
+// Slack functions should be exported to their own file
+// For universal universe
+async function _openChannelWithUser(userID, token) {
+  const endpoint = "/im.open";
+  const url = `${api}${endpoint}?token=${token}&user=${userID}`;
+
+  const dm = await axios.get(url);
+  return dm.data.channel.id;
+}
+
+async function _sendSlackMessage(channelID, notification, token) {
+  const endpoint = "/chat.postMessage";
+  const message = _formatSlackMessage(notification);
+  const url = `${api}${endpoint}?token=${token}&channel=${channelID}&text=${message}`;
+
+  await axios.get(url);
+}
+
+function _formatSlackMessage({ first_name, subject, body, link }) {
+  return `Hi ${first_name},\nI have the following message for you:\n\n*${subject}*\n${"```"}\n${body}\n${"```"}\n${
+    link ? `>${link}` : ""
+  }\n`;
+}
