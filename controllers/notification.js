@@ -49,7 +49,7 @@ router.route("/:id").get(async (req, res) => {
   const notification = await Notifications.find({
     "n.id": id,
     "u.email": email
-  });
+  }).first();
   notification && notification.length
     ? res.status(200).json({ notification })
     : res.status(404).json({ message: "That notification does not exist." });
