@@ -7,7 +7,7 @@ const notificationSystem = function() {
   return {
     start: () => {
       new CronJob(
-        "*/1 * * * * *",
+        "* */10 * * * *",
         async function(onComplete) {
           try {
             const currentTime = new Date();
