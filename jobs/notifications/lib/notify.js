@@ -12,6 +12,7 @@ const twilioNumber = process.env.TWILIO_NUMBER;
 const twilioClient = require("twilio")(twilioSid, twilioToken);
 
 const Notifications = require("../../../models/db/notifications");
+const Tokens = require("../../../models/db/tokens");
 
 module.exports = async time => {
   console.log("Sending notifications", time);
