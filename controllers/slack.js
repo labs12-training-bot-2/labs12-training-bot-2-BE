@@ -34,11 +34,11 @@ router.get("/", async (req, res) => {
 router.put(
   "/:id/add",
   verifyAddInput,
-  async ({ body: { id, slack_id, slack_on } }, res) => {
+  async ({ body: { id, slack_uuid, slack_on } }, res) => {
     try {
       const teamMember = await Teams.findBy({ id }).first();
-      teamMember.slack_id = slack_id;
-      teamMember.slack_on = slack_on ? true : false;
+      teamMember.slack_uuid = slack_uuid;
+      //teamMember.slack_on = slack_on ? true : false;
 
       const updated = await Teams.update(teamMember.id, teamMember);
       updated
@@ -56,10 +56,10 @@ router.get(
   verifyHistoryID,
   verifySlackID,
   async ({ body: { teamMember } }, res) => {
-    const { slack_id } = teamMember;
+    const { slack_uuid } = teamMember;
     try {
       const endpoint = "/conversations.history";
-      const channelID = await _openChannelWithUser(slack_id);
+      const channelID = await _openChannelWithUser(slack_uuid);
       const url = `${api + endpoint}?token=${token}&channel=${channelID}`;
 
       const history = await axios.get(url);
@@ -94,7 +94,7 @@ router.put("/:id/toggle", async (req, res) => {
   const { id } = req.params;
   try {
     const teamMember = await Teams.findBy({ id }).first();
-    if (teamMember.slack_id && teamMember.slack_id !== "pending slack ID") {
+    if (teamMember.slack_uuid && teamMember.slack_uuid !== "pending slack ID") {
       teamMember.slack_on = !teamMember.slack_on;
       const updated = await Teams.update(teamMember.id, teamMember);
 
@@ -121,9 +121,9 @@ router.post("/sendMessageNow", ({ body: { notification } }, res) => {
       first_name,
       message_name,
       message_details,
-      slack_id
+      slack_uuid
     } = notification;
-    if ((first_name && message_name && message_details, slack_id)) {
+    if ((first_name && message_name && message_details, slack_uuid)) {
       const msg = sendSlackNotifications(notification);
       msg
         ? res.status(200).json({ message: "Message sent" })
@@ -155,10 +155,8 @@ async function getAllUsers() {
   try {
     const endpoint = "/users.list";
     const url = `${api + endpoint}?token=${token}`;
-    console.log(url);
 
     const list = await axios.get(url);
-    console.log(list);
     return list.data.members.map(
       ({ id, name, profile: { real_name, display_name, image_24 } }) => ({
         id,
@@ -179,14 +177,14 @@ MIDDLEWARE
 */
 function verifyAddInput(req, res, next) {
   const { body, params } = req;
-  const { slack_id } = body;
-  if (slack_id) {
+  const { slack_uuid } = body;
+  if (slack_uuid) {
     body.id = params.id;
     next();
   } else {
     res
       .status(400)
-      .json({ message: "Please include the team member's id and slack_id" });
+      .json({ message: "Please include the team member's id and slack_uuid" });
   }
 }
 
@@ -211,7 +209,7 @@ async function verifyHistoryID(req, res, next) {
 function verifySlackID({ body: { teamMember } }, res, next) {
   // Could expand to add middleware that queries Slack API
   // and verifies the ID is valid
-  if (teamMember.slack_id) {
+  if (teamMember.slack_uuid) {
     next();
   } else {
     res.status(400).json({
