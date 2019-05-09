@@ -1,58 +1,30 @@
-// SendGrid configuration
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// Twilio Configuration
-const twilioSid = process.env.TWILIO_SID;
-const twilioToken = process.env.TWILIO_TOKEN;
-const twilioNumber = process.env.TWILIO_NUMBER;
-const twilioClient = require("twilio")(twilioSid, twilioToken);
-
-// Internal imports
+require("dotenv").config();
 const Notifications = require("../../../models/db/notifications");
-const Tokens = require("../../../models/db/tokens");
-const { batchUpdate } = require("./common");
+const { sendEmail, sendSms, sendSlack } = require("./senders");
+const { batchUpdate, asyncMap } = require("./common");
 
 module.exports = async time => {
   try {
     console.log("Sending notifications", time);
 
-    const notifs = await Notifications
-      .find({ is_sent: false })
-      .andWhere("n.send_date", "<=", time);
+    const notifs = await Notifications.find({ is_sent: false }).andWhere(
+      "n.send_date",
+      "<=",
+      time
+    );
+    console.log(notifs);
 
-    const slackTokens = await Tokens.find({ "s.name": "slack" });
+    const slackNotifs = notifs.filter(n => n.name === "slack");
+    const smsNotifs = notifs.filter(n => n.name === "twilio");
+    const emailNotifs = notifs.filter(n => n.name === "sendgrid");
 
-    const updates = notifs.map(n => {
-      switch (n.name) {
-        case "slack":
-          // Get the auth_token belonging to the user out of slackTokens
-          const { auth_token } = slackTokens.filter(t => t.user === n.admin)[0];
-          
-          // 
+    const sendingSlack = await asyncMap(slackNotifs, sendSlack);
+    const sendingSms = await asyncMap(smsNotifs, sendSms);
+    const sendingEmail = await asyncMap(emailNotifs, sendEmail);
 
-          return {
-            id: n.id,
-            num_attempts: n.num_attempts + 1
-          };
-        case "twilio":
-
-          // Rate limit sendSms to 500 messages/second (twilio's limit) and send
-          setTimeout(() => sendSms(n), 2);
-          
-          return {
-            id: n.id,
-            num_attempts: n.num_attempts + 1
-          };
-        case "sendgrid":
-          return {
-            id: n.id,
-            num_attempts: n.num_attempts + 1
-          };
-      }
-    });
-    // Send the array of updated notifications to batchUpdates
-    batchUpdate("notifications", updates);
+    // Update num_attempts and is_sent for all notifications
+    const reCombined = [...sendingSms, ...sendingEmail, ...sendingSlack];
+    batchUpdate("notifications", reCombined);
 
     // Log the completion of the Notification event
     console.log("Notifications sent:", new Date());
@@ -60,15 +32,3 @@ module.exports = async time => {
     console.error("Error sending notifications:", e);
   }
 };
-
-function sendEmail() {}
-
-function sendSms({ phone_number, subject, body, link }) {
-  twilioClient.messages.create({
-    body: `${subject}:\n${body}\n\n${link ? link : ""}`,
-    from: twilioNumber,
-    to: phone_number
-  });
-}
-
-function sendSlack() {} 
