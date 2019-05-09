@@ -20,15 +20,15 @@ function find(filters) {
       "n.is_sent",
       "n.num_attempts",
       "n.thread",
+      "ts.id AS training_series_id",
       "ts.title AS series",
+      "tm.id AS team_member_id",
+      "tm.first_name",
       "m.subject",
       "m.body",
       "m.link",
-      "s.name",
-      "tm.phone_number",
-      "tm.email",
-      "tm.slack_uuid",
-      "u.email AS admin"
+      "u.email AS user",
+      "s.name"
     )
     .leftJoin("messages AS m", { "m.id": "n.message_id" })
     .leftJoin("services AS s", { "s.id": "n.service_id" })

@@ -46,7 +46,10 @@ router
   .get(async (req, res) => {
     const { id } = req.params;
     const { user } = res.locals;
-    const message = await Messages.find({ "m.id": id, "u.email": user.email });
+    const message = await Messages.find({
+      "m.id": id,
+      "u.email": user.email
+    }).first();
     message && message.length
       ? res.status(200).json({ message })
       : res.status(404).json({ message: "That message does not exist" });

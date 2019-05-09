@@ -32,19 +32,25 @@ const teamMemberSchema = {
   job_description: Joi.string()
     .min(3)
     .max(255),
-  email: Joi.string().email({ minDomainSegments: 2 }),
+  email: Joi.string()
+    .email({ minDomainSegments: 2 })
+    .allow(null),
   phone_number: Joi.string(),
-  slack_uuid: Joi.string().token(),
+  slack_uuid: Joi.string()
+    .token()
+    .allow(null),
   user_id: Joi.number()
     .integer()
     .min(1)
     .required(),
   manager_id: Joi.number()
     .integer()
-    .min(1),
+    .min(1)
+    .allow(null),
   mentor_id: Joi.number()
     .integer()
     .min(1)
+    .allow(null)
 };
 
 const trainingSeriesSchema = {
@@ -75,7 +81,12 @@ const messageSchema = {
     .min(1)
     .required(),
   for_manager: Joi.boolean(),
-  for_mentor: Joi.boolean()
+  for_mentor: Joi.boolean(),
+  days_from_start: Joi.number()
+    .integer()
+    .min(1)
+    .required()
+    .allow(null) //come back to this
 };
 
 const tokenSchema = {
