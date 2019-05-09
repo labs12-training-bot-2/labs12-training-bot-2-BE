@@ -63,12 +63,12 @@ module.exports = async time => {
 
 function sendEmail() {}
 
-function sendSms({ phone_number, subject, message, link }) {
+function sendSms({ phone_number, subject, body, link }) {
   twilioClient.messages.create({
-    body: `${subject}: ${message}\n${link ? link : ""}`,
+    body: `${subject}:\n${body}\n\n${link ? link : ""}`,
     from: twilioNumber,
     to: phone_number
   });
 }
 
-function sendSlack() {}
+function sendSlack() {} 
