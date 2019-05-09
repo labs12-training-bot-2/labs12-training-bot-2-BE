@@ -3,9 +3,9 @@ const api = "https://slack.com/api";
 const Tokens = require("../../../../models/db/tokens");
 
 module.exports = async (n) => {
-  const token = await Tokens.find({ 'u.email': n.user });
-  const channelID = await _openChannelWithUser(n.slack_uuid, token);
-  const msg = await _sendSlackMessage(channelID, n, token);
+  const { auth_token } = await Tokens.find({ 'u.email': n.admin }).first();
+  const channelID = await _openChannelWithUser(n.slack_uuid, auth_token);
+  const msg = await _sendSlackMessage(channelID, n, auth_token);
 
   return msg 
   ? { ...n, thread: channelID, num_attempts: n.num_attempts + 1 } 
@@ -27,7 +27,8 @@ async function _sendSlackMessage(channelID, notification, token) {
   const message = _formatSlackMessage(notification);
   const url = `${api}${endpoint}?token=${token}&channel=${channelID}&text=${message}`;
 
-  await axios.get(url);
+  const data = await axios.get(url);
+  return data;
 }
 
 function _formatSlackMessage({ first_name, subject, body, link }) {

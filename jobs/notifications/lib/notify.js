@@ -23,8 +23,14 @@ module.exports = async time => {
     const sendingEmail = await asyncMap(emailNotifs, sendEmail);
 
     // Update num_attempts and is_sent for all notifications
-    const reCombined = [...sendingSms, ...sendingEmail, ...sendingSlack];
-    batchUpdate("notifications", reCombined);
+    const updates = [...sendingSms, ...sendingEmail, ...sendingSlack].map(n => {
+      return {
+        id: n.id,
+        num_attempts: n.num_attempts,
+        thread: n.thread
+      }
+    });
+    batchUpdate("notifications", updates);
 
     // Log the completion of the Notification event
     console.log("Notifications sent:", new Date());
