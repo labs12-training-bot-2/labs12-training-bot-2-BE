@@ -7,7 +7,16 @@ const express = require("express"),
 const server = express();
 
 //Library Middleware
-server.use(helmet(), express.json(), cors());
+server.use(
+  helmet(),
+  express.json(),
+  express.urlencoded({
+    extended: true,
+    type: "multipart/form-data",
+    limit: "10mb"
+  }),
+  cors()
+);
 
 // twilio notification system import
 const notificationSystem = require("./jobs/notifications/index");
