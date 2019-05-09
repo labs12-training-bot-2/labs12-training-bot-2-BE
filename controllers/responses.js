@@ -3,16 +3,25 @@ const router = require("express").Router();
 
 //Models
 const Responses = require("../models/db/responses");
+const Notifications = require("../models/db/notifications");
 
 //data validation
 const { responseSchema } = require("../models/schemas");
 const validation = require("../middleware/dataValidation");
 
 router.route("/").post(validation(responseSchema), async (req, res) => {
-  const newResponse = await Responses.add(req.body);
+  // we have a ref to the notification thread being sent with the post request, but not a notification_id
+  const { thread, ...rest } = req.body;
+
+  // use that thread to find the notification and grab its id
+  const { id } = await Notifications.find({ "n.thread": thread }).first();
+
+  //create a response body and pass in everything from req.body EXCEPT the thread (invalid property for response)
+  //and make the found id the notification_id
+  const responseBody = { ...rest, notification_id: id };
+  const newResponse = await Responses.add(responseBody);
   return res.status(201).json({ newResponse });
 });
-//do i need to add any 400 error handling or requirements?
 
 router
   .route("/:id")

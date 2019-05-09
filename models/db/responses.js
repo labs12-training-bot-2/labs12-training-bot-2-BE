@@ -15,7 +15,8 @@ function find(filters) {
       "tm.last_name",
       "r.body AS response",
       "s.name AS service",
-      "r.created_at"
+      "r.created_at",
+      "n.thread"
     )
     .join("notifications as n", { "r.notification_id": "n.id" })
     .join("services as s", { "n.service_id": "s.id" })

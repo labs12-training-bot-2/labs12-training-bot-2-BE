@@ -21,9 +21,11 @@ function find(filters) {
       "n.num_attempts",
       "n.thread",
       "ts.title AS series",
+      "tm.first_name",
       "m.subject",
       "m.body",
       "m.link",
+      "u.email AS user",
       "s.name"
     )
     .leftJoin("messages AS m", { "m.id": "n.message_id" })
