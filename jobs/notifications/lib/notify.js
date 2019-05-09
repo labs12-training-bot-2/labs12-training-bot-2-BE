@@ -16,27 +16,51 @@ const Tokens = require("../../../models/db/tokens");
 const { batchUpdate } = require("./common");
 
 module.exports = async time => {
+  try {
   console.log("Sending notifications", time);
 
-  const notifs = await Notifications.find("n.send_date", "<=", time).andWhere({
-    "n.is_sent": false
-  });
+    const notifs = await Notifications
+      .find({ is_sent: false })
+      .andWhere("n.send_date", "<=", time);
 
-  notifs.map(n => {
-    switch (n.service) {
+    const slackTokens = await Tokens.find({ "s.name": "slack" });
+
+    const updates = notifs.map(n => {
+      switch (n.name) {
       case "slack":
-        return {};
+          // Get the auth_token belonging to the user out of slackTokens
+          const { auth_token } = slackTokens.filter(t => t.user === n.admin)[0];
+          
+          // 
+
+          return {
+            id: n.id,
+            num_attempts: n.num_attempts + 1
+          };
       case "twilio":
-        sendSms(n)
-          .then(r => {
-            console.log(r)
-          })
-          .catch(e => console.log(e))
+
+          // Rate limit sendSms to 500 messages/second (twilio's limit) and send
+          setTimeout(() => sendSms(n), 2);
         
+          return {
+            id: n.id,
+            num_attempts: n.num_attempts + 1
+          };
       case "sendgrid":
-        return {};
+          return {
+            id: n.id,
+            num_attempts: n.num_attempts + 1
+          };
     }
   });
+    // Send the array of updated notifications to batchUpdates
+    batchUpdate("notifications", updates);
+
+    // Log the completion of the Notification event
+    console.log("Notifications sent:", new Date());
+  } catch (e) {
+    console.error("Error sending notifications:", e);
+  }
 };
 
 function sendEmail() {}
