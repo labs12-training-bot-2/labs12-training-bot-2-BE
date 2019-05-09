@@ -12,7 +12,6 @@ module.exports = async time => {
       "<=",
       time
     );
-    console.log(notifs);
 
     const slackNotifs = notifs.filter(n => n.name === "slack");
     const smsNotifs = notifs.filter(n => n.name === "twilio");
