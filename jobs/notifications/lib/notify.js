@@ -40,12 +40,11 @@ module.exports = async time => {
 
 function sendEmail() {}
 
-function sendSms({ subject, message, link }) {
-  return client.messages.create({
-    body: `${subject}: ${message}\n${link ? link : ''}`,
+function sendSms({ phone_number, subject, message, link }) {
+  twilioClient.messages.create({
+    body: `${subject}: ${message}\n${link ? link : ""}`,
     from: twilioNumber,
-    statusCallback: `https://api.trainingbot.app/notifications/${id}/twilio`,
-    to: '+16197794667'
+    to: phone_number
   });
 }
 
