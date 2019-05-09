@@ -8,7 +8,7 @@ const api = "https://slack.com/api";
 module.exports = sendSlackNotifications;
 
 async function sendSlackNotifications(notification) {
-  const channelID = await _openChannelWithUser(notification.slack_id);
+  const channelID = await _openChannelWithUser(notification.slack_uuid);
   const msg = await _sendSlackMessage(channelID, notification);
 
   if (msg) {
