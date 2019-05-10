@@ -2,7 +2,14 @@ const CronJob = require("cron").CronJob;
 const notify = require('./lib/notify');
 const wipeFailed = require('./lib/wipeFailed')
 
-// node-cron start function for notification system
+/**
+ * A function that returns an object containing a "start" method
+ * which, when called, will instantiate our Notifications cronjob
+ * 
+ * @module notificationSystem
+ * @function
+ * @returns {Object}
+ */
 const notificationSystem = function() {
   return {
     start: () => {
