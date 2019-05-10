@@ -7,13 +7,16 @@ const notificationSystem = function() {
   return {
     start: () => {
       new CronJob(
-        "* */10 * * * *",
+        "0 */10 * * * *",
         async function(onComplete) {
           try {
             const currentTime = new Date();
             console.log("Run Notifications onTick:", currentTime);
             await notify(currentTime);
             await onComplete(currentTime);
+            
+            // Log the completion of the Notification event
+            console.log("Notifications sent:", new Date());
           } catch (error) {
             console.log("Notification start async error", error);
           }
