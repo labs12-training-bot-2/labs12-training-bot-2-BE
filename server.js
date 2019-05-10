@@ -50,6 +50,6 @@ server.get("/", (req, res) => {
 //async error handling middleware MUST come after routes or else will just throw Type error
 server.use(errorHandler);
 
-// notificationSystem.start();
+notificationSystem.start();
 
 module.exports = server;
