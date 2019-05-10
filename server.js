@@ -1,7 +1,7 @@
 //Dependencies
-const express = require("express"),
-  helmet = require("helmet"),
-  cors = require("cors");
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
 
 //Server to point to
 const server = express();
@@ -10,11 +10,6 @@ const server = express();
 server.use(
   helmet(),
   express.json(),
-  express.urlencoded({
-    extended: true,
-    type: "multipart/form-data",
-    limit: "10mb"
-  }),
   cors()
 );
 
@@ -45,7 +40,7 @@ server.use("/api/messages", authentication, messageRouter);
 server.use("/api/stripe", stripeRouter);
 server.use("/api/slack", slackRouter);
 server.use("/api/notifications", authentication, notificationsRouter);
-server.use("/api/responses", authentication, responsesRouter);
+server.use("/api/responses", responsesRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
@@ -55,6 +50,6 @@ server.get("/", (req, res) => {
 //async error handling middleware MUST come after routes or else will just throw Type error
 server.use(errorHandler);
 
-notificationSystem.start();
+// notificationSystem.start();
 
 module.exports = server;
