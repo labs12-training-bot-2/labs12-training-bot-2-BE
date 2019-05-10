@@ -3,41 +3,45 @@ const db = require("../index");
 module.exports = {
   add,
   find,
-  findBy,
-  findById,
   update,
   remove
 };
 
-function find() {
-  return db("messages");
-}
-
-function findBy(filter) {
-  return db("messages")
-    .where(filter)
-    .first();
-}
-
-function findById(id) {
-  return db("messages").where({ id });
-}
-
 function add(message) {
   return db("messages")
-    .insert(message)
-    .returning("*");
+    .insert(message, ["*"])
+    .then(m => find({ "m.id": m[0].id }).first());
 }
 
-function update(id, message) {
-  return db("messages")
-    .where({ id })
-    .update(message)
-    .returning("*");
+function find(filters) {
+  return db("messages AS m")
+    .select(
+      "m.id",
+      "m.subject",
+      "m.body",
+      "m.link",
+      "m.for_manager",
+      "m.for_mentor",
+      "ts.title AS series",
+      "m.days_from_start"
+    )
+    .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
+    .leftJoin("users AS u", { "u.id": "ts.user_id" })
+    .where(filters)
+    .orderBy("series");
 }
 
-function remove(id) {
-  return db("messages")
-    .where({ id })
+function update(filter, message) {
+  return db("messages AS m")
+    .update(message, ["*"])
+    .where(filter)
+    .then(m => find({ "m.id": m[0].id }).first());
+}
+
+function remove(filter) {
+  return db("messages AS m")
+    .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
+    .leftJoin("users AS u", { "u.id": "ts.user_id" })
+    .where(filter)
     .del();
 }
