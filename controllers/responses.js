@@ -51,9 +51,9 @@ router.route("/email")
     // use that thread identifier to find the notification and grab its id
     const { id } = await Notifications.find({ "n.thread": thread }).first();
 
-    // Pull the date off the header to split the new body text from
-    // the rest of the thread. Format it with moment to match email
-    // formatting
+    // Pull the date off the 'date' header to split the new body text 
+    // from the rest of the thread. Format it with moment to match 
+    // email formatting
     const dateString = headerLines
       .filter(h => h.key === "date")[0]
       .line.replace("Date: ", "");
