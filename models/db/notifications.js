@@ -24,6 +24,7 @@ function find(filters) {
       "ts.title AS series",
       "tm.id AS team_member_id",
       "tm.first_name",
+      "tm.last_name",
       "tm.email",
       "tm.phone_number",
       "tm.slack_uuid",
