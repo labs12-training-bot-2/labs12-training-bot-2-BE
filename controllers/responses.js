@@ -9,7 +9,7 @@ const moment = require("moment");
 
 // SMS recieving and parsing
 const parseTwilio = require("express").urlencoded({ extended: false });
-const MessagingRepsonse = require("twilio").twiml.MessagingResponse;
+const MessagingResponse = require("twilio").twiml.MessagingResponse;
 
 //Models
 const Responses = require("../models/db/responses");
@@ -82,7 +82,7 @@ router.route("/email").post(upload.none(), async (req, res) => {
 router.route("/sms").post(parseTwilio, async (req, res) => {
   // Get the current data as an ISO datetime
   const now = new Date();
-  
+
   // Pull Body and From off of the request body
   const { Body, From } = req.body;
 
@@ -90,8 +90,9 @@ router.route("/sms").post(parseTwilio, async (req, res) => {
   const { id } = await Notifications.find({
     "tm.phone_number": From,
     "s.name": "twilio",
-    "n.is_sent": true,
-  }).andWhere("n.send_date", "<=", now)
+    "n.is_sent": true
+  })
+    .andWhere("n.send_date", "<=", now)
     .first();
 
   // If we can't find an ID, respond via SMS
