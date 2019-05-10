@@ -26,9 +26,6 @@ module.exports = async time => {
     // Combine notifications from all services and batch update the database
     const updates = [...sendingSms, ...sendingEmail, ...sendingSlack]
     batchUpdate("notifications", updates);
-
-    // Log the completion of the Notification event
-    console.log("Notifications sent:", new Date());
   } catch (e) {
     console.error("Error sending notifications:", e);
   }
