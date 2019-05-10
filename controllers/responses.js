@@ -80,8 +80,13 @@ router.route("/email").post(upload.none(), async (req, res) => {
 });
 
 router.route("/sms").post(parseTwilio, async (req, res) => {
+  // Get the current data as an ISO datetime
   const now = new Date();
+  
+  // Pull Body and From off of the request body
   const { Body, From } = req.body;
+
+  // Get the last ID of the last notification recieved by the team member
   const { id } = await Notifications.find({
     "tm.phone_number": From,
     "s.name": "twilio",
@@ -89,6 +94,7 @@ router.route("/sms").post(parseTwilio, async (req, res) => {
   }).andWhere("n.send_date", "<=", now)
     .first();
 
+  // If we can't find an ID, respond via SMS
   if (!id) {
     const twiml = new MessagingResponse();
     const notFoundSms = twiml.message({
@@ -100,12 +106,17 @@ router.route("/sms").post(parseTwilio, async (req, res) => {
       .end(notFoundSms.toString());
   }
 
+  // Create a response object to put in the database
   const newResponse = {
     body: Body,
     notification_id: id
   };
 
+  // Add the response to the database
   await Responses.add(newResponse);
+
+  // Return 204 and end the connection
+  return res.status(204).end();
 });
 
 module.exports = router;
