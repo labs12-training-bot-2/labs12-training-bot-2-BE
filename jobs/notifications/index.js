@@ -1,6 +1,6 @@
 const CronJob = require("cron").CronJob;
-const notify = require('./lib/notify');
-const wipeFailed = require('./lib/wipeFailed')
+const notify = require("./lib/notify");
+const wipeFailed = require("./lib/wipeFailed");
 
 // node-cron start function for notification system
 const notificationSystem = function() {
@@ -23,13 +23,12 @@ const notificationSystem = function() {
         },
         async function(time) {
           try {
-            await wipeFailed(time)
-          }
-          catch (error) {
+            await wipeFailed(time);
+          } catch (error) {
             console.error(
-              "There was an error removing outdated notifications", 
+              "There was an error removing outdated notifications",
               error
-            )
+            );
           }
         },
         true,
@@ -37,7 +36,7 @@ const notificationSystem = function() {
       );
       console.log("Notification System Instantiation");
       console.log(new Date());
-    },
+    }
   };
 };
 
