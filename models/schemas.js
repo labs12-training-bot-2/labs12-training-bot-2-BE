@@ -25,11 +25,11 @@ const teamMemberSchema = {
   job_description: Joi.string(),
   email: Joi.string()
     .email({ minDomainSegments: 2 })
-    .allow(null),
+    .allow(""),
   phone_number: Joi.string(),
   slack_uuid: Joi.string()
     .token()
-    .allow(null),
+    .allow(""),
   user_id: Joi.number()
     .integer()
     .min(1)
