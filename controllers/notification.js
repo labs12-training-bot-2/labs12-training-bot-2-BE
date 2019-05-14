@@ -50,7 +50,7 @@ router.route("/:id").get(async (req, res) => {
     "n.id": id,
     "u.email": email
   }).first();
-  notification && notification.length
+  notification
     ? res.status(200).json({ notification })
     : res.status(404).json({ message: "That notification does not exist." });
 });
