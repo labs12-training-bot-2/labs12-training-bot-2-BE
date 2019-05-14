@@ -10,22 +10,29 @@ const { messageSchema } = require("../models/schemas");
 const validation = require("../middleware/dataValidation");
 
 // Routes
-router.route("/").post(validation(messageSchema), async (req, res) => {
-  const { email } = res.locals.user;
+router
+  .route("/")
+  .get(async (req, res) => {
+    const { email } = res.locals.user;
+    const messages = await Messages.find({ "u.email": email });
+    res.status(200).json({ messages });
+  })
+  .post(validation(messageSchema), async (req, res) => {
+    const { email } = res.locals.user;
 
-  const trainingSeriesExists = await TrainingSeries.find({
-    "ts.id": req.body.training_series_id,
-    "u.email": email
-  }).first();
-  if (!trainingSeriesExists) {
-    return res.status(404).json({
-      message: "That training series does not exist."
-    });
-  }
+    const trainingSeriesExists = await TrainingSeries.find({
+      "ts.id": req.body.training_series_id,
+      "u.email": email
+    }).first();
+    if (!trainingSeriesExists) {
+      return res.status(404).json({
+        message: "That training series does not exist."
+      });
+    }
 
-  const newMessage = await Messages.add(req.body);
-  res.status(201).json({ newMessage });
-});
+    const newMessage = await Messages.add(req.body);
+    res.status(201).json({ newMessage });
+  });
 
 router
   .route("/:id")
