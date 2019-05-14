@@ -50,7 +50,7 @@ router
       "m.id": id,
       "u.email": user.email
     }).first();
-    message && message.length
+    message
       ? res.status(200).json({ message })
       : res.status(404).json({ message: "That message does not exist" });
   })
