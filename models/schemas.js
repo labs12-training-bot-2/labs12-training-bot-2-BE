@@ -2,7 +2,6 @@ const Joi = require("@hapi/joi");
 
 const userSchema = {
   name: Joi.string()
-    .min(3)
     .max(255)
     .required(),
   email: Joi.string()
@@ -21,24 +20,16 @@ const userSchema = {
 };
 
 const teamMemberSchema = {
-  first_name: Joi.string()
-    .min(3)
-    .max(255)
-    .required(),
-  last_name: Joi.string()
-    .min(3)
-    .max(255)
-    .required(),
-  job_description: Joi.string()
-    .min(3)
-    .max(255),
+  first_name: Joi.string().required(),
+  last_name: Joi.string().required(),
+  job_description: Joi.string(),
   email: Joi.string()
     .email({ minDomainSegments: 2 })
-    .allow(null),
+    .allow(""),
   phone_number: Joi.string(),
   slack_uuid: Joi.string()
     .token()
-    .allow(null),
+    .allow(""),
   user_id: Joi.number()
     .integer()
     .min(1)
@@ -54,10 +45,7 @@ const teamMemberSchema = {
 };
 
 const trainingSeriesSchema = {
-  title: Joi.string()
-    .min(3)
-    .max(255)
-    .required(),
+  title: Joi.string().required(),
   user_id: Joi.number()
     .integer()
     .min(1)
@@ -65,23 +53,16 @@ const trainingSeriesSchema = {
 };
 
 const messageSchema = {
-  subject: Joi.string()
-    .min(3)
-    .max(255)
-    .required(),
-  body: Joi.string()
-    .min(3)
-    .max(255)
-    .required(),
-  link: Joi.string()
-    .min(3)
-    .max(255),
+  subject: Joi.string().required(),
+  body: Joi.string().required(),
+  link: Joi.string(),
   training_series_id: Joi.number()
     .integer()
     .min(1)
     .required(),
   for_manager: Joi.boolean(),
   for_mentor: Joi.boolean(),
+  for_team_member: Joi.boolean(),
   days_from_start: Joi.number()
     .integer()
     .min(1)
@@ -125,7 +106,7 @@ const notificationSchema = {
   num_attempts: Joi.number()
     .integer()
     .min(0),
-  thread: Joi.string().min(3)
+  thread: Joi.string()
 };
 
 const responseSchema = {

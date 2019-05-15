@@ -1,6 +1,6 @@
 const CronJob = require("cron").CronJob;
-const notify = require('./lib/notify');
-const wipeFailed = require('./lib/wipeFailed')
+const notify = require("./lib/notify");
+const wipeFailed = require("./lib/wipeFailed");
 
 /**
  * A function that returns an object containing a "start" method
@@ -30,13 +30,12 @@ const notificationSystem = function() {
         },
         async function(time) {
           try {
-            await wipeFailed(time)
-          }
-          catch (error) {
+            await wipeFailed(time);
+          } catch (error) {
             console.error(
-              "There was an error removing outdated notifications", 
+              "There was an error removing outdated notifications",
               error
-            )
+            );
           }
         },
         true,
@@ -44,7 +43,7 @@ const notificationSystem = function() {
       );
       console.log("Notification System Instantiation");
       console.log(new Date());
-    },
+    }
   };
 };
 

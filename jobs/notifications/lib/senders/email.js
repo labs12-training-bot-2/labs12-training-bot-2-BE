@@ -26,7 +26,7 @@ module.exports = n => {
     })
     .then(_ => ({
       id: n.id,
-      thread: n.thread,
+      thread,
       num_attempts: n.num_attempts + 1,
       is_sent: true
     }));

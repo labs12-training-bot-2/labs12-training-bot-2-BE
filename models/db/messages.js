@@ -22,7 +22,9 @@ function find(filters) {
       "m.link",
       "m.for_manager",
       "m.for_mentor",
+      "m.for_team_member",
       "ts.title AS series",
+      "m.training_series_id",
       "m.days_from_start"
     )
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
@@ -38,10 +40,12 @@ function update(filter, message) {
     .then(m => find({ "m.id": m[0].id }).first());
 }
 
-function remove(filter) {
-  return db("messages AS m")
+async function remove(filter) {
+  const msg = await db("messages AS m")
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
     .leftJoin("users AS u", { "u.id": "ts.user_id" })
     .where(filter)
-    .del();
+    .delete();
+
+  console.log(msg);
 }
