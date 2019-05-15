@@ -1,9 +1,11 @@
 //Dependencies
 const router = require("express").Router();
+const arrayFlat = require("../helpers/arrayFlat");
 
 //Models
 const TrainingSeries = require("../models/db/trainingSeries");
 const Messages = require("../models/db/messages");
+const Notifications = require("../models/db/notifications");
 
 router
   .route("/")
@@ -93,6 +95,43 @@ router.get("/:id/messages", async (req, res) => {
   const messages = await Messages.find({ "ts.id": id });
 
   return res.status(200).json({ trainingSeries, messages });
+});
+
+router.get("/:id/assignees", async (req, res) => {
+  const { id } = req.params;
+
+  // Get all Messages meant for Team Members
+  const messages = await Messages.find({
+    "ts.id": id,
+    "m.for_team_member": true
+  });
+
+  // If no Messages are found, return a 404
+  if (!messages.length) {
+    return res
+      .status(404)
+      .json({
+        message: "This Training Series has no messages meant for Team Members"
+      });
+  }
+
+  // Create an array of pending promises for each
+  // notification matching a message
+  const pAssignees = messages.map(
+    async m =>
+      await Notifications.find({
+        "m.id": m.id
+      })
+  );
+
+  // Resolve all promises in the pAssignees array
+  const rAssignees = await Promise.all(pAssignees);
+
+  // Recursively flatten the array 
+  const assignedTeamMembers = arrayFlat(rAssignees);
+
+  // Return the assigned Team Members to the client
+  return res.status(200).json({ assignedTeamMembers });
 });
 
 module.exports = router;
