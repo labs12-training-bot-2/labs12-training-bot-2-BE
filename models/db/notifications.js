@@ -12,8 +12,8 @@ module.exports = {
  * Notification
  *
  * @function
- * @param  {Object} message - A Message object
- * @returns {Promise} Promise that resolves to the new message Object
+ * @param  {Object} message - A Notification object
+ * @returns {Promise} Promise that resolves to the new Notification object
  */
 function add(notification) {
   return db("notifications")
@@ -26,7 +26,7 @@ function add(notification) {
  * value pairs contained within the filter object parameter.
  *
  * @param  {Object} filters - A filter object to be passed to the "where" clause
- * @returns {Promise} Promise that resolves to an array of found Message objects
+ * @returns {Promise} Promise that resolves to an array of found Notification objects
  */
 function find(filters) {
   return db("notifications AS n")

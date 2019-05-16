@@ -6,6 +6,27 @@ module.exports = {
   remove
 };
 
+/**
+ * Adds a new Response to the database, and then returns the newly created
+ * Response
+ *
+ * @function
+ * @param  {Object} message - A Response object
+ * @returns {Promise} Promise that resolves to the new Response object
+ */
+function add(response) {
+  return db("responses")
+    .insert(response, ["*"])
+    .then(r => find({ "r.id": r[0].id }).first());
+}
+
+/**
+ * Finds a particular Response or set of Responses based on the key/value pairs
+ * contained within the filter object parameter.
+ *
+ * @param  {Object} filters - A filter object to be passed to the "where" clause
+ * @returns {Promise} Promise that resolves to an array of found Response objects
+ */
 function find(filters) {
   return db("responses AS r")
     .select(
@@ -24,12 +45,13 @@ function find(filters) {
     .where(filters);
 }
 
-function add(response) {
-  return db("responses")
-    .insert(response, ["*"])
-    .then(r => find({ "r.id": r[0].id }).first());
-}
-
+/**
+ * Deletes a single Response or set of Responses based on the key/value
+ * pairs contained within the filter object parameter.
+ *
+ * @param  {Object} filter - A filter object to be passed to the "where" clause
+ * @returns {Promise} A Promise that resolves to the number of Responses deleted
+ */
 function remove(id) {
   return db("responses")
     .where({ id })
