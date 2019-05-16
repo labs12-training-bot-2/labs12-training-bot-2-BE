@@ -97,7 +97,16 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
   const totalDeleted = notifsToDelete.map(
     async n => await Notifications.remove({ "n.id": n.id })
   );
-  res.status(200).json(totalDeleted.length);
+  totalDeleted.length
+    ? res
+        .status(200)
+        .json({ message: `${totalDeleted.length} resource(s) deleted.` })
+    : res
+        .status(404)
+        .json({
+          message:
+            "This Team Member doesn't have any notifications for that Training Series."
+        });
 });
 
 module.exports = router;
