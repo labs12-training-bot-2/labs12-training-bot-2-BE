@@ -93,20 +93,22 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
   //flatten array
   const notifsToDelete = arrayFlat(rNotifs);
 
-  //delete each notification and send back total number of deleted items
+  //delete each notification and send back total number of deleted items, along with array of deleted ids for FE to filter through
   const totalDeleted = notifsToDelete.map(
     async n => await Notifications.remove({ "n.id": n.id })
   );
+
   totalDeleted.length
     ? res
         .status(200)
-        .json({ message: `${totalDeleted.length} resource(s) deleted.` })
-    : res
-        .status(404)
         .json({
-          message:
-            "This Team Member doesn't have any notifications for that Training Series."
-        });
+          message: `${totalDeleted.length} resource(s) deleted.`,
+          ids: notifsToDelete.map(n => n.id)
+        })
+    : res.status(404).json({
+        message:
+          "This Team Member doesn't have any notifications for that Training Series."
+      });
 });
 
 module.exports = router;
