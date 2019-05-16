@@ -55,7 +55,9 @@ const trainingSeriesSchema = {
 const messageSchema = {
   subject: Joi.string().required(),
   body: Joi.string().required(),
-  link: Joi.string(),
+  link: Joi.string()
+    .uri({})
+    .allow(""),
   training_series_id: Joi.number()
     .integer()
     .min(1)
