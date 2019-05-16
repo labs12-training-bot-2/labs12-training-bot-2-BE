@@ -46,14 +46,14 @@ async function register(id, name, email, token) {
       email: email,
       source: token // obtained with Stripe.js
     });
-    Users.update(id, { stripe: customer.id });
+    await Users.update({ "users.id": id }, { stripe: customer.id });
     return customer;
   } catch (error) {
     console.log(error);
   }
 }
 
-function updateUserAccountType(id, plan) {
+async function updateUserAccountType(id, plan) {
   // 	// LIVE
   // 	let accountTypeID;
   // 	if (plan === 'plan_Ex95NK1FuaNiWb') {
@@ -80,23 +80,23 @@ function updateUserAccountType(id, plan) {
     accountTypeID = 1;
   }
   console.log("AccountTypeID", accountTypeID);
-  Users.update(id, { account_type_id: accountTypeID });
+  await Users.update({ "users.id": id }, { account_type_id: accountTypeID });
 }
 
 router.post("/", async (req, res) => {
-  const { token, name, email, userID, stripe, plan } = req.body;
+  const { token, name, email, user_id, stripe, plan } = req.body;
   if (stripe) {
     try {
       let customer = await getStripeUser(stripe);
 
       if (customer.subscriptions.total_count === 0) {
         let subscription = await subscribe(stripe, plan);
-        updateUserAccountType(userID, plan);
+        updateUserAccountType(user_id, plan);
         res.status(200).json(subscription);
       } else {
-        await unsubscribe(userID, stripe);
+        await unsubscribe(user_id, stripe);
         let subscription = await subscribe(stripe, plan);
-        updateUserAccountType(userID, plan);
+        updateUserAccountType(user_id, plan);
 
         res.status(200).json(subscription);
       }
@@ -119,14 +119,14 @@ router.post("/", async (req, res) => {
   }
 });
 router.post("/register", async (req, res) => {
-  const { token, name, email, userID, plan } = req.body;
+  const { token, name, email, user_id, plan } = req.body;
 
   try {
-    let customer = await register(userID, name, email, token);
+    let customer = await register(user_id, name, email, token);
     let stripe = customer.id;
     await subscribe(stripe, plan);
     customer = await getStripeUser(customer.id);
-    updateUserAccountType(userID, plan);
+    updateUserAccountType(user_id, plan);
 
     console.log("customer", customer);
     res.send(customer);
@@ -137,11 +137,11 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/unsubscribe", async (req, res) => {
-  const { userID, stripe } = req.body;
+  const { user_id, stripe } = req.body;
   if (stripe) {
     try {
-      let res = unsubscribe(userID, stripe);
-      updateUserAccountType(userID);
+      let res = unsubscribe(user_id, stripe);
+      updateUserAccountType(user_id);
 
       res.status(404);
     } catch (err) {
