@@ -4,6 +4,11 @@ const moment = require("moment");
 
 //Models
 const TeamMember = require("../models/db/teamMembers");
+const Messages = require("../models/db/messages");
+const Notifications = require("../models/db/notifications");
+
+//Helpers
+const arrayFlat = require("../helpers/arrayFlat");
 
 // Data validation
 const { teamMemberSchema } = require("../models/schemas");
@@ -57,4 +62,42 @@ router
       ? res.status(200).json({ message: "The resource has been deleted." })
       : res.status(404).json({ message: "The resource could not be found." });
   });
+router.delete("/:id/unassign/:ts_id", async (req, res) => {
+  const { id, ts_id } = req.params;
+
+  //find all messages for the specified series
+  const messages = await Messages.find({
+    "ts.id": ts_id,
+    "m.for_team_member": true
+  });
+
+  if (!messages.length) {
+    return res.status(404).json({
+      message:
+        "This Team Member doesn't have any messages for that Training Series."
+    });
+  }
+
+  //compile list of all notifications for the given messages that are meant for specified member (array of promises)
+  const pNotifs = messages.map(
+    async m =>
+      await Notifications.find({
+        "m.id": m.id,
+        "tm.id": id
+      })
+  );
+
+  //resolve all promises
+  const rNotifs = await Promise.all(pNotifs);
+
+  //flatten array
+  const notifsToDelete = arrayFlat(rNotifs);
+
+  //delete each notification and send back total number of deleted items
+  const totalDeleted = notifsToDelete.map(
+    async n => await Notifications.remove({ "n.id": n.id })
+  );
+  res.status(200).json(totalDeleted.length);
+});
+
 module.exports = router;
