@@ -13,12 +13,13 @@ server.use(
   cors()
 );
 
-// twilio notification system import
-const notificationSystem = require("./jobs/notifications/index");
-
-// authentication, error and validation middleware
+// Custom Middleware
 const { authentication } = require("./middleware/authentication");
 const errorHandler = require("./middleware/errorHandling");
+
+// Notifications Job
+const notificationSystem = require("./jobs/notifications/index");
+
 
 //Routes
 const usersRouter = require("./controllers/user");
@@ -31,7 +32,7 @@ const slackRouter = require("./controllers/slack");
 const notificationsRouter = require("./controllers/notification");
 const responsesRouter = require("./controllers/responses");
 
-//API Endpoints
+// API Endpoints
 server.use("/api/auth", authRouter);
 server.use("/api/users", authentication, usersRouter);
 server.use("/api/team-members", authentication, teamsRouter);
@@ -44,12 +45,13 @@ server.use("/api/responses", responsesRouter);
 
 //Default Endpoints
 server.get("/", (req, res) => {
-  res.send("It works!");
+  res.send("It works!"); // Uptime message
 });
 
 //async error handling middleware MUST come after routes or else will just throw Type error
 server.use(errorHandler);
 
+// Start notification system cron job
 notificationSystem.start();
 
 module.exports = server;
