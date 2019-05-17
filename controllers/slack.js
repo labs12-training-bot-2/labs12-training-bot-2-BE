@@ -18,7 +18,8 @@ router.post("/oauth/", async ({ body: { code } }, res) => {
   const url = `https://slack.com/api/oauth.access?${query}`;
 
   const auth_res = await axios.get(url);
-  console.log("auth_res", auth_res);
+  console.log(res.locals.user);
+  console.log("TOKEN", auth_res.data.bot.bot_access_token);
   const { id } = res.locals.user;
   const token = {
     user_id: id,
