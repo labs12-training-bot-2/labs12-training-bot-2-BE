@@ -1,77 +1,14 @@
-// We inherited a poor file structure so we're following it for now.
 // Sections I intend to eventually abstract out, I will write with /* */ comments
-
-// This file handles all the Slack API endpoints
 const router = require("express").Router();
 const axios = require("axios");
 
 const Teams = require("../models/db/teamMembers.js");
+const Messages = require("../models/db/messages.js");
+const Notifications = require("../models/db/notifications.js");
 const Tokens = require("../models/db/tokens.js");
-
-// ****** proces.env.SLACK_TOKEN works locally.  Should be in DB eventually
-const token = process.env.SLACK_TOKEN;
-// ******
+const sendSlackNotifications = require("../jobs/notifications/lib/senders/slack");
 
 const api = "https://slack.com/api";
-
-// **** Temporary import to test a test endpoint
-const sendSlackNotifications = require("../jobs/notifications/lib/senders/slack");
-// ****
-
-router.get("/", async (req, res) => {
-  // Useful route for frontend to autocomplete values
-  try {
-    const userlist = await getAllUsers();
-    res.status(200).json(userlist);
-  } catch (err) {
-    console.log(err);
-    res
-      .status(500)
-      .json({ message: "Internal server error fetching Slack users" });
-  }
-});
-
-router.put(
-  "/:id/add",
-  verifyAddInput,
-  async ({ body: { id, slack_uuid, slack_on } }, res) => {
-    try {
-      const teamMember = await Teams.findBy({ id }).first();
-      teamMember.slack_uuid = slack_uuid;
-      //teamMember.slack_on = slack_on ? true : false;
-
-      const updated = await Teams.update(teamMember.id, teamMember);
-      updated
-        ? res.status(200).json(teamMember)
-        : res.status(500).json({ message: "The user was not updated" });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ message: "Internal error adding Slack ID" });
-    }
-  }
-);
-
-router.get(
-  "/:id/history",
-  verifyHistoryID,
-  verifySlackID,
-  async ({ body: { teamMember } }, res) => {
-    const { slack_uuid } = teamMember;
-    try {
-      const endpoint = "/conversations.history";
-      const channelID = await _openChannelWithUser(slack_uuid);
-      const url = `${api + endpoint}?token=${token}&channel=${channelID}`;
-
-      const history = await axios.get(url);
-      res.status(200).json(history.data.messages);
-    } catch (err) {
-      console.log("ERROR", err);
-      res
-        .status(500)
-        .json({ message: "Internal error getting Slack message history" });
-    }
-  }
-);
 
 router.post("/oauth/", async ({ body: { code } }, res) => {
   const query = `client_id=${process.env.SLACK_CLIENT_ID}&client_secret=${
@@ -87,94 +24,134 @@ router.post("/oauth/", async ({ body: { code } }, res) => {
     auth_token: auth_res.data.bot.bot_access_token
   };
 
-  await Tokens.add(token);
+  const savedToken = await Tokens.add(token);
+  savedToken ? res.status(201).end() : res.status(500).end();
 });
 
-router.put("/:id/toggle", async (req, res) => {
-  const { id } = req.params;
-  try {
+router.get("/", getSlackToken, async (req, res) => {
+  // Get every user from Slack workspace
+  const { token } = res.locals.user;
+  const userlist = await getAllUsers(token);
+  res.status(200).json(userlist);
+});
+
+router.put(
+  "/:id/add",
+  getSlackToken,
+  verifyAddInput,
+  async ({ body: { id, slack_uuid } }, res) => {
+    // If you wanted to add a Slack ID you could use this endpoint but currently
+    // we just use the TeamMember endpoints for that
     const teamMember = await Teams.findBy({ id }).first();
-    if (teamMember.slack_uuid && teamMember.slack_uuid !== "pending slack ID") {
-      teamMember.slack_on = !teamMember.slack_on;
-      const updated = await Teams.update(teamMember.id, teamMember);
+    teamMember.slack_uuid = slack_uuid;
 
-      updated
-        ? res.status(200).json(teamMember)
-        : res.status(500).json({
-            message: "The team member's slack preference was not updated."
-          });
+    const updated = await Teams.update(teamMember.id, teamMember);
+    updated
+      ? res.status(200).json(teamMember)
+      : res.status(500).json({ message: "The user was not updated" });
+  }
+);
+
+router.get(
+  "/:id/history",
+  verifyHistoryID,
+  verifySlackID,
+  getSlackToken,
+  async ({ body: { teamMember } }, res) => {
+    // Get DM chat history
+    const { token } = res.locals.user;
+    const { slack_uuid } = teamMember;
+    const endpoint = "/conversations.history";
+    const channelID = await _openChannelWithUser(slack_uuid);
+    const url = `${api + endpoint}?token=${token}&channel=${channelID}`;
+
+    const history = await axios.get(url);
+    res.status(200).json(history.data.messages);
+  }
+);
+
+router.post(
+  "/sendMessageNow",
+  getSlackToken,
+  async ({ body: { notification } }, res) => {
+    // Skip the timed notification system and send message right away
+    const { first_name, subject, body, slack_uuid } = notification;
+    const { token } = res.locals.user;
+    if ((first_name && subject && body, slack_uuid)) {
+      const newMsg = {
+        subject,
+        body,
+        training_series_id: 1,
+        days_from_start: 1
+      };
+      const returnedMsg = await Messages.add(newMsg);
+      const newNotif = {
+        send_date: new Date(),
+        is_sent: false,
+        num_attempts: 0,
+        thread: "",
+        message_id: returnedMsg.id,
+        service_id: 3,
+        team_member_id: notification.team_member_id
+      };
+      const returnedNotif = await Notifications.add(newNotif);
+      const msg = await sendSlackNotifications(returnedNotif);
+      if (msg) {
+        const updatedNotif = await Notifications.update(
+          { "n.id": msg.id },
+          msg
+        );
+        res.status(200).end();
+      } else {
+        res.status(500).json({ message: "Message did not send" });
+      }
     } else {
-      res.status(400).json({ message: "Cannot toggle Slack without an ID" });
+      res.status(400).json({
+        message: "Please include first_name, subject, body, and slack_uuid"
+      });
     }
-  } catch (err) {
-    console.log(err);
-    res
-      .status(500)
-      .json({ message: "Internal error toggling user's slack preference" });
   }
-});
+);
 
-router.post("/sendMessageNow", ({ body: { notification } }, res) => {
-  // Test Route Please Ignore
-  try {
-    const {
-      first_name,
-      message_name,
-      message_details,
-      slack_uuid
-    } = notification;
-    if ((first_name && message_name && message_details, slack_uuid)) {
-      const msg = sendSlackNotifications(notification);
-      msg
-        ? res.status(200).json({ message: "Message sent" })
-        : res.status(500).json({ message: "Message did not send" });
-    } else {
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal error sending Message" });
-  }
-});
-
-router.get("/users", async (req, res) => {
-  // Test route
-  try {
-    const users = await Teams.find();
-    res.status(200).json(users);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Couldn't get team members" });
-  }
-});
 module.exports = router;
 
 /* 
 Slack API Helpers
 */
-async function getAllUsers() {
-  try {
-    const endpoint = "/users.list";
-    const url = `${api + endpoint}?token=${token}`;
+async function getAllUsers(token) {
+  const endpoint = "/users.list";
+  const url = `${api + endpoint}?token=${token}`;
 
-    const list = await axios.get(url);
-    return list.data.members.map(
-      ({ id, name, profile: { real_name, display_name, image_24 } }) => ({
-        id,
-        real_name,
-        username: name,
-        display_name,
-        image_24
-      })
-    );
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal error getting all users" });
-  }
+  const list = await axios.get(url);
+  return list.data.members.map(
+    ({ id, name, profile: { real_name, display_name, image_24 } }) => ({
+      id,
+      real_name,
+      username: name,
+      display_name,
+      image_24
+    })
+  );
 }
 
 /*
 MIDDLEWARE
 */
+async function getSlackToken(req, res, next) {
+  const { email } = res.locals.user;
+  const token = await Tokens.find({
+    "u.email": email,
+    "s.name": "slack"
+  }).first();
+  if (token) {
+    res.locals.user.token = token.auth_token;
+    next();
+  } else {
+    res
+      .status(404)
+      .json({ error: "Failed to retrieve Slack token from storage" });
+  }
+}
 function verifyAddInput(req, res, next) {
   const { body, params } = req;
   const { slack_uuid } = body;
@@ -189,20 +166,15 @@ function verifyAddInput(req, res, next) {
 }
 
 async function verifyHistoryID(req, res, next) {
-  try {
-    const {
-      params: { id }
-    } = req;
-    const teamMember = await Teams.findById(id);
-    if (teamMember) {
-      req.body.teamMember = teamMember;
-      next();
-    } else {
-      res.status(404).json({ message: "Cannot find user with that ID" });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Internal error looking up team member" });
+  const {
+    params: { id }
+  } = req;
+  const teamMember = await Teams.findById(id);
+  if (teamMember) {
+    req.body.teamMember = teamMember;
+    next();
+  } else {
+    res.status(404).json({ message: "Cannot find user with that ID" });
   }
 }
 
@@ -218,16 +190,6 @@ function verifySlackID({ body: { teamMember } }, res, next) {
   }
 }
 
-function verifyAuthInput({ body: { client_id, secret } }, res, next) {
-  if (client_id && secret) {
-    next();
-  } else {
-    res
-      .status(400)
-      .json({ message: "client_id & secret are required to authorize Slack" });
-  }
-}
-
 // Copy/Paste from sendSlackNotifications.js
 // Slack functions need to be exported to their own file
 async function _openChannelWithUser(userID) {
@@ -237,12 +199,3 @@ async function _openChannelWithUser(userID) {
   const dm = await axios.get(url);
   return dm.data.channel.id;
 }
-
-/*
-	  Missing scope error:
-	  data:
-   { ok: false,
-     error: 'missing_scope',
-     needed: 'channels:history',
-	 provided: 'identify,bot:basic' } }
-	 */

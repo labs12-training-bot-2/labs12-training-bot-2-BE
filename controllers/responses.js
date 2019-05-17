@@ -1,3 +1,5 @@
+// Can delete after removing temp endpoint at button
+const arrayFlat = require("../helpers/arrayFlat.js");
 //Dependencies
 const router = require("express").Router();
 
@@ -7,7 +9,7 @@ const multer = require("multer");
 const upload = multer();
 const moment = require("moment");
 
-// SMS recieving and parsing
+// SMS receiving and parsing
 const parseTwilio = require("express").urlencoded({ extended: false });
 const MessagingResponse = require("twilio").twiml.MessagingResponse;
 
@@ -18,7 +20,8 @@ const Notifications = require("../models/db/notifications");
 // Authentication & validation
 const { authentication } = require("../middleware/authentication");
 
-router.route(authentication, "/:id")
+router
+  .route(authentication, "/:id")
   .get(async (req, res) => {
     const { id } = req.params;
     const response = await Responses.find({ "r.id": id }).first();
@@ -38,87 +41,140 @@ router.route(authentication, "/:id")
       : res.status(404).json({ message: "The resource could not be found." });
   });
 
-router.route("/email")
-  .post(upload.none(), async (req, res) => {
-    // Parse the raw email from req.body using multer and simpleParser
-    const { email } = req.body;
-    const { text, headerLines } = await simpleParser(email);
+router.route("/email").post(upload.none(), async (req, res) => {
+  // Parse the raw email from req.body using multer and simpleParser
+  const { email } = req.body;
+  const { text, headerLines } = await simpleParser(email);
 
-    // Get the unique thread identifier (the To email address)
-    const thread = headerLines
-      .filter(h => h.key === "to")[0]
-      .line.replace("<", "")
-      .replace(">", "")
-      .replace("To: Training Bot ", "");
+  // Get the unique thread identifier (the To email address)
+  const thread = headerLines
+    .filter(h => h.key === "to")[0]
+    .line.replace("<", "")
+    .replace(">", "")
+    .replace("To: Training Bot ", "");
 
-    // use that thread identifier to find the notification and grab its id
-    const { id } = await Notifications.find({ "n.thread": thread }).first();
+  // use that thread identifier to find the notification and grab its id
+  const { id } = await Notifications.find({ "n.thread": thread }).first();
 
-    // Pull the date off the 'date' header to split the new body text
-    // from the rest of the thread. Format it with moment to match
-    // email formatting
-    const dateString = headerLines
-      .filter(h => h.key === "date")[0]
-      .line.replace("Date: ", "");
-    const formatDate = moment(dateString).format("ddd, MMMM D, YYYY");
+  // Pull the date off the 'date' header to split the new body text
+  // from the rest of the thread. Format it with moment to match
+  // email formatting
+  const dateString = headerLines
+    .filter(h => h.key === "date")[0]
+    .line.replace("Date: ", "");
+  const formatDate = moment(dateString).format("ddd, MMMM D, YYYY");
 
-    // get the body text by spliting on the common RE footer and
-    // then grabbing the first item in that new array
-    const body = text.split(`On ${formatDate}\n\n`)[0];
+  // get the body text by spliting on the common RE footer and
+  // then grabbing the first item in that new array
+  const body = text.split(`On ${formatDate}\n\n`)[0];
 
-    // build a response object with the thread and the body
-    const newResponse = {
-      body,
-      notification_id: id
-    };
+  // build a response object with the thread and the body
+  const newResponse = {
+    body,
+    notification_id: id
+  };
 
-    // Add the newResponse object to the responses table
-    await Responses.add(newResponse);
+  // Add the newResponse object to the responses table
+  await Responses.add(newResponse);
 
-    // Return 204 and no content (since I'm responding to a webhook)
-    return res.status(204).end();
-  });
+  // Return 204 and no content (since I'm responding to a webhook)
+  return res.status(204).end();
+});
 
-router.route("/sms")
-  .post(parseTwilio, async (req, res) => {
-    // Get the current data as an ISO datetime
-    const now = new Date();
+router.route("/sms").post(parseTwilio, async (req, res) => {
+  // Get the current data as an ISO datetime
+  const now = new Date();
 
-    // Pull Body and From off of the request body
-    const { Body, From } = req.body;
+  // Pull Body and From off of the request body
+  const { Body, From } = req.body;
 
-    // Get the last ID of the last notification recieved by the team member
-    const { id } = await Notifications.find({
-      "tm.phone_number": From,
-      "s.name": "twilio",
+  // Get the last ID of the last notification received by the team member
+  const { id } = await Notifications.find({
+    "tm.phone_number": From,
+    "s.name": "twilio",
+    "n.is_sent": true
+  })
+    .andWhere("n.send_date", "<=", now)
+    .first();
+
+  // If we can't find an ID, respond via SMS
+  if (!id) {
+    const twiml = new MessagingResponse();
+    const notFoundSms = twiml.message({
+      body: "Sorry! We can't find which notification you're responding to."
+    });
+
+    return res
+      .writeHead(200, { "Content-Type": "text/xml" })
+      .end(notFoundSms.toString());
+  }
+
+  // Create a response object to put in the database
+  const newResponse = {
+    body: Body,
+    notification_id: id
+  };
+
+  // Add the response to the database
+  await Responses.add(newResponse);
+
+  // Return 204 and end the connection
+  return res.status(204).end();
+});
+
+router.route("/slack").post(verifyToken, async (req, res) => {
+  // Webhook for Slack responses sent here.  Cannot go in /api/slack since
+  // the Slack API will not have access to a user token
+  const { challenge } = req.body;
+  if (challenge) {
+    // Slack sends a challenge string to verify the endpoint before it can be used
+    res.status(201).json(challenge);
+  } else {
+    // If you don't respond within a time limit, Slack will send again
+    // This results in multiple responses being logged.  Only way to avoid this would be
+    // to add a column to the responses to log the id from the event and see if it exists already
+    res.status(200).end();
+    const { text, channel } = req.body.event;
+    const notifications = await Notifications.find({
+      "n.thread": channel,
       "n.is_sent": true
-    })
-      .andWhere("n.send_date", "<=", now)
-      .first();
+    });
 
-    // If we can't find an ID, respond via SMS
-    if (!id) {
-      const twiml = new MessagingResponse();
-      const notFoundSms = twiml.message({
-        body: "Sorry! We can't find which notification you're responding to."
-      });
-
-      return res
-        .writeHead(200, { "Content-Type": "text/xml" })
-        .end(notFoundSms.toString());
-    }
-
-    // Create a response object to put in the database
+    const notification_id = Math.max(...notifications.map(n => n.id));
     const newResponse = {
-      body: Body,
-      notification_id: id
+      notification_id,
+      body: text
     };
+    const response = await Responses.add(newResponse);
+    console.log("RESPONSE", response);
+  }
+});
 
-    // Add the response to the database
-    await Responses.add(newResponse);
+/* 
+Middleware!
+*/
+function verifyToken(req, res, next) {
+  // Verification token is found on the slack API under Basic Info --> App Credentials --> Verification Token
+  const { token } = req.body;
 
-    // Return 204 and end the connection
-    return res.status(204).end();
-  });
+  if (token === process.env.SLACK_VERIFICATION) {
+    next();
+  }
+}
+
+router.get("/", authentication, async (req, res) => {
+  // Temporary endpoint for presentation purposes
+  // Should not ship past week 5
+  const { email } = res.locals.user;
+
+  const userNotifications = await Notifications.find({ "u.email": email });
+  const pResponses = userNotifications.map(
+    async n => await Responses.find({ "n.id": n.id })
+  );
+  const responseArray = await Promise.all(pResponses);
+  const responses = arrayFlat(responseArray);
+
+  return res.status(200).json({ responses });
+});
 
 module.exports = router;
