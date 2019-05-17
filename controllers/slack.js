@@ -11,6 +11,7 @@ const sendSlackNotifications = require("../jobs/notifications/lib/senders/slack"
 const api = "https://slack.com/api";
 
 router.post("/oauth/", async ({ body: { code } }, res) => {
+  console.log("Did we get here,oath?");
   const query = `client_id=${process.env.SLACK_CLIENT_ID}&client_secret=${
     process.env.SLACK_SECRET
   }&code=${code}&redirect_uri=${process.env.APP_BASE_URL}/slack-callback`;
@@ -23,7 +24,7 @@ router.post("/oauth/", async ({ body: { code } }, res) => {
     service: "slack",
     auth_token: auth_res.data.bot.bot_access_token
   };
-
+  console.log("TOKEN", token);
   const savedToken = await Tokens.add(token);
   savedToken ? res.status(201).end() : res.status(500).end();
 });
