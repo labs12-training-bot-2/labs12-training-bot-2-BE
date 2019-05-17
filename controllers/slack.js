@@ -16,6 +16,7 @@ router.post("/oauth/", async ({ body: { code } }, res) => {
     process.env.SLACK_SECRET
   }&code=${code}&redirect_uri=${process.env.APP_BASE_URL}/slack-callback`;
   const url = `https://slack.com/api/oauth.access?${query}`;
+  console.log("URL", url);
 
   const auth_res = await axios.get(url);
   const { id } = res.locals.user;
