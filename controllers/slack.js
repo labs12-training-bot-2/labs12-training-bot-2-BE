@@ -19,7 +19,7 @@ router.post("/oauth/", async ({ body: { code } }, res) => {
 
   const auth_res = await axios.get(url);
   console.log(res.locals.user);
-  console.log("TOKEN", auth_res.data.bot.bot_access_token);
+  console.log("TOKEN", auth_res.data);
   const { id } = res.locals.user;
   const token = {
     user_id: id,
