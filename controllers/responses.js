@@ -126,9 +126,10 @@ router.route("/slack").post(verifyToken, async (req, res) => {
   // Webhook for Slack responses sent here.  Cannot go in /api/slack since
   // the Slack API will not have access to a user token
   const { challenge } = req.body;
+  console.log(challenge);
   if (challenge) {
     // Slack sends a challenge string to verify the endpoint before it can be used
-    res.status(201).json(challenge);
+    return res.status(201).json(challenge);
   } else {
     // If you don't respond within a time limit, Slack will send again
     // This results in multiple responses being logged.  Only way to avoid this would be
