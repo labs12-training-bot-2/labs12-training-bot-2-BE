@@ -164,6 +164,7 @@ router.get("/plans", async (req, res) => {
     // );
 
     //TEST
+    console.log("Did it get here?");
     stripe.plans.list(
       {
         limit: 3,
