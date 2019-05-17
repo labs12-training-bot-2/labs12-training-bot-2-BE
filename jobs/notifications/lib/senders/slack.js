@@ -2,17 +2,17 @@ const axios = require("axios");
 const api = "https://slack.com/api";
 const Tokens = require("../../../../models/db/tokens");
 
-module.exports = async (n) => {
-  const { auth_token } = await Tokens.find({ 'u.email': n.user }).first();
+module.exports = async n => {
+  const { auth_token } = await Tokens.find({ "u.email": n.user }).first();
   const channelID = await _openChannelWithUser(n.slack_uuid, auth_token);
   const msg = await _sendSlackMessage(channelID, n, auth_token);
 
-  return { 
-    id: n.id, 
-    thread: channelID, 
-    num_attempts: n.num_attempts + 1, 
-    is_sent: true 
-  } 
+  return {
+    id: n.id,
+    thread: channelID,
+    num_attempts: n.num_attempts + 1,
+    is_sent: true
+  };
 };
 
 // Slack functions should be exported to their own file

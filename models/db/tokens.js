@@ -31,7 +31,7 @@ function find(filters) {
 
 /**
  * Provided with user_id, service, and auth_token--with the option for
- * refersh_token and expiration--creates a new row in the
+ * refresh_token and expiration--creates a new row in the
  * 'token' database then returns a promise which returns
  * the newly created object with ID when resolved.
  *

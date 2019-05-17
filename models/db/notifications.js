@@ -3,14 +3,9 @@ const db = require("../index");
 module.exports = {
   add,
   find,
-  remove
+  remove,
+  update
 };
-
-function add(notification) {
-  return db("notifications")
-    .insert(notification, ["*"])
-    .then(n => find({ "n.id": n[0].id }).first());
-}
 
 function find(filters) {
   return db("notifications AS n")
@@ -43,10 +38,16 @@ function find(filters) {
     .orderBy("n.send_date");
 }
 
+function add(notification) {
+  return db("notifications")
+    .insert(notification, ["*"])
+    .then(n => find({ "n.id": n[0].id }).first());
+}
+
 function update(filter, changes) {
-  return db('notifications AS n')
-    .update(changes, ['*'])
-    .where(filter)
+  return db("notifications AS n")
+    .update(changes, ["*"])
+    .where(filter);
 }
 
 function remove(filters) {

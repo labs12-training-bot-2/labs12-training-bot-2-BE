@@ -7,11 +7,7 @@ const cors = require("cors");
 const server = express();
 
 //Library Middleware
-server.use(
-  helmet(),
-  express.json(),
-  cors()
-);
+server.use(helmet(), express.json(), cors());
 
 // twilio notification system import
 const notificationSystem = require("./jobs/notifications/index");
@@ -38,7 +34,7 @@ server.use("/api/team-members", authentication, teamsRouter);
 server.use("/api/training-series", authentication, trainingsRouter);
 server.use("/api/messages", authentication, messageRouter);
 server.use("/api/stripe", stripeRouter);
-server.use("/api/slack", slackRouter);
+server.use("/api/slack", authentication, slackRouter);
 server.use("/api/notifications", authentication, notificationsRouter);
 server.use("/api/responses", responsesRouter);
 
