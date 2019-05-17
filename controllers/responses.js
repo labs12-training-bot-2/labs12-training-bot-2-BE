@@ -134,19 +134,22 @@ router.route("/slack").post(verifyToken, async (req, res) => {
     // This results in multiple responses being logged.  Only way to avoid this would be
     // to add a column to the responses to log the id from the event and see if it exists already
     res.status(200).end();
-    const { text, channel } = req.body.event;
-    const notifications = await Notifications.find({
-      "n.thread": channel,
-      "n.is_sent": true
-    });
+    if (req.body.event.subtype !== "bot_message") {
+      console.log(req.body.event.type);
+      const { text, channel } = req.body.event;
+      const notifications = await Notifications.find({
+        "n.thread": channel,
+        "n.is_sent": true
+      });
 
-    const notification_id = Math.max(...notifications.map(n => n.id));
-    const newResponse = {
-      notification_id,
-      body: text
-    };
-    const response = await Responses.add(newResponse);
-    console.log("RESPONSE", response);
+      const notification_id = Math.max(...notifications.map(n => n.id));
+      const newResponse = {
+        notification_id,
+        body: text
+      };
+      const response = await Responses.add(newResponse);
+      console.log("RESPONSE", response);
+    }
   }
 });
 
