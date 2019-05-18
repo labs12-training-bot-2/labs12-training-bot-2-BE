@@ -49,7 +49,7 @@
     }
   },
   "scripts": {
-    "postdeploy": "npx knex migrate:latest && npx knex seed:run",
+    "postdeploy": "npx knex migrate:latest && npx knex seed:run"
   },
   "success_url": "/"
 }
