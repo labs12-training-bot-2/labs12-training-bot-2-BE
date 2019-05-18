@@ -1,0 +1,55 @@
+{
+  "name": "Training Bot",
+  "description": "An Express + Node.js API for Training Bot",
+  "repository": "https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE",
+  "logo": "https://i.imgur.com/izl59sH.png",
+  "keywords": [
+    "node",
+    "express",
+    "Lambda School",
+    "Lambda Labs"
+  ],
+  "addons": [
+    {
+      "plan": "heroku-postgresql:hobby-dev",
+      "as": "DB_URL"
+    }
+  ],
+  "env": {
+    "APP_BASE_URL": {},
+    "STRIPE_SECRET_KEY": {
+      "description": "Provided by Stripe; the Secret Key for your Stripe account"
+    },
+    "STRIPE_PUBLIC_KEY": {
+      "description": "Provided by Stripe; the Public Key for your Stripe account"
+    },
+    "STRIPE_TEST_SECRET_KEY": {
+      "description": "Provided by Stripe; the Secret Key for you to test your Stripe account with"
+    },
+    "STRIPE_TEST_PUBLIC_KEY": {
+      "description": "Provided by Stripe; the Public Key for to test your Stripe account"
+    },
+    "SLACK_CLIENT_ID": {
+      "description": "Your Slack app's Client ID"
+    },
+    "SLACK_SECRET": {
+      "description": "Your Slack app's Client Secret"
+    },
+    "TWILIO_SID": {
+      "description": "Your Twilio Account SID (See: https://www.twilio.com/console)"
+    },
+    "TWILIO_TOKEN": {
+      "description": "Your TWILIO Auth Token (See: https://www.twilio.com/console)"
+    },
+    "TWILIO_NUMBER": {
+      "description": "The phone number you have set up with Twilio (See: https://www.twilio.com/console/phone-numbers/incoming)"
+    },
+    "SENDGRID_API_KEY": {
+      "description": "The API Key associated with your SendGrid account"
+    }
+  },
+  "scripts": {
+    "postdeploy": "npx knex migrate:latest && npx knex seed:run",
+  },
+  "success_url": "/"
+}
