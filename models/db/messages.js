@@ -21,6 +21,13 @@ function add(message) {
     .then(m => find({ "m.id": m[0].id }).first());
 }
 
+/**
+ * Finds a particular message or set of messages based on the contents of a
+ * filters object
+ *
+ * @param  {Object} filters - A filter object to be passed to the "where" clause
+ * @returns {Promise} Promise that resolves to an array of found Message objects
+ */
 function find(filters) {
   return db("messages AS m")
     .select(
