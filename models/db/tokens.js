@@ -30,16 +30,16 @@ function find(filters) {
 }
 
 /**
- * Provided with user_id, service, and auth_token--with the option for
- * refresh_token and expiration--creates a new row in the
- * 'token' database then returns a promise which returns
- * the newly created object with ID when resolved.
+ * Creates a new Token in the database associated with a service and a user
  *
- * @param {Integer} user_id
- * @param {String} service
- * @param {String} auth_token
- * @param {String} refresh_token
- * @param {String} expiration
+ * @function
+ * @param {Object} filters A filter object to be passed to the "where" clause (destructured in this case)
+ * @param {Integer} filters.user_id - A user's ID
+ * @param {String} filters.service - A services's name (e.g slack, twilio, sendgrid)
+ * @param {String} filters.auth_token - An OAuth token
+ * @param {String} [filters.refresh_token] - (optional) An OAuth Refresh Token
+ * @param {DateTime} [filters.expiration] - (optional) An expiration datetime for the OAuth Token
+ * @returns {Promise} a promise which resolves to the newly created Token
  */
 
 async function add({
@@ -73,8 +73,10 @@ async function add({
  * a new one is retrieved.  Returns a promise that when resolved
  * will return an object with the updated properties.
  *
+ * @function
  * @param {Integer} id
  * @param {Object} changes
+ * @returns {Promise}
  */
 
 function update(id, changes) {
@@ -88,7 +90,9 @@ function update(id, changes) {
  * When given an id for a token, the corresponding row
  * on the table will be removed
  *
+ * @function
  * @param {Integer} id
+ * @returns {Promise}
  */
 
 function remove(id) {
