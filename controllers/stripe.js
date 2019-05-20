@@ -151,6 +151,7 @@ router.post("/unsubscribe", async (req, res) => {
 });
 
 router.get("/plans", async (req, res) => {
+  console.log("inside the plans router");
   try {
     // // LIVE
     // stripe.plans.list(
@@ -171,11 +172,14 @@ router.get("/plans", async (req, res) => {
         // product: 'prod_Ex92rwszM77RQA' //Live
       },
       function(err, plans) {
-        res.send(plans.data);
+        if (err) {
+          return console.error("I made it and caught an error", err);
+        }
+        return res.status(200).json(plans.data);
       }
     );
   } catch (error) {
-    console.log(error);
+    console.log("In the catch block", error);
   }
 });
 router.get("/subscriptions", async (req, res) => {
