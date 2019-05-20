@@ -135,7 +135,6 @@ router.route("/slack").post(verifyToken, async (req, res) => {
     // to add a column to the responses to log the id from the event and see if it exists already
     res.status(200).end();
     if (req.body.event.subtype !== "bot_message") {
-      console.log(req.body.event.type);
       const { text, channel } = req.body.event;
       const notifications = await Notifications.find({
         "n.thread": channel,
@@ -147,8 +146,7 @@ router.route("/slack").post(verifyToken, async (req, res) => {
         notification_id,
         body: text
       };
-      const response = await Responses.add(newResponse);
-      console.log("RESPONSE", response);
+      await Responses.add(newResponse);
     }
   }
 });
