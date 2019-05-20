@@ -18,7 +18,9 @@ module.exports = {
  */
 async function authentication(req, res, next) {
   const token = req.get("Authorization");
+
   const { email } = jwtDecode(token);
+
   const validUser = await Users.find({ "u.email": email }).first();
 
   if (email) {

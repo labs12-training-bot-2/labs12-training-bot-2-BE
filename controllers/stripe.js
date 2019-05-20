@@ -30,7 +30,6 @@ async function subscribe(stripeID, plan) {
 async function unsubscribe(userID, stripeID, plan) {
   try {
     let customer = await getStripeUser(stripeID);
-    console.log("unsubscribe customer", customer.subscriptions.data[0].id);
     let subID = customer.subscriptions.data[0].id;
     await stripe.subscriptions.del(subID);
     updateUserAccountType(userID, plan);
@@ -65,7 +64,6 @@ async function updateUserAccountType(id, plan) {
   // 	} else {
   // 		accountTypeID = 1;
   // 	}
-  // 	console.log('AccountTypeID', accountTypeID);
   // 	Users.update(id, { account_type_id: accountTypeID });
 
   // TEST;
@@ -79,7 +77,6 @@ async function updateUserAccountType(id, plan) {
   } else {
     accountTypeID = 1;
   }
-  console.log("AccountTypeID", accountTypeID);
   await Users.update({ "users.id": id }, { account_type_id: accountTypeID });
 }
 
@@ -111,7 +108,6 @@ router.post("/", async (req, res) => {
       await subscribe(stripe, plan);
       updateUserAccountType(userID, plan);
 
-      console.log(customer);
       res.send(customer);
     } catch (err) {
       res.status(500).end();
@@ -128,7 +124,6 @@ router.post("/register", async (req, res) => {
     customer = await getStripeUser(customer.id);
     updateUserAccountType(user_id, plan);
 
-    console.log("customer", customer);
     res.send(customer);
   } catch (err) {
     console.log(err);
@@ -171,7 +166,10 @@ router.get("/plans", async (req, res) => {
         // product: 'prod_Ex92rwszM77RQA' //Live
       },
       function(err, plans) {
-        res.send(plans.data);
+        if (err) {
+          return console.error("I made it and caught an error", err);
+        }
+        return res.status(200).json(plans.data);
       }
     );
   } catch (error) {
@@ -193,7 +191,6 @@ router.get("/subscriptions", async (req, res) => {
   }
 });
 router.get("/customer/plan", async (req, res) => {
-  console.log("customer plan", req.body);
   try {
     await stripe.customers.retrieve(req.body.stripe, function(err, customer) {
       res.send(customer);
