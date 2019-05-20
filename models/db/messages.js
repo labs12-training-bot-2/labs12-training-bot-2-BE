@@ -48,6 +48,14 @@ function find(filters) {
     .orderBy("series");
 }
 
+/**
+ * Updates a record or set of records based on the key/value pairs in the
+ * filter object
+ *
+ * @param  {Object} filter - A filter object to be passed to the "where" clause
+ * @param  {Object} message - An object containing the changes you'd like to make to the message(s) selected by the filter object
+ * @returns {Promise}
+ */
 function update(filter, message) {
   return db("messages AS m")
     .update(message, ["*"])
