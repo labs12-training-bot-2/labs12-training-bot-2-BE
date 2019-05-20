@@ -63,12 +63,17 @@ function update(filter, message) {
     .then(m => find({ "m.id": m[0].id }).first());
 }
 
-async function remove(filter) {
-  const msg = await db("messages AS m")
+/**
+ * Deletes a single Message or set of Messages based on the key/value pairs
+ * contained within the filter object.
+ *
+ * @param  {Object} filter - A filter object to be passed to the "where" clause
+ * @returns {Promise} A Promise that resolves to the number of records deleted
+ */
+function remove(filter) {
+  return db("messages AS m")
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
     .leftJoin("users AS u", { "u.id": "ts.user_id" })
     .where(filter)
     .delete();
-
-  console.log(msg);
 }
