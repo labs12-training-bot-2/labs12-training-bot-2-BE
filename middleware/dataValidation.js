@@ -1,5 +1,14 @@
 const Joi = require("@hapi/joi");
 
+/**
+ * Takes in a JOI schema object and returns a Middleware
+ * function
+ *
+ * @module dataValidation
+ * @function
+ * @param {schema}
+ * @return {function} An Express middleware function
+ */
 module.exports = schema => {
   return (req, res, next) => {
     const { error } = Joi.validate(req.body, schema);
