@@ -7,6 +7,14 @@ module.exports = {
   remove
 };
 
+/**
+ * Adds a new Message to the database, and then returns the newly created
+ * message
+ *
+ * @function
+ * @param  {Object} message - A Message object
+ * @returns {Promise} Promise that resolves to the new message Object
+ */
 function add(message) {
   return db("messages")
     .insert(message, ["*"])
