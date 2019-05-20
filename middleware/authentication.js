@@ -18,8 +18,11 @@ module.exports = {
  */
 async function authentication(req, res, next) {
   const token = req.get("Authorization");
+  console.log("inside authentication", token);
   const { email } = jwtDecode(token);
+  console.log(email);
   const validUser = await Users.find({ "u.email": email }).first();
+  console.log(validUser);
 
   if (email) {
     if (validUser.email) {

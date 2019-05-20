@@ -33,7 +33,7 @@ server.use("/api/users", authentication, usersRouter);
 server.use("/api/team-members", authentication, teamsRouter);
 server.use("/api/training-series", authentication, trainingsRouter);
 server.use("/api/messages", authentication, messageRouter);
-server.use("/api/stripe", stripeRouter);
+server.use("/api/stripe", authentication, stripeRouter);
 server.use("/api/slack", authentication, slackRouter);
 server.use("/api/notifications", authentication, notificationsRouter);
 server.use("/api/responses", responsesRouter);
