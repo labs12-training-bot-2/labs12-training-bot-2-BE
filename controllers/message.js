@@ -51,7 +51,7 @@ router
       "u.email": user.email
     }).first();
 
-    // If trainingSeriesExists is falsey, the Training Series does not exist and a 404 message will be returned to the client
+    // If trainingSeriesExists is falsey, we can assume the Training Series does not exist
     if (!trainingSeriesExists) {
       return res.status(404).json({
         message: "That training series does not exist."
