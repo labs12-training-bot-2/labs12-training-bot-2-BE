@@ -11,6 +11,7 @@ module.exports = {
  * Find a Team Member or set of Team Members in the database
  *
  * @function
+ * 
  * @param {Object} filters - A filters object to pass to the SQL WHERE clause
  * @see https://knexjs.org/#Builder-where
  *
@@ -42,6 +43,7 @@ function find(filters) {
  * Add a Team Member to the Database
  *
  * @function
+ * 
  * @param {Object} teamMember - A Team Member object
  * @see https://knexjs.org/#Builder-insert
  *
@@ -77,6 +79,7 @@ function update(filters, changes) {
  * Deletes a specific Team Member or set of Team Members from the database
  *
  * @function
+ * 
  * @param {Object} filters - A filters object to pass to the SQL WHERE clause
  * @see https://knexjs.org/#Builder-where
  * 
