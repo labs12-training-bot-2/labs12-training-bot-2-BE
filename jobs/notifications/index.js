@@ -17,7 +17,7 @@ const wipeFailed = require("./lib/wipeFailed");
  * PR2 ecosystem file that instantiates the Cron job
  * @see https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/ecosystem.config.js
  *
- * @returns {undefined}
+ * @return {undefined}
  */
 (function notificationSystem() {
   /**
@@ -25,16 +25,16 @@ const wipeFailed = require("./lib/wipeFailed");
    *
    * @constructor
    *
-   * @param time {String} - A crontab string to specify when the job should run.
+   * @param {String} time - A crontab string to specify when the job should run.
    * @see https://github.com/kelektiv/node-cron#cron-ranges
    *
-   * @param onTick {function} - The function to fire at the time specified. If an onComplete callback was provided, onTick will receive it as an argument. onTick may call onComplete when it has finished its work.
+   * @param {function} onTick - The function to fire at the time specified. If an onComplete callback was provided, onTick will receive it as an argument. onTick may call onComplete when it has finished its work.
    *
-   * @param onComplete {function} - The function that will fire when the onTick function ends
+   * @param {function} onComplete - The function that will fire when the onTick function ends
    *
-   * @param start {boolean} - Specifies whether to start the job before exiting the constructor.
+   * @param {boolean} [start] - Specifies whether to start the job before exiting the constructor. Defaults to false.
    *
-   * @param timezone {string} - The timezone for the execution. See linked documentation below for timezone options, though I highly recommend leaving this in UTC
+   * @param {string} timezone - The timezone for the execution. See linked documentation below for timezone options, though I highly recommend leaving this in UTC
    * @see http://momentjs.com/timezone/
    */
   new CronJob(
