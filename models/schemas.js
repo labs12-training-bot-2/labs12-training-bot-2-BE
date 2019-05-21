@@ -108,7 +108,8 @@ const notificationSchema = {
   num_attempts: Joi.number()
     .integer()
     .min(0),
-  thread: Joi.string()
+  thread: Joi.string(),
+  for_team_member: Joi.boolean()
 };
 
 const responseSchema = {
