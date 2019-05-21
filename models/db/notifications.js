@@ -36,6 +36,8 @@ function find(filters) {
       "n.is_sent",
       "n.num_attempts",
       "n.thread",
+      "n.message_id",
+      "n.recipient_id",
       "ts.id AS training_series_id",
       "ts.title AS series",
       "tm.id AS team_member_id",
