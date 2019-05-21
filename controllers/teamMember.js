@@ -13,10 +13,11 @@ const arrayFlat = require("../helpers/arrayFlat");
 const { teamMemberSchema } = require("../models/schemas");
 const validation = require("../middleware/dataValidation");
 
-router.route("/")
+router
+  .route("/")
   .get(async (req, res) => {
     /**
-     * Get all Team Memebers associated with an authenticated user
+     * Get all Team Members associated with an authenticated user
      *
      * @function
      * @param {Object} req - The Express request object
@@ -24,7 +25,7 @@ router.route("/")
      * @returns {Object} - The Express response object
      */
 
-    // Destrucutre the authenticated User off of res.locals
+    // Destructure the authenticated User off of res.locals
     const { user } = res.locals;
 
     // Get all Team Members from the database that are associated with the authenticated User
@@ -37,7 +38,7 @@ router.route("/")
   })
   .post(validation(teamMemberSchema), async (req, res) => {
     /**
-     * Validate the request body against our Team Member schema and then Create 
+     * Validate the request body against our Team Member schema and then Create
      * a new Team Member
      *
      * @function
@@ -54,7 +55,8 @@ router.route("/")
     return res.status(201).json({ newTeamMember });
   });
 
-router.route("/:id")
+router
+  .route("/:id")
   .get(async (req, res) => {
     /**
      * Get a specific Team Member by their ID
@@ -89,7 +91,7 @@ router.route("/:id")
   })
   .put(validation(teamMemberSchema), async (req, res) => {
     /**
-     * Validate the request body against the Team Member schema, then update 
+     * Validate the request body against the Team Member schema, then update
      * the specified Team Member in the database
      *
      * @function
@@ -125,25 +127,25 @@ router.route("/:id")
     const { id } = req.params;
 
     // Attempt to delete the specified Team Member from the database
-    const deleted = await TeamMember.remove({ 'tm.id': id });
+    const deleted = await TeamMember.remove({ "tm.id": id });
 
     // If deleted is falsey, we can assume that there is no Team Member at that ID
     if (!deleted) {
-      return res.status(404).json({ 
-        message: "The resource could not be found." 
+      return res.status(404).json({
+        message: "The resource could not be found."
       });
     }
 
     // Respond to the client with a success message
-    return res.status(200).json({ 
-      message: "The resource has been deleted." 
+    return res.status(200).json({
+      message: "The resource has been deleted."
     });
   });
 
 router.delete("/:id/unassign/:ts_id", async (req, res) => {
   /**
-   * "Unassign" a specific Team Member from a specific Training Series. 
-   * Ultimately, this deletes all pending notifications for that Team Member 
+   * "Unassign" a specific Team Member from a specific Training Series.
+   * Ultimately, this deletes all pending notifications for that Team Member
    * that are associated with a particular Training Series.
    *
    * @function
@@ -152,7 +154,7 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
    * @returns {Object} - The Express response object
    */
 
-   // Destructure the Team Member ID and Training Series ID off of the request object
+  // Destructure the Team Member ID and Training Series ID off of the request object
   const { id, ts_id } = req.params;
 
   // Find all Messages associated with the specified Training Series
@@ -161,7 +163,7 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
     "m.for_team_member": true
   });
 
-  // If messages.length is falsey, we can assume that that Team Member hasn't 
+  // If messages.length is falsey, we can assume that that Team Member hasn't
   // been assigned to that training series.
   if (!messages.length) {
     return res.status(404).json({
@@ -170,8 +172,8 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
     });
   }
 
-  // Compile a list of all pending Notifications associated with a Training 
-  // Series for that Team Member, based on the messages found above. This will 
+  // Compile a list of all pending Notifications associated with a Training
+  // Series for that Team Member, based on the messages found above. This will
   // be an array of Promises
   const pNotifs = messages.map(
     async m =>
@@ -187,27 +189,27 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
   // Flatten all nested arrays inside of rNotifs
   const notifsToDelete = arrayFlat(rNotifs);
 
-  // Delete each notification and send back total number of deleted items, 
+  // Delete each notification and send back total number of deleted items,
   // along with array of deleted ids to send to the client
   const totalDeleted = notifsToDelete.map(
     async n => await Notifications.remove({ "n.id": n.id })
   );
 
-  // If totalDeleted.length is falsey, we can assume that there were no pending 
+  // If totalDeleted.length is falsey, we can assume that there were no pending
   // Notifications for that Team Member associated with that Training Series
   if (!totalDeleted.length) {
     return res.status(404).json({
-        message:
-          "This Team Member doesn't have any Notifications for that Training Series."
-      });
+      message:
+        "This Team Member doesn't have any Notifications for that Training Series."
+    });
   }
 
-  // Respond to the client with the number of resources deleted and the ID's of 
+  // Respond to the client with the number of resources deleted and the ID's of
   // the deleted notifications
   return res.status(200).json({
     message: `${totalDeleted.length} resource(s) deleted.`,
     ids: notifsToDelete.map(n => n.id)
-  })
+  });
 });
 
 module.exports = router;
