@@ -35,9 +35,9 @@ Most routes require authentication, and Training Bot handles authentication by l
 
 Valid JWTs are provided by the Auth0 integration with our [React application](https://github.com/labs12-training-bot-2/labs12-training-bot-2-FE). However -- for testing -- You can get a token programattically using the [Auth0 Management API](https://auth0.com/docs/api/management/v2/get-access-tokens-for-test).
 
-### Resources
+----
 
----
+### Resources
 
 #### `/api/auth`
 
@@ -47,7 +47,11 @@ route | methods | description | Docs
 
 ----
 
-`/api/users`
+#### `/api/users`
+
+route | methods | description | Docs
+:---: | :---: | :--- | :---:
+`api/users/:id` | DELETE | Deletes a specific user based on the ID parameter| [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/user.js#L7-L32) | 
 
 ----
 
