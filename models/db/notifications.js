@@ -37,7 +37,10 @@ function find(filters) {
       "n.num_attempts",
       "n.thread",
       "n.message_id",
+<<<<<<< HEAD
       "n.recipient_id",
+=======
+>>>>>>> master
       "ts.id AS training_series_id",
       "ts.title AS series",
       "tm.id AS team_member_id",
