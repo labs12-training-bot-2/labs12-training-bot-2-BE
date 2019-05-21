@@ -5,7 +5,14 @@ const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 
 const Users = require("../models/db/users");
 
-// pass in stripeID
+/**
+ * When a user is created their stripe ID is null until they sign up for a
+ * plan. Doing that starts this process gives them a stripeID from the Stripe API
+ *
+ * @function
+ * @param {null} stripeID
+ * @returns {String} stripeID
+ */
 async function getStripeUser(stripeID) {
   try {
     return await stripe.customers.retrieve(stripeID);
@@ -14,7 +21,14 @@ async function getStripeUser(stripeID) {
   }
 }
 
-// pass in stripeID and plan ID
+/**
+ * Now that the user has a valid stripeID, this passes that new ID and the
+ * plan they choice to the Stripe API to create a recurring subscription for them.
+ * @function
+ * @param {String} stripeID
+ * @param {String} plan
+ * @returns {Object} the new subscription plan for the customer.
+ */
 async function subscribe(stripeID, plan) {
   try {
     return await stripe.subscriptions.create({
@@ -26,7 +40,15 @@ async function subscribe(stripeID, plan) {
   }
 }
 
-// pass in subscription ID
+/**
+ * unsubscribes a user from their current subscription plan.
+ *
+ * @function
+ * @param {Integer} userID
+ * @param {String} stripeID
+ * @param {String} plan
+ * @returns the updated user account type plan to being the free plan.
+ */
 async function unsubscribe(userID, stripeID, plan) {
   try {
     let customer = await getStripeUser(stripeID);
@@ -38,12 +60,20 @@ async function unsubscribe(userID, stripeID, plan) {
   }
 }
 
+/**
+ * registers a user with Stripe.
+ * @param {Integer} id
+ * @param {String} name
+ * @param {String} email
+ * @param {String} token this comes from Stripe.JS
+ * @return {Object} the newly registered customer.
+ */
 async function register(id, name, email, token) {
   try {
     let customer = await stripe.customers.create({
       description: name,
       email: email,
-      source: token // obtained with Stripe.js
+      source: token
     });
     await Users.update({ "users.id": id }, { stripe: customer.id });
     return customer;
@@ -52,6 +82,16 @@ async function register(id, name, email, token) {
   }
 }
 
+/**
+ * To update the user account type between free, premium and pro.
+ * The commented out code is for testing stripe functionality or for
+ * taking live payments. Future developers will need to replace the plan Id's
+ * with Ids given to them on their stripe dashboard when they create their own
+ * strip accounts with a product and different price plans.
+ * @param {Integer} id
+ * @param {String} plan
+ * @return {Object} the updated user account type id.
+ */
 async function updateUserAccountType(id, plan) {
   // 	// LIVE
   // 	let accountTypeID;
