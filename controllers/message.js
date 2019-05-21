@@ -67,6 +67,34 @@ router
 
 router
   .route("/:id")
+  .get(async (req, res) => {
+    /**
+     * Get a specific Message by its ID
+     *
+     * @function
+     * @param {Object} req - The Express request object
+     * @param {Object} res - The Express response object
+     * @returns {Object} - The Express response object
+     */
+
+    // Destructure the Message ID from the request parameters
+    const { id } = req.params;
+
+    // Destructure the authenticated user off of res.locals
+    const { user } = res.locals;
+
+    // Get the Message associated with the user by ID
+    const message = await Messages.find({
+      "m.id": id,
+      "u.email": user.email
+    }).first();
+
+    message
+      ? // Return the specified Message to the client
+        res.status(200).json({ message })
+      : // If message is falsey, either the Message doesn't exist in the database or the user doesn't have access
+        res.status(404).json({ message: "That message does not exist" });
+  })
   .put(validation(messageSchema), async (req, res) => {
     /**
      * Validate the request body against the Message schema, then update
@@ -101,34 +129,6 @@ router
 
     // Return the newly updated Message to the client
     res.status(200).json({ updatedMessage });
-  })
-  .get(async (req, res) => {
-    /**
-     * Get a specific Message by its ID
-     *
-     * @function
-     * @param {Object} req - The Express request object
-     * @param {Object} res - The Express response object
-     * @returns {Object} - The Express response object
-     */
-
-    // Destructure the Message ID from the request parameters
-    const { id } = req.params;
-
-    // Destructure the authenticated user off of res.locals
-    const { user } = res.locals;
-
-    // Get the Message associated with the user by ID
-    const message = await Messages.find({
-      "m.id": id,
-      "u.email": user.email
-    }).first();
-
-    message
-      ? // Return the specified Message to the client
-        res.status(200).json({ message })
-      : // If message is falsey, either the Message doesn't exist in the database or the user doesn't have access
-        res.status(404).json({ message: "That message does not exist" });
   })
   .delete(async (req, res) => {
     /**
