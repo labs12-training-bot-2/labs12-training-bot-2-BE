@@ -42,7 +42,7 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 route | methods | description | Docs
 :--- | :---: | :--- | :---:
-`api/auth/` | POST | Takes a valid JWT provided by Auth0 and logs the user in | [JS Docs](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/auth.js#L13-L54)
+`api/auth/` | POST | Takes a valid JWT provided by Auth0 and logs the user in | [JS Docs](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/auth.js#L9-L65)
 
 ----
 
