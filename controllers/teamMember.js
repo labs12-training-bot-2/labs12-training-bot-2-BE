@@ -23,10 +23,16 @@ router.route("/")
      * @param {Object} res - The Express response object
      * @returns {Object} - The Express response object
      */
+
+    // Destrucutre the authenticated User off of res.locals
     const { user } = res.locals;
+
+    // Get all Team Members from the database that are associated with the authenticated User
     const teamMembers = await TeamMember.find({
       "u.email": user.email
     });
+
+    // Return the found Team Members to client
     return res.status(200).json({ teamMembers });
   })
   .post(validation(teamMemberSchema), async (req, res) => {
@@ -40,7 +46,11 @@ router.route("/")
      * @param {Object} res - The Express response object
      * @returns {Object} - The Express response object
      */
+
+    // Add the new Team Member to the database
     const newTeamMember = await TeamMember.add(req.body);
+
+    // Return the newly created Team Member to the client
     return res.status(201).json({ newTeamMember });
   });
 

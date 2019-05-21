@@ -4,7 +4,6 @@ const router = require("express").Router();
 //Models
 const Users = require("../models/db/users");
 
-// api/users/:id
 router.route("/:id")
   .delete(async (req, res) => {
     /** 

@@ -50,7 +50,7 @@ route | methods | description | Docs
 
 route | methods | description | Docs
 :--- | :---: | :--- | :---:
-`api/users/:id` | DELETE | Deletes a specific user based on the ID parameter| [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/user.js#L7-L32) |
+`api/users/:id` | DELETE | Deletes a specific user based on the ID parameter| [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/user.js#L7-L31) |
 
 ----
 
@@ -58,9 +58,9 @@ route | methods | description | Docs
 
 route | methods | description | Docs
 :--- | :---: | :--- | :---:
-`api/team-members/` | GET, POST | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/teamMember.js#L16-L45) |
-`api/team-members/:id` | GET, PUT, DELETE | Read, Update, and Delete specific Team Members | [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/teamMember.js#L47-L131) |
-`api/team-members/:id/unassign/:ts_id` | DELETE | Unassign a specified Team Member from a Training Series | [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/teamMember.js#L133-L201) |
+`api/team-members/` | GET, POST | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/teamMember.js#L16-L55) |
+`api/team-members/:id` | GET, PUT, DELETE | Read, Update, and Delete specific Team Members | [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/teamMember.js#L57-L141) |
+`api/team-members/:id/unassign/:ts_id` | DELETE | Unassign a specified Team Member from a Training Series | [JS Doc](https://github.com/labs12-training-bot-2/labs-12-training-bot-2-BE/blob/master/controllers/teamMember.js#L143-L211) |
 
 ----
 
