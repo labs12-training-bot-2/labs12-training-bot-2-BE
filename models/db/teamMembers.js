@@ -11,7 +11,7 @@ module.exports = {
  * Find a Team Member or set of Team Members in the database
  *
  * @function
- * 
+ *
  * @param {Object} filters - A filters object to pass to the SQL WHERE clause
  * @see https://knexjs.org/#Builder-where
  *
@@ -43,7 +43,7 @@ function find(filters) {
  * Add a Team Member to the Database
  *
  * @function
- * 
+ *
  * @param {Object} teamMember - A Team Member object
  * @see https://knexjs.org/#Builder-insert
  *
@@ -69,7 +69,7 @@ function add(teamMember) {
  * @returns {Promise} - A Promise that resolves to the updated Team Member(s)
  */
 function update(filters, changes) {
-  return db("team_members")
+  return db("team_members AS tm")
     .update(changes, ["*"])
     .where(filters)
     .then(tm => find({ "tm.id": tm[0].id }).first());
@@ -79,10 +79,10 @@ function update(filters, changes) {
  * Deletes a specific Team Member or set of Team Members from the database
  *
  * @function
- * 
+ *
  * @param {Object} filters - A filters object to pass to the SQL WHERE clause
  * @see https://knexjs.org/#Builder-where
- * 
+ *
  * @returns {Promise} A promise that resolves to the number of Team Member(s) deleted
  */
 function remove(filters) {
