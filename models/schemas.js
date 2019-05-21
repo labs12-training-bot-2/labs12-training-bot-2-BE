@@ -109,7 +109,9 @@ const notificationSchema = {
     .integer()
     .min(0),
   thread: Joi.string(),
-  for_team_member: Joi.boolean()
+  recipient_id: Joi.number()
+    .integer()
+    .min(1)
 };
 
 const responseSchema = {
