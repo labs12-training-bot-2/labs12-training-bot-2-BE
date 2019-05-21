@@ -2,6 +2,23 @@ const CronJob = require("cron").CronJob;
 const notify = require("./lib/notify");
 const wipeFailed = require("./lib/wipeFailed");
 
+/**
+ * An IIFE called by PM2 to instantiate the Cron job that sends all of Training
+ * Bot's pending Notifications
+ *
+ * @function
+ *
+ * IFEE Documentation on MDN
+ * @see https://developer.mozilla.org/en-US/docs/Glossary/IIFE
+ *
+ * 'Cron' documentation on GitHub
+ * @see https://github.com/kelektiv/node-cron#api
+ *
+ * PR2 ecosystem file that instantiates the Cron job
+ * @see https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/ecosystem.config.js
+ *
+ * @returns {undefined}
+ */
 (function notificationSystem() {
   /**
    * A CronJob object.
@@ -20,32 +37,32 @@ const wipeFailed = require("./lib/wipeFailed");
    * @param timezone {string} - The timezone for the execution. See linked documentation below for timezone options, though I highly recommend leaving this in UTC
    * @see http://momentjs.com/timezone/
    */
-      new CronJob(
-        "0 */10 * * * *",
-        async function(onComplete) {
+  new CronJob(
+    "0 */10 * * * *",
+    async function(onComplete) {
       /**
        * An anonomous function run by CronJob at the interval specified in the CronTab. Runs the notify() function and then calls the onComplete function passed to it by CronJob
        *
        * @param [onComplete] {function} - An optional param that gets passed in by the constructor if it exists
        */
-          try {
+      try {
         // Get the current time for logging and also to pass to notify()
-            const currentTime = new Date();
+        const currentTime = new Date();
 
         // Log that the job has started on the server
-            console.log("Run Notifications onTick:", currentTime);
+        console.log("Run Notifications onTick:", currentTime);
 
         // Await the completion of the notify() function, exit to catch block if notify() rejects
-            await notify(currentTime);
+        await notify(currentTime);
 
         // Await the completion of the onComplete function, exit to catch block if onComplete() rejects
-            await onComplete(currentTime);
-          } catch (error) {
+        await onComplete(currentTime);
+      } catch (error) {
         // If the onTick function fails at any point, log the error to stderr
         console.error("Notifications worker encountered an error", error);
-          }
-        },
-        async function(time) {
+      }
+    },
+    async function(time) {
       /**
        * An anonomous function that will be passed to the onTick function and called at the end of that function. Runs the wipeFailed() function.
        *
@@ -53,11 +70,11 @@ const wipeFailed = require("./lib/wipeFailed");
        */
       
       // Await the completion of the wipeFailed() function, exit to catch block in the onTick function if wipeFailed() rejects
-            await wipeFailed(time);
-        },
-        true,
-        "UTC"
-      );
+      await wipeFailed(time);
+    },
+    true,
+    "UTC"
+  );
 
   // Log that the Notification System has been started
   console.log("Notification System Instantiation", new Date());
