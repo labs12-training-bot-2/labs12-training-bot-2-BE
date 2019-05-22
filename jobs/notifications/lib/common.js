@@ -25,7 +25,7 @@ function batchUpdate(table, arr) {
         .update(i)
         .transacting(trx)
     );
-
+    
     // Attempt to resolve all Pending promises in the queries array, and commit 
     // the updates to the database if all resolve as they should. Rollback the 
     // transaction if any fail
@@ -35,14 +35,25 @@ function batchUpdate(table, arr) {
   });
 }
 
+/**
+ * Takes an array of resource objects and maps over them, calling a callback function on each object in the array
+ * 
+ * @param {Array} arr - An array of resource objects 
+ * @param {function} cb - A callback function
+ * @return {Array} - An array of modified resource objects
+ */
 async function asyncMap(arr, cb) {
+  // Map over the array that was passed in, calling the callback function on 
+  // each item (i) in the array. Will return an array of Promises.
   const pArray = arr.map(async i => {
     const promise = await cb(i);
 
     return promise;
   });
 
+  // Resolve all Promises in the array created by the map function above
   const data = await Promise.all(pArray);
 
+  // Return the array of resolved promises
   return data;
 }
