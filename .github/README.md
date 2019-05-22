@@ -54,38 +54,38 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 ---
 
-`/api/team-members`
+#### Team Members
 
 | route | methods | description | Docs |
 |:--- | :---: | :--- | :---:|
-| `api/team-members/`| GET, POST | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L16-L55)  |
-| `api/team-members/:id`| GET, PUT, DELETE | Read, Update, and Delete specific Team Members [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L57-L141)  |
-| `api/team-members/:id/unassign/:ts_id`| DELETE | Unassign a specified Team Member from a Training Series | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L143-L211) |
+| `api/team-members/`| GET, POST | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L58-L143)  |
+| `api/team-members/:id`| GET, PUT, DELETE | Read, Update, and Delete specific Team Members | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L57-L141)  |
+| `api/team-members/:id/unassign/:ts_id`| DELETE | Unassign a specified Team Member from a Training Series | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L144-L213) |
 
 ---
 
-`/api/training-series`
+#### Training Series
 
 ---
 
-`/api/messages`
+#### Messages
 
 | route | methods | description | Docs |
 |:--- | :---: | :--- | :---:|
 | `api/messages/` | GET, POST | Get all Messages associated with an authenticated User and/or Create a new Message associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L13-L66)  |
-| `api/messages/:id` | GET, PUT, DELETE | Read, Update, and Delete specific Messages | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L66-L165) |
+| `api/messages/:id` | GET, PUT, DELETE | Read, Update, and Delete specific Messages | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L68-L165) |
 
 ---
 
-`/api/stripe`
+#### Stripe
 
 ---
 
-`/api/slack`
+#### Slack
 
 ---
 
-`/api/notifications`
+#### Notifications
 
 | route | methods | description | Docs |
 |:--- | :---: | :--- | :---:|
@@ -96,7 +96,9 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 ---
 
-`/api/responses`
+#### Responses
+
+----
 
 ## Maintainers
 
