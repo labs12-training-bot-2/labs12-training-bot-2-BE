@@ -9,9 +9,6 @@ const server = express();
 //Library Middleware
 server.use(helmet(), express.json(), cors());
 
-// twilio notification system import
-const notificationSystem = require("./jobs/notifications/index");
-
 // authentication, error and validation middleware
 const { authentication } = require("./middleware/authentication");
 const errorHandler = require("./middleware/errorHandling");
@@ -45,7 +42,5 @@ server.get("/", (req, res) => {
 
 //async error handling middleware MUST come after routes or else will just throw Type error
 server.use(errorHandler);
-
-notificationSystem.start();
 
 module.exports = server;

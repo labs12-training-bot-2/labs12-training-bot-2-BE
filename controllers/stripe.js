@@ -5,7 +5,22 @@ const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 
 const Users = require("../models/db/users");
 
-// pass in stripeID
+/**
+ * Overview:
+ *The way Stripe works is that you need to have your own stripe account and create a single
+ * product. That product will contain 2 different payment plans. "Premium" at $5/month and "Pro"
+ *  at $10/month. Those plan then will have corresponding subscriptions. All of this needs to be
+ * managed on the stripe.com dashboard.
+ */
+
+/**
+ * When a user is created their stripe ID is null until they sign up for a
+ * plan. Doing that starts this process gives them a stripeID from the Stripe API
+ *
+ * @function
+ * @param {null} stripeID
+ * @returns {String} stripeID
+ */
 async function getStripeUser(stripeID) {
   try {
     return await stripe.customers.retrieve(stripeID);
@@ -14,7 +29,14 @@ async function getStripeUser(stripeID) {
   }
 }
 
-// pass in stripeID and plan ID
+/**
+ * Now that the user has a valid stripeID, this passes that new ID and the
+ * plan they choice to the Stripe API to create a recurring subscription for them.
+ * @function
+ * @param {String} stripeID
+ * @param {String} plan
+ * @returns {Object} the new subscription plan for the customer.
+ */
 async function subscribe(stripeID, plan) {
   try {
     return await stripe.subscriptions.create({
@@ -26,7 +48,15 @@ async function subscribe(stripeID, plan) {
   }
 }
 
-// pass in subscription ID
+/**
+ * unsubscribes a user from their current subscription plan.
+ *
+ * @function
+ * @param {Integer} userID
+ * @param {String} stripeID
+ * @param {String} plan
+ * @returns the updated user account type plan to being the free plan.
+ */
 async function unsubscribe(userID, stripeID, plan) {
   try {
     let customer = await getStripeUser(stripeID);
@@ -38,12 +68,20 @@ async function unsubscribe(userID, stripeID, plan) {
   }
 }
 
+/**
+ * registers a user with Stripe.
+ * @param {Integer} id
+ * @param {String} name
+ * @param {String} email
+ * @param {String} token this comes from Stripe.JS
+ * @return {Object} the newly registered customer.
+ */
 async function register(id, name, email, token) {
   try {
     let customer = await stripe.customers.create({
       description: name,
       email: email,
-      source: token // obtained with Stripe.js
+      source: token
     });
     await Users.update({ "users.id": id }, { stripe: customer.id });
     return customer;
@@ -52,49 +90,60 @@ async function register(id, name, email, token) {
   }
 }
 
+/**
+ * To update the user account type between free, premium and pro.
+ * Future developers will need to replace the plan Id's
+ * with Ids given to them on their stripe dashboard when they create their own
+ * strip accounts with a product and different price plans.
+ * @param {Integer} id
+ * @param {String} plan
+ * @return {Object} the updated user account type id.
+ */
 async function updateUserAccountType(id, plan) {
-  // 	// LIVE
-  // 	let accountTypeID;
-  // 	if (plan === 'plan_Ex95NK1FuaNiWb') {
-  // 		// LIVE - PREMIUM PLAN
-  // 		accountTypeID = 2;
-  // 	} else if (plan === 'plan_Ex955Zz8JE0ZuW') {
-  // 		// LIVE - PRO PLAN
-  // 		accountTypeID = 3;
-  // 	} else {
-  // 		accountTypeID = 1;
-  // 	}
-  // 	Users.update(id, { account_type_id: accountTypeID });
-
-  // TEST;
   let accountTypeID;
   if (plan === "plan_EyjXqiSYXoKEXf") {
-    // TEST - PREMIUM PLAN
+    // production = "plan_Ex95NK1FuaNiWb"
+    // test ="plan_EyjXqiSYXoKEXf"
+    // PREMIUM PLAN
     accountTypeID = 2;
   } else if (plan === "plan_EyjXEzjQkZf78d") {
-    // TEST - PRO PLAN
+    // production = "plan_Ex955Zz8JE0ZuW"
+    // test = "plan_EyjXEzjQkZf78d"
+    // PRO PLAN
     accountTypeID = 3;
   } else {
-    accountTypeID = 1;
+    accountTypeID = 1; //the free plan.
   }
   await Users.update({ "users.id": id }, { account_type_id: accountTypeID });
 }
 
 router.post("/", async (req, res) => {
+  /**
+   * this post endpoint communicates to stripe based on what the other endpoints
+   * in this file specify do. 
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+  
+   */
   const { token, name, email, user_id, stripe, plan } = req.body;
   if (stripe) {
     try {
+      //get the customer from stripe via their stripe id.
       let customer = await getStripeUser(stripe);
-
+      //if their subscription is the free tier let them update to a paid subscription
       if (customer.subscriptions.total_count === 0) {
         let subscription = await subscribe(stripe, plan);
         updateUserAccountType(user_id, plan);
+        //return the updated subscription status
         res.status(200).json(subscription);
       } else {
+        //if they have a paid subscription, let them update their account to unsubscribe.
         await unsubscribe(user_id, stripe);
         let subscription = await subscribe(stripe, plan);
         updateUserAccountType(user_id, plan);
-
+        //return the updated subscription status
         res.status(200).json(subscription);
       }
     } catch (err) {
@@ -102,12 +151,16 @@ router.post("/", async (req, res) => {
       res.status(500).end();
     }
   } else {
+    //if Stripe id is not found (is null) allow customer to register with stripe
     try {
+      //create a customer based on the userId, name, email, and token from stripe.
       let customer = await register(userID, name, email, token);
+      //let stripe identitify the customer by the new stripe id.
       let stripe = customer.id;
+      //update the user's info with their new stripe id and plan, which is defaulted to free
       await subscribe(stripe, plan);
       updateUserAccountType(userID, plan);
-
+      //return the updated user info
       res.send(customer);
     } catch (err) {
       res.status(500).end();
@@ -115,15 +168,29 @@ router.post("/", async (req, res) => {
   }
 });
 router.post("/register", async (req, res) => {
+  /**
+   * this endpoint runs the code to have the user register with Stripe
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
+
+  // Destructured the stripe token, user name, email, id, and their plan off the request parameters
   const { token, name, email, user_id, plan } = req.body;
 
   try {
+    //register the customer with their id, name, email, and token from stripe.
     let customer = await register(user_id, name, email, token);
+    //creates the stripe id for that customer aka the user.
     let stripe = customer.id;
+    //sets up the subscription on stripe to the defaulted free plan
     await subscribe(stripe, plan);
+    //get's the customers info with their new stripe id.
     customer = await getStripeUser(customer.id);
+    //updates the account accordingly
     updateUserAccountType(user_id, plan);
-
+    //returns the new customer.
     res.send(customer);
   } catch (err) {
     console.log(err);
@@ -132,13 +199,24 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/unsubscribe", async (req, res) => {
+  /**
+   * allows user to unsubscribe from their current plan.
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
+
+  // Destructured user id and their stripe id off the request parameters
   const { user_id, stripe } = req.body;
   if (stripe) {
     try {
+      //unsubscribes the user
       let res = unsubscribe(user_id, stripe);
+      //updates their account about the unsubscription
       updateUserAccountType(user_id);
-
-      res.status(404);
+      //they are now successfully unsubscribed
+      res.status(200);
     } catch (err) {
       res.send(err);
     }
@@ -146,22 +224,23 @@ router.post("/unsubscribe", async (req, res) => {
 });
 
 router.get("/plans", async (req, res) => {
-  try {
-    // // LIVE
-    // stripe.plans.list(
-    // 	{
-    // 		limit: 3,
-    // 		product: 'prod_Ex92rwszM77RQA' // LIVE
-    // 	},
-    // 	function(err, plans) {
-    // 		res.send(plans.data);
-    // 	}
-    // );
+  /**
+   * get the different plans we offer.
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
 
-    //TEST
+  //if we add more plans the 3 needs to be changed. comment and uncomment out the product line depending on if
+  //you plan on taking real cards with the live code or are using fake numbers for testing.
+  //remember to put the your codes from your own stripe account in.
+  try {
     stripe.plans.list(
       {
         limit: 3,
+        //remember to swap between these too id's depending if you want to show test or production product
+        //and it's corresponding plans/subscriptions.
         product: "prod_EyjWGnhGwmQIsE" // TEST
         // product: 'prod_Ex92rwszM77RQA' //Live
       },
@@ -177,7 +256,15 @@ router.get("/plans", async (req, res) => {
   }
 });
 router.get("/subscriptions", async (req, res) => {
+  /**
+   * get the different subscription plans
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
   try {
+    //only retrieve 3 subscriptions that go with the 3 plans we offer, if more plans are added this limit number should change.
     await stripe.subscriptions.list(
       {
         limit: 3
@@ -191,6 +278,13 @@ router.get("/subscriptions", async (req, res) => {
   }
 });
 router.get("/customer/plan", async (req, res) => {
+  /**
+   * gets and shows the customer's current plan according to stripe.
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
   try {
     await stripe.customers.retrieve(req.body.stripe, function(err, customer) {
       res.send(customer);
@@ -200,9 +294,16 @@ router.get("/customer/plan", async (req, res) => {
   }
 });
 
-// Cancel subscription route
-
 router.post("/paymentintent", async (req, res) => {
+  /**
+   * This route is required by Stipe in their documentation to allow you to collect payment.
+   * https://stripe.com/docs/payments/payment-intents
+   *
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 1099,
