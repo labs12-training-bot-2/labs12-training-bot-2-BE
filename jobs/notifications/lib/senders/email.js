@@ -1,10 +1,25 @@
-// SendGrid configuration
+// Dependencies
 const sgMail = require("@sendgrid/mail");
 const uuid = require("uuid");
+
+// SendGrid Configuration
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+/**
+ * Takes a Notification object (n) and attempts to send it via SendGrid
+ * 
+ * Purposefully doesn't attempt to catch errors so that errors bubble up to the function that calls it.
+ * 
+ * @param {Object} n - A Notification object
+ * @return {Object} - An updated Notification object
+ */
 module.exports = n => {
+  // Generate a random reply-to email address to track responses
   const thread = `${uuid()}@mail.trainingbot.app`;
+
+  // Attempt to send the message via SendGrid, then return an updated 
+  // Notification object that inludes the random thread, increments 
+  // num_attempts, and changes is_sent to true
   return sgMail.send({
       to: `${n.email}`,
       from: {
