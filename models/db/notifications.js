@@ -12,7 +12,7 @@ module.exports = {
  * Notification
  *
  * @function
- * @param  {Object} message - A Notification object
+ * @param  {Object} notification - A Notification object
  * @returns {Promise} Promise that resolves to the new Notification object
  */
 function add(notification) {
