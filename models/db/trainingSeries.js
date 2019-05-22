@@ -40,6 +40,7 @@ function add(series) {
     .then(ts => find({ "ts.id": ts[0].id }).first());
 }
 
+
 /**
  * Update a training series to the Database
  *
