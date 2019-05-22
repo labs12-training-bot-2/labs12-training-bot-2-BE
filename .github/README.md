@@ -51,40 +51,47 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 #### Auth
 
-| route | methods | description | Docs |
-|:--- | :---: | :--- | :---:|
+| route       | methods | description                                              |                                                        Docs                                                         |
+| :---------- | :-----: | :------------------------------------------------------- | :-----------------------------------------------------------------------------------------------------------------: |
 | `api/auth/` |  POST   | Takes a valid JWT provided by Auth0 and logs the user in | [JS Docs](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/auth.js#L9-L65) |
 
 ---
 
 #### Users
 
-| route | methods | description | Docs |
-|:--- | :---: | :--- | :---:|
-| `api/users/:id` | DELETE | Deletes a specific user based on the ID parameter | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/user.js#L7-L31) |
+| route           | methods | description                                       |                                                        Docs                                                        |
+| :-------------- | :-----: | :------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------: |
+| `api/users/:id` | DELETE  | Deletes a specific user based on the ID parameter | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/user.js#L7-L31) |
 
 ---
 
 #### Team Members
 
-| route | methods | description | Docs |
-|:--- | :---: | :--- | :---:|
-| `api/team-members/`| GET, POST | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L58-L143)  |
-| `api/team-members/:id`| GET, PUT, DELETE | Read, Update, and Delete specific Team Members | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L57-L141)  |
-| `api/team-members/:id/unassign/:ts_id`| DELETE | Unassign a specified Team Member from a Training Series | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L144-L213) |
+| route                                  |     methods      | description                                                                                                                      |                                                            Docs                                                             |
+| :------------------------------------- | :--------------: | :------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------: |
+| `api/team-members/`                    |    GET, POST     | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L58-L143)  |
+| `api/team-members/:id`                 | GET, PUT, DELETE | Read, Update, and Delete specific Team Members                                                                                   | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L57-L141)  |
+| `api/team-members/:id/unassign/:ts_id` |      DELETE      | Unassign a specified Team Member from a Training Series                                                                          | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L144-L213) |
 
 ---
 
 #### Training Series
 
+| route                               |      methods      | description                                                                                                                                 |                                                              Docs                                                               |
+| :---------------------------------- | :---------------: | :------------------------------------------------------------------------------------------------------------------------------------------ | :-----------------------------------------------------------------------------------------------------------------------------: |
+| `api/training-series/`              |     GET, POST     | Get all the training series associated with an authenticated User and/or Create a new training series associated with an authenticated User |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L15-L53)  |
+| `api/training-series/:id`           | GET, POST, DELETE | Read, Update, and Delete specific training series                                                                                           | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L55-L140)  |
+| `api/training-series/:id/messages`  |        GET        | Get all the messages for a specific training series                                                                                         | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L142-L170) |
+| `api/training-series/:id/assignees` |        GET        | Get the team members for the specific training series                                                                                       | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L172-L215) |
+
 ---
 
 #### Messages
 
-| route | methods | description | Docs |
-|:--- | :---: | :--- | :---:|
-| `api/messages/` | GET, POST | Get all Messages associated with an authenticated User and/or Create a new Message associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L13-L66)  |
-| `api/messages/:id` | GET, PUT, DELETE | Read, Update, and Delete specific Messages | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L68-L165) |
+| route              |     methods      | description                                                                                                              |                                                          Docs                                                           |
+| :----------------- | :--------------: | :----------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------: |
+| `api/messages/`    |    GET, POST     | Get all Messages associated with an authenticated User and/or Create a new Message associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L13-L66)  |
+| `api/messages/:id` | GET, PUT, DELETE | Read, Update, and Delete specific Messages                                                                               | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/message.js#L68-L165) |
 
 ---
 
@@ -98,33 +105,31 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 #### Notifications
 
-| route | methods | description | Docs |
-|:--- | :---: | :--- | :---:|
-| `api/notifications/` | GET, POST | Get all Notifications associated with an authenticated User and/or Create a new Notification associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L15-L80) |
-| `api/notifications/:id` | GET | Get specific Notifications | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L82-L109)  |
-| `api/notifications/:id/response` | GET | Get all Responses associated with an authenticated User for specific Notification | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L111-L143) |
-| `api/notifications/:id/delete` | DELETE | Delete specific Notifications | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L145-L167) |
+| route                            |  methods  | description                                                                                                                        |                                                             Docs                                                              |
+| :------------------------------- | :-------: | :--------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------: |
+| `api/notifications/`             | GET, POST | Get all Notifications associated with an authenticated User and/or Create a new Notification associated with an authenticated User |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L15-L80)  |
+| `api/notifications/:id`          |    GET    | Get specific Notifications                                                                                                         | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L82-L109)  |
+| `api/notifications/:id/response` |    GET    | Get all Responses associated with an authenticated User for specific Notification                                                  | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L111-L143) |
+| `api/notifications/:id/delete`   |  DELETE   | Delete specific Notifications                                                                                                      | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/notification.js#L145-L167) |
 
 ---
 
 #### Responses
 
-----
+---
 
-| route | methods | description | Docs |
-|:--- | :---: | :--- | :---:|
-| `api/responses/:id` | GET, DELETE | Get or delete specific Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L22-L71) |
-| `api/responses/email` | POST | Create a new email Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L73-L139)  |
-| `api/responses/sms` | POST | Create a new text Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L141-L192)  |
-| `api/responses/slack` | POST | Create a new Slack Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L194-L244)  |
-
-
+| route                 |   methods   | description                     |                                                            Docs                                                            |
+| :-------------------- | :---------: | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------: |
+| `api/responses/:id`   | GET, DELETE | Get or delete specific Response |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L22-L71)  |
+| `api/responses/email` |    POST     | Create a new email Response     | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L73-L139)  |
+| `api/responses/sms`   |    POST     | Create a new text Response      | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L141-L192) |
+| `api/responses/slack` |    POST     | Create a new Slack Response     | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L194-L244) |
 
 ## Maintainers
 
 | ![Andrew Brush](https://github.com/ajb85.png) | ![Nick Cannariato](https://github.com/nickcannariato.png) | ![Adam McKenney](https://github.com/DaftBeowulf.png) | ![Gannon Darcy](https://github.com/GannonDetroit.png) | ![Thomas Hessburg](https://github.com/TomHessburg.png) |
 | --------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| [@ajb85](https://github.com/ajb85) | [@nickcannariato](https://github.com/nickcannariato) | [@DaftBeowulf](https://github.com/DaftBeowulf) | [@GannonDetroit](https://github.com/GannonDetroit) | [@TomHessburg](https://github.com/TomHessburg)         |
+| [@ajb85](https://github.com/ajb85)            | [@nickcannariato](https://github.com/nickcannariato)      | [@DaftBeowulf](https://github.com/DaftBeowulf)       | [@GannonDetroit](https://github.com/GannonDetroit)    | [@TomHessburg](https://github.com/TomHessburg)         |
 
 ## License
 
