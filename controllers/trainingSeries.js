@@ -7,6 +7,10 @@ const TrainingSeries = require("../models/db/trainingSeries");
 const Messages = require("../models/db/messages");
 const Notifications = require("../models/db/notifications");
 
+// Data validation
+const { trainingSeriesSchema } = require("../models/schemas");
+const validation = require("../middleware/dataValidation");
+
 router
   .route("/")
   .get(async (req, res) => {
@@ -26,9 +30,16 @@ router
     // Return the found training series to client
     res.status(200).json({ trainingSeries });
   })
+<<<<<<< Updated upstream
   .post(async (req, res) => {
     /**
      * create a new training series
+=======
+  .post(validation(trainingSeriesSchema), async (req, res) => {
+    /**
+     * Validate the request body against our training series schema and then Create
+     * a new training series
+>>>>>>> Stashed changes
      *
      * @function
      * @param {Object} req - The Express request object
@@ -40,6 +51,7 @@ router
     //deconstructure the title and user id from the req body.
     const { title, user_id } = req.body;
 
+<<<<<<< Updated upstream
     //if the title and user id isn't there send a 400 error with a message asking
     //client to provide a title and/or user id.
     if (!title && !user_id) {
@@ -50,6 +62,8 @@ router
       });
     }
 
+=======
+>>>>>>> Stashed changes
     //add the new training series to the database
     const newTrainingSeries = await TrainingSeries.add({ title, user_id });
 
@@ -85,9 +99,17 @@ router
     //Return the training series to the client
     return res.status(200).json({ trainingSeries });
   })
+<<<<<<< Updated upstream
   .put(async (req, res) => {
     /**
      * update a specific training series in the database.
+=======
+  .put(validation(trainingSeriesSchema), async (req, res) => {
+    /**
+     * Validate the request body against the training series schema, then update
+     * the specified training series in the database
+     *
+>>>>>>> Stashed changes
      * @function
      * @param {Object} req - The Express request object
      * @param {Object} req.body - The request body, which represents the changes we need to make to a specific training series
@@ -98,12 +120,15 @@ router
     // Destructure the ID off the request parameters
     const { id } = req.params;
 
+<<<<<<< Updated upstream
     //if no change is made the title input, return a 400 and message.
     if (!req.body.title.length) {
       return res.status(400).json({
         message: "New title cannot be an empty string"
       });
     }
+=======
+>>>>>>> Stashed changes
     //update the specific training series in the database
     const updatedTrainingSeries = await TrainingSeries.update(
       { "ts.id": id },
