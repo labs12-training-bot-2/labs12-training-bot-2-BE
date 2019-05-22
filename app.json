@@ -12,7 +12,7 @@
   "addons": [
     {
       "plan": "heroku-postgresql:hobby-dev",
-      "as": "DB_URL"
+      "as": "DATABASE_URL"
     }
   ],
   "env": {
