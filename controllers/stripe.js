@@ -119,8 +119,7 @@ async function updateUserAccountType(id, plan) {
 
 router.post("/", async (req, res) => {
   /**
-   * this post endpoint communicates to stripe based on what the other endpoints
-   * in this file specify do. 
+   * this post allows the stripe plans to be updated, defaults to a free plan and allows upgrades from premium to pro and vice-versa
    * @function
    * @param {Object} req - The Express request object
    * @param {Object} res - The Express response object
@@ -136,14 +135,14 @@ router.post("/", async (req, res) => {
       if (customer.subscriptions.total_count === 0) {
         let subscription = await subscribe(stripe, plan);
         updateUserAccountType(user_id, plan);
-        //return the updated subscription status
+        //return the updated subscription status to the client
         res.status(200).json(subscription);
       } else {
-        //if they have a paid subscription, let them update their account to unsubscribe.
+        //if they have a paid subscription, let them update their account to a different plan by unsubscribing and then resubscibing to the new plan.
         await unsubscribe(user_id, stripe);
         let subscription = await subscribe(stripe, plan);
         updateUserAccountType(user_id, plan);
-        //return the updated subscription status
+        //return the updated subscription status to the client
         res.status(200).json(subscription);
       }
     } catch (err) {
@@ -160,7 +159,7 @@ router.post("/", async (req, res) => {
       //update the user's info with their new stripe id and plan, which is defaulted to free
       await subscribe(stripe, plan);
       updateUserAccountType(userID, plan);
-      //return the updated user info
+      //return the updated user info to the client
       res.send(customer);
     } catch (err) {
       res.status(500).end();
