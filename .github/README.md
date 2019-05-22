@@ -97,9 +97,26 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 #### Stripe
 
+| route                      | methods | description                                                                   |                                                          Docs                                                           |
+| :------------------------- | :-----: | :---------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------: |
+| `api/stripe/`              |  POST   | allows user to update/change their stripe plan.                               | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L120-L168) |
+| `api/stripe/register`      |  POST   | register the user with stripe's API to get a stripe ID                        | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L169-L198) |
+| `api/stripe/unsubscribe`   |  POST   | allows user to unsubscribe from their current plan.                           | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L200-L223) |
+| `api/stripe/plans`         |   GET   | allows user to see available plans (basic, premium, pro)                      | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L225-L256) |
+| `api/stripe/subscriptions` |   GET   | Allows the user to access the three subscription that go with the three plans | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L257-L278) |
+| `api/stripe/customer/plan` |   GET   | Shows the user what their current plan is                                     | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L279-L294) |
+| `api/stripe/paymentintent` |  POST   | required by the stripe API to be able to collect credit card payments.        | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/stripe.js#L296-L316) |
+
 ---
 
 #### Slack
+
+| route | methods | description | Docs |
+|:--- | :---: | :--- | :---:|
+| `api/slack/oauth` | POST | Creates authenticated Slack Token in the database after oauth validation | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L24-L60) |
+| `api/slack/` | GET | Get all Slack users from the authenticated Slack workspace | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L62-L95)  |
+| `api/slack/:id/history` | GET | Get all messages in specific DM chat history with specified Team Member | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L97-L138) |
+| `api/slack/sendMessageNow` | POST | Bypass Notification timer and immediately send specified Team Member a Slack Message, for testing purposes only | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/slack.js#L140-L208) |
 
 ---
 
@@ -114,22 +131,25 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 ---
 
+
 #### Responses
 
----
+| route | methods | description | Docs |
+|:--- | :---: | :--- | :---:|
+| `api/responses/:id` | GET, DELETE | Get or delete specific Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L22-L71) |
+| `api/responses/email` | POST | Create a new email Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L73-L139)  |
+| `api/responses/sms` | POST | Create a new text Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L141-L192)  |
+| `api/responses/slack` | POST | Create a new Slack Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L194-L244)  |
 
-| route                 |   methods   | description                     |                                                            Docs                                                            |
-| :-------------------- | :---------: | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------: |
-| `api/responses/:id`   | GET, DELETE | Get or delete specific Response |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L22-L71)  |
-| `api/responses/email` |    POST     | Create a new email Response     | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L73-L139)  |
-| `api/responses/sms`   |    POST     | Create a new text Response      | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L141-L192) |
-| `api/responses/slack` |    POST     | Create a new Slack Response     | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L194-L244) |
+---
 
 ## Maintainers
 
 | ![Andrew Brush](https://github.com/ajb85.png) | ![Nick Cannariato](https://github.com/nickcannariato.png) | ![Adam McKenney](https://github.com/DaftBeowulf.png) | ![Gannon Darcy](https://github.com/GannonDetroit.png) | ![Thomas Hessburg](https://github.com/TomHessburg.png) |
 | --------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-| [@ajb85](https://github.com/ajb85)            | [@nickcannariato](https://github.com/nickcannariato)      | [@DaftBeowulf](https://github.com/DaftBeowulf)       | [@GannonDetroit](https://github.com/GannonDetroit)    | [@TomHessburg](https://github.com/TomHessburg)         |
+| [@ajb85](https://github.com/ajb85) | [@nickcannariato](https://github.com/nickcannariato) | [@DaftBeowulf](https://github.com/DaftBeowulf) | [@GannonDetroit](https://github.com/GannonDetroit) | [@TomHessburg](https://github.com/TomHessburg)         |
+
+
 
 ## License
 

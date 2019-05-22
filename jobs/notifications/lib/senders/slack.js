@@ -1,9 +1,10 @@
 const axios = require("axios");
 const api = "https://slack.com/api";
 const Tokens = require("../../../../models/db/tokens");
+const { _openChannelWithUser } = require("../../../../helpers/slackHelpers");
 
 /**
- * Takes a Notification object (n) and attempts to send it to the appropriate 
+ * Takes a Notification object (n) and attempts to send it to the appropriate
  * Team Member via Slack
  *
  * Purposefully doesn't attempt to catch errors so that errors bubble up to the function that calls it.
@@ -11,17 +12,18 @@ const Tokens = require("../../../../models/db/tokens");
  * @param {Object} n - A Notification object
  * @return {Object} - An updated Notification object
  */
+
 module.exports = async n => {
   // Get the slack auth_token associated with
   const { auth_token } = await Tokens.find({ "u.email": n.user }).first();
 
   // Wait for a channel to be opened with the User
-  const channelID = await _openChannelWithUser(n.slack_uuid, auth_token);
+  const channelID = await _openChannelWithUser(api, n.slack_uuid, auth_token);
 
   // Wait for the message to send
   await _sendSlackMessage(channelID, n, auth_token);
 
-  // return an updated Notification object that sets thread to the ChannelID, 
+  // return an updated Notification object that sets thread to the ChannelID,
   // increments num_attempts, and changes is_sent to true
   return {
     id: n.id,
@@ -32,28 +34,12 @@ module.exports = async n => {
 };
 
 /**
- * Opens a direct message channel between our Slack bot and a given Team Member
- * 
- * @param {String} userID - A Team Member's Slack ID 
- * @param {String} token - A User's Slack token
- * 
- * @return {String} The ID of the direct message channel that was opened between our bot and the Team Member
- */
-async function _openChannelWithUser(userID, token) {
-  const endpoint = "/im.open";
-  const url = `${api}${endpoint}?token=${token}&user=${userID}`;
-
-  const dm = await axios.get(url);
-  return dm.data.channel.id;
-}
-
-/**
  * Sends a Slack message from our Slack bot to a given Team Member
- * 
+ *
  * @param {String} channelID - The unique ID of the open channel between our Bot and the Team Member
  * @param {Object} notification - A Notification object
- * @param {String} token - 
- * 
+ * @param {String} token -
+ *
  * @return {Object} The data returned by the Axios call to Slack
  */
 async function _sendSlackMessage(channelID, notification, token) {
@@ -67,7 +53,7 @@ async function _sendSlackMessage(channelID, notification, token) {
 
 /**
  * Formats a Notification object to fit Slack's pseudo-Markdown syntax
- * 
+ *
  * @param {Object} n - A Notification Object
  * @param {String} n.first_name - The Team Member's first name
  * @param {String} n.subject - The subject of the Notification
