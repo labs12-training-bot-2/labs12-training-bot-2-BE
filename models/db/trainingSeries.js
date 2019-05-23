@@ -53,10 +53,10 @@ function add(series) {
  *
  * @returns {Promise} - A Promise that resolves to the updated training series
  */
-function update(id, changes) {
-  return db("training_series")
+function update(filter, changes) {
+  return db("training_series as ts")
     .update(changes, ["*"])
-    .where({ id })
+    .where(filter)
     .then(ts => find({ "ts.id": ts[0].id }).first());
 }
 
