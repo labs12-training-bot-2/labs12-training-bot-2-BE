@@ -38,9 +38,9 @@ function find(filters) {
       "n.thread",
       "n.message_id",
       "n.recipient_id",
+      "n.team_member_id",
       "ts.id AS training_series_id",
       "ts.title AS series",
-      "tm.id AS team_member_id",
       "tm.first_name",
       "tm.last_name",
       "tm.email",
@@ -54,7 +54,7 @@ function find(filters) {
     )
     .leftJoin("messages AS m", { "m.id": "n.message_id" })
     .leftJoin("services AS s", { "s.id": "n.service_id" })
-    .leftJoin("team_members AS tm", { "tm.id": "n.team_member_id" })
+    .leftJoin("team_members AS tm", { "tm.id": "n.recipient_id" })
     .leftJoin("users AS u", { "u.id": "tm.user_id" })
     .leftJoin("training_series AS ts", { "ts.id": "m.training_series_id" })
     .where(filters)
