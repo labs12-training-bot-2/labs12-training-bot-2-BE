@@ -40,7 +40,6 @@ function add(series) {
     .then(ts => find({ "ts.id": ts[0].id }).first());
 }
 
-
 /**
  * Update a training series to the Database
  *
@@ -71,8 +70,8 @@ function update(id, changes) {
  *
  * @returns {Promise} A promise that resolves to the number of training series deleted
  */
-function remove(id) {
+function remove(filter) {
   return db("training_series")
-    .where({ id })
+    .where(filter)
     .del();
 }

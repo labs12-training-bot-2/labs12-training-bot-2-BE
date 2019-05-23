@@ -124,7 +124,7 @@ router
     const { id } = req.params;
 
     // Attempt to delete the specified Team Member from the database
-    const deleted = await TrainingSeries.remove({ "ts.id": id });
+    const deleted = await TrainingSeries.remove({ id });
 
     // If deleted is falsey, we can assume that there is no Team Member at that ID
     if (!deleted) {
