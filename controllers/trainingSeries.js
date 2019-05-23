@@ -21,11 +21,11 @@ router
      * @param {Object} res - The Express response object
      * @returns {Object} - The Express response object
      */
-    // Destructure the authenticated User off of res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email off of res.locals
+    const { email } = res.locals.user;
     // Get all training series from the database that are associated with the authenticated User
     const trainingSeries = await TrainingSeries.find({
-      "u.email": user.email
+      "u.email": email
     });
     // Return the found training series to client
     res.status(200).json({ trainingSeries });

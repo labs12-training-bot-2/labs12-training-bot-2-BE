@@ -22,11 +22,11 @@ router
      * @returns {Object} - The Express response object
      */
 
-    // Destructure the authenticated User from res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email from res.locals
+    const { email } = res.locals.user;
 
     // Get all Messages from the database that are associated with the authenticated user
-    const messages = await Messages.find({ "u.email": user.email });
+    const messages = await Messages.find({ "u.email": email });
 
     // Return the found Messages to the client
     res.status(200).json({ messages });
@@ -42,13 +42,13 @@ router
      * @returns {Object} - The Express response object
      */
 
-    // Destructure the authenticated User from res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email from res.locals
+    const { email } = res.locals.user;
 
     // Retrieve the Training Series referenced with the authenticated user by the training_series_id
     const trainingSeriesExists = await TrainingSeries.find({
       "ts.id": req.body.training_series_id,
-      "u.email": user.email
+      "u.email": email
     }).first();
 
     // If trainingSeriesExists is falsey, we can assume the Training Series does not exist
@@ -80,13 +80,13 @@ router
     // Destructure the Message ID from the request parameters
     const { id } = req.params;
 
-    // Destructure the authenticated user off of res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email off of res.locals
+    const { email } = res.locals.user;
 
     // Get the Message associated with the user by ID
     const message = await Messages.find({
       "m.id": id,
-      "u.email": user.email
+      "u.email": email
     }).first();
 
     message
@@ -110,13 +110,13 @@ router
     // Destructure the ID off the request parameters
     const { id } = req.params;
 
-    // Destructure the authenticated User from res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email from res.locals
+    const { email } = res.locals.user;
 
     // Attempt to find the Message in the database that relates to the authenticated user
     const messageExists = await Messages.find({
       "m.id": id,
-      "u.email": user.email
+      "u.email": email
     });
 
     // If messageExists is falsey, either the Message does not exist in the database or the authenticated user does not have access to it
@@ -143,7 +143,7 @@ router
     // Destructure the Message ID from the request parameters
     const { id } = req.params;
 
-    // Destructure the authenticated user off of res.locals
+    // Destructure the authenticated User email off of res.locals
     const { email } = res.locals.user;
 
     // Get the Message associated with the user by ID

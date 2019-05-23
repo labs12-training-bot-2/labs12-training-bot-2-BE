@@ -25,12 +25,12 @@ router
      * @returns {Object} - The Express response object
      */
 
-    // Destructure the authenticated User off of res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email off of res.locals
+    const { email } = res.locals.user;
 
     // Get all Team Members from the database that are associated with the authenticated User
     const teamMembers = await TeamMember.find({
-      "u.email": user.email
+      "u.email": email
     });
 
     // Return the found Team Members to client
@@ -70,13 +70,13 @@ router
     // Destructure the ID off of the request parameters
     const { id } = req.params;
 
-    // Destructure the authenticated User off of res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email off of res.locals
+    const { email } = res.locals.user;
 
     // Get the Team Member associated with a user by ID
     const teamMember = await TeamMember.find({
       "tm.id": id,
-      "u.email": user.email
+      "u.email": email
     }).first();
 
     // If teamMember is falsey, we can assume that Team Member doesn't exist
