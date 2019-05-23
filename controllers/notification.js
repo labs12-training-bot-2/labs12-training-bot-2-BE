@@ -69,7 +69,7 @@ router
 
     // Retrieve the Team Member referenced with the authenticated user by the recipient_id
     const recipientExists = await TeamMembers.find({
-      "tm.id": team_member_id,
+      "tm.id": recipient_id,
       "u.email": email
     });
 
