@@ -24,11 +24,11 @@ router
      * @returns {Object} - The Express response object
      */
 
-    // Destructure the authenticated user from res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email from res.locals
+    const { email } = res.locals.user;
 
     // Get all Notifications from the database that are associated with the authenticated user
-    const notifications = await Notifications.find({ "u.email": user.email });
+    const notifications = await Notifications.find({ "u.email": email });
 
     // Return the found Notifications to the client
     res.status(200).json({ notifications });
@@ -44,8 +44,8 @@ router
      * @returns {Object} - The Express response object
      */
 
-    // Destructure the authenticated user from res.locals
-    const { user } = res.locals;
+    // Destructure the authenticated User email from res.locals
+    const { email } = res.locals.user;
 
     // Destructure the Message ID and Team Member ID off the request body
     const { message_id, team_member_id } = req.body;
@@ -53,7 +53,7 @@ router
     // Retrieve the Message referenced with the authenticated user by the message_id
     const messageExists = await Messages.find({
       "m.id": message_id,
-      "u.email": user.email
+      "u.email": email
     });
 
     // If messageExists is falsey, we can assume the Message does not exist
@@ -92,7 +92,7 @@ router.route("/:id").get(async (req, res) => {
   // Destructure the Notification ID from the request parameters
   const { id } = req.params;
 
-  // Destructure the authenticated user off of res.locals
+  // Destructure the authenticated User email off of res.locals
   const { email } = res.locals.user;
 
   // Attempt to find the Notification in the database that relates to the authenticated user
@@ -121,7 +121,7 @@ router.route("/:id/responses").get(async (req, res) => {
   // Destructure the Notification ID from the request parameters
   const { id } = req.params;
 
-  // Destructure the authenticated user off of res.locals
+  // Destructure the authenticated User email off of res.locals
   const { email } = res.locals.user;
 
   // Attempt to find the Notification in the database that relates to the authenticated user
