@@ -77,9 +77,12 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 #### Training Series
 
-| route                  |  methods  | description                                                                                                                      |                                                            Docs                                                            |
-| :--------------------- | :-------: | :------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------: |
-| `api/training-series/` | GET, POST | Get all Team Members associated with an authenticated User and/or Create a new Team Member associated with an authenticated User | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/teamMember.js#L58-L143) |
+| route                               |      methods      | description                                                                                                                                 |                                                              Docs                                                               |
+| :---------------------------------- | :---------------: | :------------------------------------------------------------------------------------------------------------------------------------------ | :-----------------------------------------------------------------------------------------------------------------------------: |
+| `api/training-series/`              |     GET, POST     | Get all the training series associated with an authenticated User and/or Create a new training series associated with an authenticated User |  [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L15-L53)  |
+| `api/training-series/:id`           | GET, POST, DELETE | Read, Update, and Delete specific training series                                                                                           | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L55-L140)  |
+| `api/training-series/:id/messages`  |        GET        | Get all the messages for a specific training series                                                                                         | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L142-L170) |
+| `api/training-series/:id/assignees` |        GET        | Get the team members for the specific training series                                                                                       | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/trainingSeries.js#L172-L215) |
 
 ---
 
@@ -131,8 +134,6 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 
 #### Responses
 
-----
-
 | route | methods | description | Docs |
 |:--- | :---: | :--- | :---:|
 | `api/responses/:id` | GET, DELETE | Get or delete specific Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L22-L71) |
@@ -140,14 +141,14 @@ Valid JWTs are provided by the Auth0 integration with our [React application](ht
 | `api/responses/sms` | POST | Create a new text Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L141-L192)  |
 | `api/responses/slack` | POST | Create a new Slack Response | [JS Doc](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/controllers/responses.js#L194-L244)  |
 
-----
+---
 
 ## Maintainers
 
 | ![Andrew Brush](https://github.com/ajb85.png) | ![Nick Cannariato](https://github.com/nickcannariato.png) | ![Adam McKenney](https://github.com/DaftBeowulf.png) | ![Gannon Darcy](https://github.com/GannonDetroit.png) | ![Thomas Hessburg](https://github.com/TomHessburg.png) |
 | --------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
-
 | [@ajb85](https://github.com/ajb85) | [@nickcannariato](https://github.com/nickcannariato) | [@DaftBeowulf](https://github.com/DaftBeowulf) | [@GannonDetroit](https://github.com/GannonDetroit) | [@TomHessburg](https://github.com/TomHessburg)         |
+
 
 
 ## License
