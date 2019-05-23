@@ -45,7 +45,7 @@ You'll then need to add your assorted keys and passwords to the .env file where 
 
 ## Auth0
 
-- [Official Site](https://auth0.com/)  
+- [Official Site](https://auth0.com/)
 - [Developer Docs](https://auth0.com/docs)
 
 [Auth0](https://auth0.com/) is a universal authentication and authorization service that Training Bot uses to authenticate users to the application and also to register new users.
@@ -56,7 +56,7 @@ You'll then need to add your assorted keys and passwords to the .env file where 
 2. The React app redirects the user to the Auth0 login screen, and passes Auth0 a callback URL as a query string on the request
 3. The user selects which third-party service they'd like to authenticate with (Google, LinkedIn, Facebook)
 4. The User is redirected from Auth0 to the third party service they selected to Authorize our application to create a user on their behalf
-5. Auth0 catches the OAuth tokens from the third party services and creates a user record inside their application 
+5. Auth0 catches the OAuth tokens from the third party services and creates a user record inside their application
 6. Auth0 generates a JWT for that user, then redirects the user to the callback URL supplied initially by our application
 7. Our application accepts the token, creates a new User record in our database based on the information in the token, and then stores the JWT in the user's local storage.
 8. When the user attempts to access any route, we pull that ID token from local storage and include it as a header named "Authorization", the API decrypts this token and verifies that the user has the appropriate Authorization to access a given resource.
@@ -83,14 +83,14 @@ You'll then need to add your assorted keys and passwords to the .env file where 
 
 ## SendGrid
 
-- [Official Site](https://sendgrid.com/)  
+- [Official Site](https://sendgrid.com/)
 - [Developer Docs](https://sendgrid.com/docs/)
 
 [Sendgrid](https://sendgrid.com/) is a Marketing and Transactional email service used by developers around the world. Training Bot uses it to send email notifications out to the appropriate people.
 
 ### Configuring SendGrid
 
-***Note**: To configure sendgrid correctly, you'll need to have a custom domain. Talk with your PM about getting one from NameCheap using Lambda's resources*
+**\*Note**: To configure sendgrid correctly, you'll need to have a custom domain. Talk with your PM about getting one from NameCheap using Lambda's resources\*
 
 1. [Create a "Free" account on SendGrid](https://sendgrid.com/pricing/) using your Labs team email
 2. Navigate to the [Sender Authentication](https://app.sendgrid.com/settings/sender_auth) page, and click "Authenticate your domain". It will then walk you through adding the appropriate DNS records to your domain so that SendGrid can send mail on your behalf.
@@ -99,18 +99,35 @@ You'll then need to add your assorted keys and passwords to the .env file where 
 5. Copy the "ID" under your newly created template group, and paste it into the `jobs/notifications/lib/senders/email` file as the value for the "templateId" property in the object being passed to the `sgMail.send()` function.
 6. Back in the SendGrid GUI, click "add version" to start adding a template version; then select "Code Editor" as your experience and click "Continue" on the top right.
 7. Paste the code in [this gist](https://gist.github.com/nickcannariato/c090975c2a0ac415d175c5d1d4544b60) into the code editor, then hit the "Save Template" button on the header bar.
-8. Now navigate to the [API Keys page in your settings](https://app.sendgrid.com/settings/api_keys) and click "Create API Key" on the top right. 
+8. Now navigate to the [API Keys page in your settings](https://app.sendgrid.com/settings/api_keys) and click "Create API Key" on the top right.
 9. Name your API key "training_bot", select "Full Access" (unless you want to customize or restrict the permissions for that key) and click "Create and View"
-10. Copy the API key that SendGrid displayes and paste it into your `.env` file as the value for the `SENDGRID_API_KEY` variable.
+10. Copy the API key that SendGrid displays and paste it into your `.env` file as the value for the `SENDGRID_API_KEY` variable.
 11. Congrats! You're done!
 
 ## Slack
+
+[Slack API Docs](https://api.slack.com/)
+[Slack Workspace](https://slack.com/signin)
+
+### Create a new Slack App
+
+1. [Create a Slack workspace](https://slack.com/create) to demo your bot from. Use your team's email account when creating. Follow the prompts and optionally add your teammates to the workspace. Once you're loaded in Slack, it's time to create the Slack App
+2. [Starting from the API linked above](https://api.slack.com/), click on the "Start Building" button
+3. Name your app (I would suggest Training Bot) and select the workspace you just created in the Development Slack Workspace field then click "Create App"
+4. From the buttons listed in the "Add features and functionality", click on "Bots" and then "Add a Bot User". The default display name and default username should be fine but you're welcome to change them if you'd like. "Always Show My Bot as Online" is your personal choice. Once you're happy with the settings, click on "Add Bot User"
+5. Once you see "Success!" at the top, click on Basic Information on the top left and drop down Add features and functionality. Then click on Permissions. Scroll down to Scopes and add the following permissions: channels:history, channels:read, chat:write:bot, groups:history, im:history, im:write, mpim:history, users:read. Once you're done, don't forget to click "Save Changes" at the bottom.
+6. Scroll back to the top and notice the two access tokens. Do _NOT_ use "OAuth Access Token" since that one is for you, the user. You want "Bot User OAuth Access Token" so click the "Copy" button next to it. This is the token you will use to authorize Slack through oauth--it ties a user's bot to your code. Open or create the .env file on your backend in the root folder and add: SLACK_TOKEN=PASTE_YOUR_TOKEN_HERE
+7. Back in Basic Information on the Slack API site, look in the App Credentials section for Client ID, Client Secret, and Verification Token. Copy those to environment variables as follows: SLACK_CLIENT_ID=PASTE_CLIENT_ID_HERE, SLACK_SECRET=PASTE_CLIENT_SECRET_HERE, SLACK_VERIFICATION=PASTE_VERIFICATION_TOKEN_HERE. After oauth verification, Slack will want the client ID and secret as extra percautions. However, the verification token is used with web hooks and since those requests come from the outside, Slack is going to send that token to you as proof of a legit request.
+8. Once you have all your environment variables, you need to tell Slack how to redirect users back to you after they authorize Slack, which you do under "Redirect URL". You can find yours on the left side under the "Features" section in "OAuth & Permissions". If you're running local tests then you can set it to "http://localhost:3000/slack-callback" but once your frontend and backend are live, set it to "https://YOUR_APP_URL.netlify.com/slack-callback". Slack will want this url as part of the oauth process so make sure you have one last environment variable on the backend: APP_BASE_URL=http://localhost:3000 (use this locally, update to your live URL on Netlify)
+9. Next, you need to setup webhooks to receive responses. Basic Information --> Add Features and Functionality --> Event Subscriptions. Click on "Add Workspace Event" and add: message.im, message.mpim
+10. Lastly, you need to tell Slack where it can send events when they trigger (your backend). Under Request URL, add a working URL to your backend and point it to the endpoint _https://YOUR_BACKEND_URL.heroku.com/api/responses/slack_ As soon as you type the URL, Slack is going to immediately send a challenge to that endpoint and expect the challenge back within a short time limit. If you are testing locally, you can use [ngrok](https://ngrok.com/download) to forward requests to your localhost. Otherwise, point it to your working Heroku backend and it should pass the challenge just fine.
+11. Rejoice, you now have a working Slack bot!
 
 ## Stripe
 
 ## Twilio
 
-- [Official Site](https://www.twilio.com/)  
+- [Official Site](https://www.twilio.com/)
 - [Developer Docs](https://www.twilio.com/docs/)
 
 [Twilio](https://www.twilio.com/) is a messaging service that Training bot uses to send SMS messages.
@@ -130,4 +147,4 @@ You'll then need to add your assorted keys and passwords to the .env file where 
 11. [Navigate back to your console](https://www.twilio.com/console) and copy the "Account SID" string in the top left hand portion of your dashboard. Paste it into your `.env` file as the value for the `TWILIO_SID` variable.
 12. Back in your Dashboard, click the "view" link next to "Auth Token" just under where you copied your "Account SID".
 13. Copy the token that gets revealed into your `.env` fild as the value for the `TWILIO_TOKEN` variable
-14. That's it! You're good to send SMS messages now. 
+14. That's it! You're good to send SMS messages now.
