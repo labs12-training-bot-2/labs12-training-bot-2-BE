@@ -48,7 +48,7 @@ router
     const { email } = res.locals.user;
 
     // Destructure the Message ID and Team Member ID off the request body
-    const { message_id, team_member_id } = req.body;
+    const { message_id, team_member_id, recipient_id } = req.body;
 
     // Retrieve the Message referenced with the authenticated user by the message_id
     const messageExists = await Messages.find({
@@ -67,9 +67,17 @@ router
       "u.email": email
     });
 
-    // If teamMemberExists is falsey, we can assume the Team Member does not exist
-    if (!teamMemberExists) {
-      return res.status(404).json({ message: "That message does not exist." });
+    // Retrieve the Team Member referenced with the authenticated user by the recipient_id
+    const recipientExists = await TeamMembers.find({
+      "tm.id": team_member_id,
+      "u.email": email
+    });
+
+    // If teamMemberExists or recipientExists is falsey, we can assume one or both do not exist
+    if (!teamMemberExists || !recipientExists) {
+      return res
+        .status(404)
+        .json({ message: "One of those Team Members does not exist." });
     }
 
     // Add new Notification to the database

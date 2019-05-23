@@ -159,8 +159,7 @@ router.delete("/:id/unassign/:ts_id", async (req, res) => {
 
   // Find all Messages associated with the specified Training Series
   const messages = await Messages.find({
-    "ts.id": ts_id,
-    "m.for_team_member": true
+    "ts.id": ts_id
   });
 
   // If messages.length is falsey, we can assume that that Team Member hasn't
