@@ -1,7 +1,7 @@
 //Dependencies
 const router = require("express").Router();
-//const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+//const stripe = require("stripe")(process.env.STRIPE_TEST_SECRET_KEY);
 
 const Users = require("../models/db/users");
 
@@ -101,12 +101,12 @@ async function register(id, name, email, token) {
  */
 async function updateUserAccountType(id, plan) {
   let accountTypeID;
-  if (plan === "plan_EyjXqiSYXoKEXf") {
+  if (plan === "plan_Ex95NK1FuaNiWb") {
     // production = "plan_Ex95NK1FuaNiWb"
     // test ="plan_EyjXqiSYXoKEXf"
     // PREMIUM PLAN
     accountTypeID = 2;
-  } else if (plan === "plan_EyjXEzjQkZf78d") {
+  } else if (plan === "plan_Ex955Zz8JE0ZuW") {
     // production = "plan_Ex955Zz8JE0ZuW"
     // test = "plan_EyjXEzjQkZf78d"
     // PRO PLAN
@@ -240,8 +240,9 @@ router.get("/plans", async (req, res) => {
         limit: 3,
         //remember to swap between these too id's depending if you want to show test or production product
         //and it's corresponding plans/subscriptions.
-        product: "prod_EyjWGnhGwmQIsE" // TEST
-        // product: 'prod_Ex92rwszM77RQA' //Live
+        product: "prod_Ex92rwszM77RQA"
+        // product: 'prod_Ex92rwszM77RQA'
+        // test: "prod_EyjWGnhGwmQIsE"
       },
       function(err, plans) {
         if (err) {
