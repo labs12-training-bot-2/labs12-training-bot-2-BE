@@ -34,8 +34,9 @@ router.post("/oauth/", async ({ body: { code } }, res) => {
   // Build query string from Slack environment variables and the APP_BASE_URL as the redirect URI
   const query = `client_id=${process.env.SLACK_CLIENT_ID}&client_secret=${
     process.env.SLACK_SECRET
-  }&code=${code}&redirect_uri=${process.env.APP_BASE_URL}/slack-callback`;
+    }&code=${code}&redirect_uri=${process.env.APP_BASE_URL}/slack-callback`;
 
+  console.log("QUERY STRING", query);
   // Build url to request oauth token out of query string
   const url = `https://slack.com/api/oauth.access?${query}`;
 
