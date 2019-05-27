@@ -19,6 +19,26 @@ const Notifications = require("../models/db/notifications");
 const { authentication } = require("../middleware/authentication");
 const verifySlackToken = require("../middleware/verifySlackToken");
 
+router.route(authentication, "/").get(async (req, res) => {
+  /**
+   *Get all Responses for authenticated user
+   *
+   * @function
+   * @param {Object} req - The Express request object
+   * @param {Object} res - The Express response object
+   * @returns {Object} - The Express response object
+   */
+
+  // Destructure the authenticated User email from res.locals
+  const { email } = res.locals.user;
+
+  // Retrieve all Responses from the database for the authenticated User
+  const responses = await Responses.find({ "u.email": email });
+
+  // Return Responses to the client
+  res.status(200).json({ responses });
+});
+
 router
   .route(authentication, "/:id")
   .get(async (req, res) => {
