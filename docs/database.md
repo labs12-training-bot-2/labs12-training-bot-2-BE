@@ -57,7 +57,7 @@ The types of accounts currently offered by the app: currently only free, premium
 
 The logged-in end user that performs all operations within the app's front end. Other resources will be retrieved based on the currently logged-in user's email having been set on res.locals during authentication, and will not be able to retrieve information in the database they did not create.
 
-[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#8-25) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#3-20)
+[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L8-L25) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L3-L20)
 
 | property           | type         | description                                                                       | required |
 |--------------------|--------------|-----------------------------------------------------------------------------------|----------|
@@ -72,7 +72,7 @@ The logged-in end user that performs all operations within the app's front end. 
 
 Services available for messaging option, currently Twilio, Sendgrid, and Slack.
 
-[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#26-29)
+[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L26-L29)
 
 | property | type   | description                                                                                             | required |
 |----------|--------|---------------------------------------------------------------------------------------------------------|----------|
@@ -83,7 +83,7 @@ Services available for messaging option, currently Twilio, Sendgrid, and Slack.
 
 Tokens stored either for oAuth authentication or Slack identity validation. Stored for a specific User.
 
-[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#30-49) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#75-89)
+[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L30-L49) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L75-L89)
 
 
 | property      | type         | description                                                               | required |
@@ -99,7 +99,7 @@ Tokens stored either for oAuth authentication or Slack identity validation. Stor
 
 Team Members that will be sent automated messages containing the training content. Can have other Team Members assigned as their manager or mentor, which allows for other options for who gets sent messages when the Team Member is assigned to a Training Series.
 
-[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#50-77) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#22-45)
+[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L50-L77) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L22-L45)
 
 | property        | type         | description                                                                                                                    | required |
 |-----------------|--------------|--------------------------------------------------------------------------------------------------------------------------------|----------|
@@ -117,7 +117,7 @@ Team Members that will be sent automated messages containing the training conten
 
 Describes the Training Series that any number of Messages with training content can be generated for--any Team Member assigned to a given series (or their manager or mentor) can be sent these messages. The act of assigning a Team Member to the series, including options as to which available messaging medium the communication should go through, is what generates the actual Notifications that are delivered to said Team Member.
 
-[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#78-88) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#47-53)
+[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L78-L88) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L47-L53)
 
 | property | type         | description              | required |
 |----------|--------------|--------------------------|----------|
@@ -129,7 +129,7 @@ Describes the Training Series that any number of Messages with training content 
 
 User creates this content with a title and description of what the message is, optionally includes a URL link for content. Note that said link is not meant to be generated by the app, this would be the actual training content that end users would want their employees to receive messages about so they could complete training.
 
-[Primary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#89-110), [secondary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190515004244_add_for_team_member.js#3-7) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#55-73)
+[Primary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L89-L110), [secondary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190515004244_add_for_team_member.js#L3-L7) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L55-L73)
 
 | property           | type         | description                                                                                                                                                   | required |
 |--------------------|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
@@ -148,7 +148,7 @@ User creates this content with a title and description of what the message is, o
 
 Notifications are automatically generated when a Team Member is assigned to a Training Series that has Messages. Note that the team_member_id is the ID of the Team Member who was originally assigned, but since we want to allow messaging of managers and mentors only for a Message that the Team Member themselves would not receive, or to send a Message to any combination of all three, the recipient_id denotes the Team Member this Notification is actually going to and may be different than team_member_id.
 
-[Primary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#111-144), [secondary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190521131026_add_recipient_id.js#3-10) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#91-115)
+[Primary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L111-L144), [secondary migration](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190521131026_add_recipient_id.js#L3-L10) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L91-L115)
 
 | property       | type        | description                                                                                                                                              | required |
 |----------------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
@@ -166,7 +166,7 @@ Notifications are automatically generated when a Team Member is assigned to a Tr
 
 The catalogued Response from a Team Member as a reply to the Notification they received from the specific service. This currently could be either an sms response from Twilio, an email response from Sendgrid, or a DM chat response from Slack.
 
-[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#145-159) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#117-124)
+[Migrations](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/migrations/20190506173831_data_model_v2.js#L145-L159) and [schema validation](https://github.com/labs12-training-bot-2/labs12-training-bot-2-BE/blob/master/models/schemas.js#L117-L124)
 
 | property        | type        | description                                                                                   | required |
 |-----------------|-------------|-----------------------------------------------------------------------------------------------|----------|
