@@ -22,7 +22,7 @@
 		"@hapi/joi": "^15.0.1",
 		"@sendgrid/mail": "^6.4.0",
 		"axios": "^0.18.1",
-		"bcrypt": "^3.0.6",
+		"bcrypt": "^5.0.0",
 		"connect-session-knex": "^1.4.0",
 		"cors": "^2.8.5",
 		"cron": "^1.7.1",
