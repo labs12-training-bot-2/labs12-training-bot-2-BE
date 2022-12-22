@@ -35,7 +35,7 @@
 		"faker": "^4.1.0",
 		"google-libphonenumber": "^3.2.2",
 		"helmet": "^3.18.0",
-		"jsonwebtoken": "^8.5.1",
+		"jsonwebtoken": "^9.0.0",
 		"jwks-rsa": "^1.4.0",
 		"jwt-decode": "^2.2.0",
 		"knex": "^0.19.5",
